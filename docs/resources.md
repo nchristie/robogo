@@ -24,6 +24,7 @@
 # Ideas for UI
 - https://towardsdatascience.com/python-miniproject-making-the-game-of-go-from-scratch-in-pygame-d94f406d4944
 - https://github.com/thomashikaru/gogame (project described above)
+- https://levelup.gitconnected.com/how-to-make-a-go-board-with-css-ac4cba7d0b72
 
 # Example code for two-player games
 - https://geekflare.com/tic-tac-toe-python-code/
@@ -31,3 +32,7 @@
 # Docker
 - https://blog.logrocket.com/dockerizing-django-app/
 - https://docs.docker.com/samples/django/
+
+# Django
+- https://docs.djangoproject.com/en/4.0/ref/contrib/postgres/fields/#arrayfield
+- https://docs.djangoproject.com/en/4.0/topics/testing/overview/
