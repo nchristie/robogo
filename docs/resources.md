@@ -36,3 +36,4 @@
 # Django
 - https://docs.djangoproject.com/en/4.0/ref/contrib/postgres/fields/#arrayfield
 - https://docs.djangoproject.com/en/4.0/topics/testing/overview/
+- https://djangoproject.com
