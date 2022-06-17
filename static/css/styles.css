@@ -1,40 +1,116 @@
-.table {
-    width: 720px;
-    height: 720px;
-    padding: calc(720px / 40);
-    background-color: #f1b06c;
-  }
-  .grid {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(16, calc(720px / 16));
-    grid-template-rows: repeat(16, calc(720px / 16));
-  }
-  .lines {
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
-    background-size: calc(720px / 8) calc(720px / 8);
-    background-image: linear-gradient(to right, black 1px, transparent 1px),
-      linear-gradient(to bottom, black 1px, transparent 1px);
-  }
-  .star {
-    width: calc(100% / 6);
-    height: calc(100% / 6);
-    border-radius: 50%;
-    background-color: black;
-    align-self: center;
-    justify-self: center;
-    z-index: 1;
-  }
+body {
+	background: #fff;
+}
 
-  .stone {
-    border-radius: 50%;
-    z-index: 2;
-  }
-  .black {
-    background: #000000;
-  }
-  .white {
-    background: #ffffff;
-  }
+.options-bar {
+	width: 500px;
+	font-size: 40px;
+	color: #000;
+	font-family: "Bungee Shade";
+	text-align: center;
+	cursor: default;
+}
+
+.btn {
+	float: right;
+	color: #000;
+	font-size: 28px;
+	cursor: pointer;
+	line-height: 55px;
+	margin-left: 20px;
+	position: relative;
+	display: inline-block;
+}
+
+.btn:hover {
+	color: #ccc;
+}
+
+.btn .tooltiptext {
+    visibility: hidden;
+    font-family: sans-serif;
+	 width: 100px;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+	 line-height: 20px;
+	 font-size: 22px;
+
+    position: absolute;
+    z-index: 1;
+    top: 90%;
+    left: 50%;
+    margin-left: -50px;
+}
+
+.reset-btn .tooltiptext {
+	 width: 140px;
+	 margin-left: -70px;
+}
+
+.btn .tooltiptext::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
+
+.btn:hover .tooltiptext {
+    visibility: visible;
+}
+
+canvas {
+	position: absolute;
+	z-index: -10;
+}
+
+.board {
+	position: absolute;
+	padding: 20px 0 0 35px;
+}
+
+.row {
+	clear: both;
+	overflow: hidden;
+}
+
+.box {
+	width: 48px;
+	height: 48px;
+	margin: 1px;
+	float: left;
+	border-radius: 100%;
+	box-sizing: border-box;
+	cursor: default;
+	box-shadow: 3px 0px 5px #755F31;
+}
+
+.hide {
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	box-shadow: none;
+}
+
+.black {
+	background: #060606;
+}
+
+.white {
+	background: #fff;
+}
+
+.invalid {
+	background: #f00;
+}
+
+#test {
+	margin-left: 520px;
+	font-size: 16px;
+}
