@@ -42,3 +42,4 @@
 - https://www.saaspegasus.com/guides/modern-javascript-for-django-developers/client-server-architectures/
 - https://mkdev.me/posts/fundamentals-of-front-end-django
 - https://github.com/nathanborror/django-basic-apps
+- https://medium.datadriveninvestor.com/python-django-views-templates-models-f0844a00db70
