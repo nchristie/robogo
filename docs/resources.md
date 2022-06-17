@@ -25,6 +25,7 @@
 - https://towardsdatascience.com/python-miniproject-making-the-game-of-go-from-scratch-in-pygame-d94f406d4944
 - https://github.com/thomashikaru/gogame (project described above)
 - https://levelup.gitconnected.com/how-to-make-a-go-board-with-css-ac4cba7d0b72
+- https://medium.com/riow/django-static-files-dcc3f65a8f3a
 
 # Example code for two-player games
 - https://geekflare.com/tic-tac-toe-python-code/
@@ -37,3 +38,6 @@
 - https://docs.djangoproject.com/en/4.0/ref/contrib/postgres/fields/#arrayfield
 - https://docs.djangoproject.com/en/4.0/topics/testing/overview/
 - https://djangoproject.com
+- https://www.mattlayman.com/django-riffs/build-user-interfaces/
+- https://www.saaspegasus.com/guides/modern-javascript-for-django-developers/client-server-architectures/
+- https://mkdev.me/posts/fundamentals-of-front-end-django

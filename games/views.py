@@ -1,23 +1,30 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from pprint import pformat
+# from django.http import HttpResponse
+# from pprint import pformat
+from django.views import View
 
-def index(request):
-    game_board = Board()
-    return HttpResponse(f"{pformat(game_board.draw())}")
+# class Index(View):
+#     template = 'index.html'
 
-class Board():
-  def __init__(self, size=9):
-    self.state = [ [None for j in range(size)] for i in range(size) ]
+#     def get(self, request):
+#         return render(request, self.template)
 
-  def draw(self):
-    return self.state
+# def index(request):
+#     game_board = Board()
+#     return HttpResponse(f"{pformat(game_board.draw())}")
 
-  def make_move(self, x, y, player):
-    self.state[x][y] = player
+# class Board():
+#   def __init__(self, size=9):
+#     self.state = [ [None for j in range(size)] for i in range(size) ]
 
-  def get_scores(self, player):
-    player_score = 0
-    return player_score
+#   def draw(self):
+#     return self.state
 
-# Create your views here.
+#   def make_move(self, x, y, player):
+#     self.state[x][y] = player
+
+#   def get_scores(self, player):
+#     player_score = 0
+#     return player_score
+
+
