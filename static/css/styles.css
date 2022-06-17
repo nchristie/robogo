@@ -14,7 +14,7 @@
   .lines {
     border-right: 1px solid black;
     border-bottom: 1px solid black;
-    background-size: calc(720px / 18) calc(720px / 18);
+    background-size: calc(720px / 8) calc(720px / 8);
     background-image: linear-gradient(to right, black 1px, transparent 1px),
       linear-gradient(to bottom, black 1px, transparent 1px);
   }
