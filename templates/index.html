@@ -1,7 +1,16 @@
-{{some_variable}} Go Board
+
 <br>
-<br>
-<br>
+<label for="your_move">Your move (x,y): </label>
+<input id="your_move" type="text" name="your_move" maxlength="3" required>
+
+<form action="/games/" method="post">
+	{% csrf_token %}
+	{{ form }}
+	<input type="submit" value="Submit">
+</form>
+
+
+
 9&nbsp&nbsp&nbsp&nbsp
 {{my_board.state.0.0}}&nbsp&nbsp
 {{my_board.state.0.1}}&nbsp&nbsp

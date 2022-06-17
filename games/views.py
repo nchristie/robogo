@@ -1,6 +1,6 @@
 from django.shortcuts import render
-# from django.http import HttpResponse
-# from pprint import pformat
+from django import forms
+from django.http import HttpResponse
 from django.views import View
 from random import randint
 
@@ -10,12 +10,10 @@ BLACK_STONE = "●"
 
 class Index(View):
     template = 'index.html'
-    some_variable = "Hello"
 
     def get(self, request):
         my_board = Board()
         context = {
-          "some_variable": self.some_variable,
           "my_board": my_board
         }
         return render(request, self.template, context)
@@ -38,4 +36,24 @@ class Board():
     player_score = 0
     return player_score
 
+class MoveForm(forms.Form):
+    your_move = forms.CharField(label='Your move (x,y)', max_length=3)
+
+def get_move(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = MoveForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponse('/games/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = MoveForm()
+
+    return render(request, 'index.html', {'form': form})
 
