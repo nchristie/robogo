@@ -43,3 +43,11 @@
 - https://mkdev.me/posts/fundamentals-of-front-end-django
 - https://github.com/nathanborror/django-basic-apps
 - https://medium.datadriveninvestor.com/python-django-views-templates-models-f0844a00db70
+- https://docs.djangoproject.com/en/4.0/topics/forms/
+- https://docs.djangoproject.com/en/4.0/topics/db/models/
+- https://www.youtube.com/watch?v=6aQoW0TRXBk
+
+# Get user IP
+- https://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
+- https://stackoverflow.com/questions/23463599/how-to-store-ip-address-in-the-database-and-django-admin
+- https://stackoverflow.com/questions/16046478/django-model-nullable-field

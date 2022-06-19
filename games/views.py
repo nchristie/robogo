@@ -1,59 +1,97 @@
 from django.shortcuts import render
-from django import forms
-from django.http import HttpResponse
+from django.forms import ModelForm, IntegerField
 from django.views import View
-from random import randint
+from .models import Game, Move
 
 INTERSECTION = "+"
 WHITE_STONE = "○"
 BLACK_STONE = "●"
 
 class Index(View):
-    template = 'index.html'
-
     def get(self, request):
+        form = MoveForm(request.POST)
+        user_game = None
+        # Find existing game for user if there is one
+        try:
+          user_game = Game.objects.find_by('-user_ip')
+        # Initiate new game if not
+        except:
+          user_game = Game()
+          ip = get_client_ip(request)
+          user_game.user_ip = ip
+          user_game.save()
+
+        moves = Move.objects.order_by('-id')
         my_board = Board()
+        my_board.make_move(4, 4, BLACK_STONE)
+        
+        for move in moves:
+          print(move.x_coordinate)
+        #   my_board.make_move(move.x_coordinate, move.y_coordinate)
         context = {
-          "my_board": my_board
+          "my_board": my_board,
+          "user_ip": ip,
+          "all_moves": moves,
+          "form": form
         }
-        return render(request, self.template, context)
+        return render(request, 'games/index.html', context)
+  
+    def post(self, request):
+        form = MoveForm(request.POST)
+        if form.is_valid():
+          form.save()
+        user_game = None
+        # Find existing game for user if there is one
+        try:
+          user_game = Game.objects.find_by('-user_ip')
+        # Initiate new game if not
+        except:
+          user_game = Game()
+          ip = get_client_ip(request)
+          user_game.user_ip = ip
+          user_game.save()
+
+        moves = Move.objects.order_by('-id')
+        my_board = Board()
+
+        my_board.make_move(4, 4, BLACK_STONE)
+        
+        # for move in moves:
+        #   print(f"move.x_coordinate {move.x_coordinate}")
+        #   my_board.make_move(move.x_coordinate, move.y_coordinate, move.player)
+        context = {
+          "my_board": my_board,
+          "user_ip": ip,
+          "all_moves": moves,
+          "form": form
+        }
+        return render(request, 'games/index.html', context)
 class Board():
   def __init__(self, size=9):
     self.state = [ [INTERSECTION for j in range(size)] for i in range(size) ]
-    stone_to_move = [BLACK_STONE, WHITE_STONE, INTERSECTION]
-    for i in range(9):
-      for j in range(9):
-        stone = stone_to_move[randint(0,2)]
-        self.make_move(i,j,stone)
 
-  def draw(self):
-    return self.state
-
-  def make_move(self, x, y, player):
+  def make_move(self, x, y, player=BLACK_STONE):
     self.state[x][y] = player
 
   def get_scores(self, player):
+    # TODO this should identify lines of stones and return longest line length for each player
     player_score = 0
     return player_score
 
-class MoveForm(forms.Form):
-    your_move = forms.CharField(label='Your move (x,y)', max_length=3)
 
-def get_move(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = MoveForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponse('/games/')
+class MoveForm(ModelForm):
+    player = "black"
+    x_coordinate = IntegerField(label='x coordinate:')
+    y_coordinate = IntegerField(label='y coordinate:')
+    class Meta:
+      model = Move
+      exclude = ["player"]
 
-    # if a GET (or any other method) we'll create a blank form
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
     else:
-        form = MoveForm()
-
-    return render(request, 'index.html', {'form': form})
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 

@@ -1,9 +1,8 @@
+{{moves}}
 
 <br>
-<label for="your_move">Your move (x,y): </label>
-<input id="your_move" type="text" name="your_move" maxlength="3" required>
 
-<form action="/games/" method="post">
+<form action="/games/" method="post" enctype="multipart/form-data">
 	{% csrf_token %}
 	{{ form }}
 	<input type="submit" value="Submit">
