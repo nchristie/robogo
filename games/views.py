@@ -1,7 +1,8 @@
+from string import printable
 from django.shortcuts import render
-from django.forms import ModelForm, IntegerField
 from django.views import View
-from .models import Game, Move
+from .models import Game
+from .forms import MoveForm
 
 INTERSECTION = "+"
 WHITE_STONE = "○"
@@ -9,59 +10,27 @@ BLACK_STONE = "●"
 
 class Index(View):
     def get(self, request):
-        form = MoveForm(request.POST)
-        user_game = None
-        # Find existing game for user if there is one
-        try:
-          user_game = Game.objects.find_by('-user_ip')
-        # Initiate new game if not
-        except:
-          user_game = Game()
-          ip = get_client_ip(request)
-          user_game.user_ip = ip
-          user_game.save()
-
-        moves = Move.objects.order_by('-id')
-        my_board = Board()
-        my_board.make_move(4, 4, BLACK_STONE)
-        
-        for move in moves:
-          print(move.x_coordinate)
-        #   my_board.make_move(move.x_coordinate, move.y_coordinate)
-        context = {
-          "my_board": my_board,
-          "user_ip": ip,
-          "all_moves": moves,
-          "form": form
-        }
-        return render(request, 'games/index.html', context)
+        return self.post(request)
   
     def post(self, request):
-        form = MoveForm(request.POST)
+        user_game = find_game_by_ip(get_client_ip(request))
+        game_id = user_game.id
+        print(f"user_game id: {game_id}")
+        initial_state = {
+          'game': game_id,
+          'player': 'black'
+        }
+        form = MoveForm(request.POST, initial=initial_state)
         if form.is_valid():
           form.save()
-        user_game = None
-        # Find existing game for user if there is one
-        try:
-          user_game = Game.objects.find_by('-user_ip')
-        # Initiate new game if not
-        except:
-          user_game = Game()
-          ip = get_client_ip(request)
-          user_game.user_ip = ip
-          user_game.save()
 
-        moves = Move.objects.order_by('-id')
+        moves = user_game.move_set.all().order_by('-id')
         my_board = Board()
 
-        my_board.make_move(4, 4, BLACK_STONE)
+        my_board.draw(moves)
         
-        # for move in moves:
-        #   print(f"move.x_coordinate {move.x_coordinate}")
-        #   my_board.make_move(move.x_coordinate, move.y_coordinate, move.player)
         context = {
           "my_board": my_board,
-          "user_ip": ip,
           "all_moves": moves,
           "form": form
         }
@@ -69,6 +38,10 @@ class Index(View):
 class Board():
   def __init__(self, size=9):
     self.state = [ [INTERSECTION for j in range(size)] for i in range(size) ]
+  
+  def draw(self, moves):
+    for move in moves:
+      self.make_move(move.x_coordinate, move.y_coordinate)
 
   def make_move(self, x, y, player=BLACK_STONE):
     self.state[x][y] = player
@@ -78,15 +51,6 @@ class Board():
     player_score = 0
     return player_score
 
-
-class MoveForm(ModelForm):
-    player = "black"
-    x_coordinate = IntegerField(label='x coordinate:')
-    y_coordinate = IntegerField(label='y coordinate:')
-    class Meta:
-      model = Move
-      exclude = ["player"]
-
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -94,4 +58,21 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+def find_game_by_ip(ip):
+    # Find existing game for user if there is one
+    try:
+      user_game = Game.objects.get(user_ip=ip)
+      print(f"Found game for ip: {ip}")
+    # Initiate new game if not
+    except:
+      print(f"Couldn't find game for ip: {ip}, creating new game")
+      user_game = Game()
+      user_game.user_ip = ip
+      user_game.save()
+    return user_game
+
+
+
+
 

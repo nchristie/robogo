@@ -46,6 +46,7 @@
 - https://docs.djangoproject.com/en/4.0/topics/forms/
 - https://docs.djangoproject.com/en/4.0/topics/db/models/
 - https://www.youtube.com/watch?v=6aQoW0TRXBk
+- https://stackoverflow.com/questions/65495315/django-retrieving-all-objects-from-one-to-many-model-relationship-in-shell
 
 # Get user IP
 - https://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
