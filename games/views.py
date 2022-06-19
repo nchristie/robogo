@@ -1,8 +1,9 @@
 from string import printable
 from django.shortcuts import render
 from django.views import View
-from .models import Game
+from .models import Game, Move
 from .forms import MoveForm
+from random import randint
 
 INTERSECTION = "+"
 WHITE_STONE = "○"
@@ -27,6 +28,16 @@ class Index(View):
 
         my_board.draw(moves)
 
+        # get white response
+        white_x, white_y = get_white_response()
+        white_move = Move(
+          game=user_game, 
+          player='white', 
+          x_coordinate=white_x, 
+          y_coordinate=white_y
+        )
+        white_move.save()
+
         context = {"my_board": my_board, "all_moves": moves, "form": form}
         return render(request, "games/index.html", context)
 
@@ -37,7 +48,10 @@ class Board:
 
     def draw(self, moves):
         for move in moves:
-            self.make_move(move.x_coordinate, move.y_coordinate)
+            player = BLACK_STONE 
+            if len(move.player) > 0 and move.player[0].lower() == "w":
+              player = WHITE_STONE
+            self.make_move(move.x_coordinate, move.y_coordinate, player)
 
     def make_move(self, x, y, player=BLACK_STONE):
         self.state[x][y] = player
@@ -69,3 +83,8 @@ def find_game_by_ip(ip):
         user_game.user_ip = ip
         user_game.save()
     return user_game
+
+def get_white_response():
+      white_x = randint(0,8)
+      white_y = randint(0,8)
+      return (white_x, white_y)
