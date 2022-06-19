@@ -7,25 +7,34 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('games', '0001_initial'),
+        ("games", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Game',
-            fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-            ],
+            name="Game",
+            fields=[("id", models.BigAutoField(primary_key=True, serialize=False)),],
         ),
         migrations.CreateModel(
-            name='GameMove',
+            name="GameMove",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('move_player', models.CharField(max_length=6)),
-                ('game_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='games.game')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("move_player", models.CharField(max_length=6)),
+                (
+                    "game_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="games.game"
+                    ),
+                ),
             ],
         ),
-        migrations.DeleteModel(
-            name='BoardState',
-        ),
+        migrations.DeleteModel(name="BoardState",),
     ]

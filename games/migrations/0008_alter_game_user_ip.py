@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('games', '0007_auto_20220619_0849'),
+        ("games", "0007_auto_20220619_0849"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='game',
-            name='user_ip',
-            field=models.GenericIPAddressField(default='172.24.0.1'),
+            model_name="game",
+            name="user_ip",
+            field=models.GenericIPAddressField(default="172.24.0.1"),
             preserve_default=False,
         ),
     ]

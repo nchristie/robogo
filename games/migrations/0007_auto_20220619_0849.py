@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('games', '0006_game_user_ip'),
+        ("games", "0006_game_user_ip"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='move',
-            name='x_coordinate',
+            model_name="move",
+            name="x_coordinate",
             field=models.IntegerField(default=4),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='move',
-            name='y_coordinate',
+            model_name="move",
+            name="y_coordinate",
             field=models.IntegerField(default=4),
             preserve_default=False,
         ),
