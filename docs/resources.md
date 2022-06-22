@@ -1,10 +1,14 @@
-# Minmax and Alpha-Beta Search
+# Minimax and Alpha-Beta Search
 - https://www.youtube.com/watch?v=STjW3eH0Cik (35:26)
 - https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
+- https://en.wikipedia.org/wiki/Minimax Non-leaf nodes inherit their value from a descendant leaf node
 
-# Minmax and Alpha-Beta Search with Python
+# Minimax and Alpha-Beta Search with Python
 - https://levelup.gitconnected.com/mastering-tic-tac-toe-with-minimax-algorithm-3394d65fa88f
 - https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python/
+
+# Minimax ideas
+- https://blog.boot.dev/computer-science/binary-search-tree-in-python/ I used binary search tree as the model for creating a tree with many leaves
 
 # Ideas for project structure
 - https://realpython.com/python-application-layouts/
