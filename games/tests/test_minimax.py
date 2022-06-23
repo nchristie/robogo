@@ -1,6 +1,5 @@
 from django.test import TestCase
 from games.minimax import Node, LeafGetter
-import pytest
 
 class NodeTestCase(TestCase):
     def setUp(self):
@@ -127,9 +126,22 @@ class LeafGetterTestCase(TestCase):
         # THEN
         expected = [(0,1), (1,0), (1,2), (2,1)]
         self.assertEqual(expected, actual)
+
+    def test_find_intersections_when_boundary(self):
+        # GIVEN
+        leaf_getting_object = self.my_node.leaf_getter()
+        x_coordinate = 2
+        y_coordinate = 2
+        board_size = 3
+
+        # WHEN
+        actual = leaf_getting_object.find_intersections(x_coordinate, y_coordinate, board_size)
+
+        # THEN
+        expected = [(1,2), (2,1)]
+        self.assertEqual(expected, actual)
     
-    @pytest.mark.skip(reason="need to make a helper work first")
-    def test_leaf_getter_returns_attack_option(self):
+    def test_leaf_getter_returns_attack_options(self):
         # GIVEN
         board_state = [
             ["●", "+", "+"],
@@ -141,7 +153,55 @@ class LeafGetterTestCase(TestCase):
         # WHEN
 
         # THEN
-        expected = [[1,0]]
+        expected = [(0,1),(1,0)]
+        actual = leaf_getting_object.get_potential_moves(board_state)
+        self.assertEqual(expected, actual)
+
+    def test_leaf_getter_returns_attack_options_2_groups(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "●"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+
+        # THEN
+        expected = [(0,1),(1,0),(1,2),(2,1)]
+        actual = leaf_getting_object.get_potential_moves(board_state)
+        self.assertEqual(expected, actual)
+
+    def test_leaf_getter_returns_defend_options_2_groups(self):
+        # GIVEN
+        board_state = [
+            ["○", "+", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "○"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+
+        # THEN
+        expected = [(0,1),(1,0),(1,2),(2,1)]
+        actual = leaf_getting_object.get_potential_moves(board_state)
+        self.assertEqual(expected, actual)
+
+    def test_leaf_getter_returns_attack_and_defend_options(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "○"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+
+        # THEN
+        expected = [(0,1),(1,0),(1,2),(2,1)]
         actual = leaf_getting_object.get_potential_moves(board_state)
         self.assertEqual(expected, actual)
         

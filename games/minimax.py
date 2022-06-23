@@ -1,3 +1,4 @@
+from cmath import e
 import uuid
 
 class Node:
@@ -58,7 +59,7 @@ class Node:
 
 class LeafGetter:
     def __init__(self):
-        self.INTERSECTION = "+"
+        self.EMPTY_POSITION = "+"
         self.WHITE_STONE = "○"
         self.BLACK_STONE = "●"
         return
@@ -85,20 +86,31 @@ class LeafGetter:
     
     def get_potential_moves(self, board_state):
         potential_moves = []
+        board_size = len(board_state[0])
         for i, row in enumerate(board_state):
             for j, cell in enumerate(row):
-                if cell == self.BLACK_STONE:
-                    continue
-                    
-
-        return
+                if cell != self.EMPTY_POSITION:
+                    intersections = self.find_intersections(i, j, board_size)
+                    potential_moves.extend(intersections)
+        return potential_moves
     
     def find_intersections(self, x_coordinate, y_coordinate, board_size):
         up = (x_coordinate - 1, y_coordinate)
         left = (x_coordinate, y_coordinate - 1)
         right = (x_coordinate, y_coordinate + 1)
         down = (x_coordinate + 1, y_coordinate)
-        return [up, left, right, down]
+        potential_moves = [up, left, right, down]
+
+        potential_moves_within_boundaries = []
+        for move in potential_moves:
+            if (move[0] >= board_size) or (move[0] < 0):
+                continue
+            elif (move[1] >= board_size) or (move[1] < 0):
+                continue
+            else:
+                potential_moves_within_boundaries.append(move)
+
+        return potential_moves_within_boundaries
 
 
 
