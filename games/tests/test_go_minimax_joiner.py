@@ -9,7 +9,6 @@ class GoNodeTestCase(TestCase):
             player = "maximizer",
             score = 0,
             leaves = None,
-            leaf_setter=GoNode,
             board_state=None
         )
 

@@ -5,13 +5,11 @@ class Node:
         player=None,
         score=None,
         leaves=[],
-        leaf_setter=None
     ):
         self.leaves = leaves
         self.move_id=move_id
         self.player=player
         self.score = score
-        self.leaf_setter = leaf_setter
 
     def set_score(self, score):
         self.score = score
@@ -28,10 +26,6 @@ class Node:
 
     def get_leaves(self):
         return self.leaves
-
-    def set_leaves(self):
-        # TODO
-        return None
 
     def get_optimal_move(self):
         if self.player == "maximizer":

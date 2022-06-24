@@ -13,12 +13,10 @@ class GoNode(Node):
         player=None,
         score=None,
         leaves=None,
-        leaf_setter=None,
         board_state=None,
         optimal_move_coordinates=None
     ):
         super().__init__(move_id, player, score, leaves, leaf_setter)
-        self.leaf_setter = self.set_node_array
         self.board_state = board_state
         self.optimal_move_coordinates = optimal_move_coordinates
 
@@ -52,14 +50,12 @@ class GoNode(Node):
         return GoNode(
             move_id=move_id,
             player=None,
-            leaf_setter=GoNode
         )
 
     def make_terminal_node(self, board_state, move_id, player):
         new_node = GoNode(
             move_id=move_id,
             player=player,
-            leaf_setter=GoNode,
             board_state=board_state
         )
         new_node.score = new_node.get_scores()["relative_black_score"]
