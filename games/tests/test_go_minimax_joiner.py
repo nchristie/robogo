@@ -1,5 +1,5 @@
 from django.test import TestCase
-from games.go_minimax_joiner import LeafGetter, Node
+from games.go_minimax_joiner import LeafGetter, Node, WHITE_STONE, BLACK_STONE
 from uuid import UUID
 
 class LeafGetterTestCase(TestCase):
@@ -10,7 +10,7 @@ class LeafGetterTestCase(TestCase):
             score = 0,
             leaf_getter=LeafGetter
         )
-    
+
     def test_leaf_getter_makes_array(self):
         # GIVEN
         board_state = [
@@ -20,10 +20,10 @@ class LeafGetterTestCase(TestCase):
         ]
         leaf_getting_object = self.my_node.leaf_getter()
         node_array = leaf_getting_object.get_node_array(board_state=board_state)
-        
+
         # WHEN
         actual = type(node_array)
-        
+
         # THEN
         expected = list
         self.assertEqual(expected, actual)
@@ -36,14 +36,14 @@ class LeafGetterTestCase(TestCase):
             ["+", "+", "+"]
         ]
         leaf_getting_object = self.my_node.leaf_getter()
-        
+
         # WHEN
         node_array = leaf_getting_object.get_node_array(board_state=board_state)
-        
+
         # THEN
         for node in node_array:
             assert UUID(node.get_move_id())
-    
+
     def test_find_intersections(self):
         # GIVEN
         leaf_getting_object = self.my_node.leaf_getter()
@@ -52,7 +52,7 @@ class LeafGetterTestCase(TestCase):
         board_size = 3
 
         # WHEN
-        actual = leaf_getting_object.find_intersections(x_coordinate, y_coordinate, board_size)
+        actual = leaf_getting_object.find_liberties(x_coordinate, y_coordinate, board_size)
 
         # THEN
         expected = [(0,1), (1,0), (1,2), (2,1)]
@@ -66,12 +66,12 @@ class LeafGetterTestCase(TestCase):
         board_size = 3
 
         # WHEN
-        actual = leaf_getting_object.find_intersections(x_coordinate, y_coordinate, board_size)
+        actual = leaf_getting_object.find_liberties(x_coordinate, y_coordinate, board_size)
 
         # THEN
         expected = [(1,2), (2,1)]
         self.assertEqual(expected, actual)
-    
+
     def test_leaf_getter_returns_attack_options(self):
         # GIVEN
         board_state = [
@@ -135,8 +135,8 @@ class LeafGetterTestCase(TestCase):
         expected = [(0,1),(1,0),(1,2),(2,1)]
         actual = leaf_getting_object.get_potential_moves(board_state)
         self.assertEqual(expected, actual)
-    
-    def test_get_scores(self):
+
+    def test_get_scores_one_stone(self):
         # GIVEN
         board_state = [
             ["●", "+", "+"],
@@ -147,7 +147,7 @@ class LeafGetterTestCase(TestCase):
 
         # WHEN
         actual = leaf_getting_object.get_scores(board_state)
-        
+
         # THEN
         expected = {
             "●": 1,
@@ -155,4 +155,211 @@ class LeafGetterTestCase(TestCase):
             "relative_black_score": 1
         }
         self.assertEqual(expected, actual)
-        
+
+    def test_get_scores_two_groups_of_one_stone(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "●"],
+            ["+", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_scores(board_state)
+
+        # THEN
+        expected = {
+            "●": 1,
+            "○": 0,
+            "relative_black_score": 1
+        }
+        self.assertEqual(expected, actual)
+
+    def test_get_scores_two_stones_horizontal(self):
+        # GIVEN
+        board_state = [
+            ["●", "●", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_scores(board_state)
+
+        # THEN
+        expected = {
+            "●": 2,
+            "○": 0,
+            "relative_black_score": 2
+        }
+        self.assertEqual(expected, actual)
+
+    def test_get_scores_two_stones_horizontal_other_row(self):
+        # GIVEN
+        board_state = [
+            ["+", "+", "+"],
+            ["●", "●", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_scores(board_state)
+
+        # THEN
+        expected = {
+            "●": 2,
+            "○": 0,
+            "relative_black_score": 2
+        }
+        self.assertEqual(expected, actual)
+
+    def test_get_scores_white_stones(self):
+        # GIVEN
+        board_state = [
+            ["+", "+", "+"],
+            ["○", "○", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_scores(board_state)
+
+        # THEN
+        expected = {
+            "●": 0,
+            "○": 2,
+            "relative_black_score": -2
+        }
+        self.assertEqual(expected, actual)
+
+    def test_get_scores_two_stones_vertical(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["●", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_scores(board_state)
+
+        # THEN
+        expected = {
+            "●": 2,
+            "○": 0,
+            "relative_black_score": 2
+        }
+        self.assertEqual(expected, actual)
+
+    def test_transpose_board(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["●", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.transpose_board(board_state)
+
+        # THEN
+        expected = [
+            ["●", "●", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        self.assertEqual(expected, actual)
+
+    def test_get_row_score(self):
+        # GIVEN
+        row = ["+", "+", "+"]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+
+        # THEN
+        expected = 0
+        self.assertEqual(expected, actual)
+
+    def test_get_row_score_one(self):
+        # GIVEN
+        row = ["●", "+", "+"]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+
+        # THEN
+        expected = 1
+        self.assertEqual(expected, actual)
+
+    def test_get_row_score_one_but_two_stones(self):
+        # GIVEN
+        row = ["●", "+", "●"]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+
+        # THEN
+        expected = 1
+        self.assertEqual(expected, actual)
+
+    def test_get_row_score_two_groups(self):
+        # GIVEN
+        row = ["●", "+", "●", "●"]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+
+        # THEN
+        expected = 2
+        self.assertEqual(expected, actual)
+
+    def test_get_row_score_row_begins_and_ends_with_empty_space(self):
+        # GIVEN
+        row = ["+", "+", "●", "●", "+", "●", "●", "●", "+"]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+
+        # THEN
+        expected = 3
+        self.assertEqual(expected, actual)
+
+    def test_get_scores_big_board_lots_of_stones(self):
+        # GIVEN
+        board_state = [
+            ["+", "●", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "●", "+", "+", "+", "+", "+", "○", "+"],
+            ["+", "●", "+", "●", "●", "●", "●", "○", "+"],
+            ["+", "+", "+", "+", "●", "+", "+", "○", "+"],
+            ["+", "+", "●", "●", "●", "●", "●", "○", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "+", "○", "○", "○", "+", "+", "○", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_scores(board_state)
+
+        # THEN
+        expected = {
+            "●": 5,
+            "○": 4,
+            "relative_black_score": 1
+        }
+        self.assertEqual(expected, actual)
+
+
