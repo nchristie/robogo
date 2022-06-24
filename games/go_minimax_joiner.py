@@ -6,9 +6,18 @@ EMPTY_POSITION = "+"
 WHITE_STONE = "○"
 BLACK_STONE = "●"
 
-class LeafGetter:
-    def __init__(self):
-        return
+class GoNode(Node):
+    def __init__(
+        self,
+        move_id=None,
+        player=None,
+        score=None,
+        leaf_getter=None,
+        board_state=None
+    ):
+        super().__init__(move_id, player, score, leaf_getter)
+        self.leaf_getter = self.get_node_array
+        self.board_state = board_state
 
     def get_node_array(self, board_state=None, player=None, is_terminal=False):
         # returns an array of Nodes representing the
@@ -34,7 +43,7 @@ class LeafGetter:
         return Node(
             move_id=move_id,
             player=None,
-            leaf_getter=LeafGetter
+            leaf_getter=GoNode
         )
 
     def make_terminal_node(self, move_id, score):
@@ -42,7 +51,7 @@ class LeafGetter:
             move_id=move_id,
             score=score,
             player=None,
-            leaf_getter=LeafGetter
+            leaf_getter=GoNode
         )
 
     def get_potential_moves(self, board_state):
