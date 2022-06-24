@@ -1,5 +1,6 @@
 from .minimax import Node
 import uuid
+from copy import deepcopy
 
 EMPTY_POSITION = "+"
 WHITE_STONE = "○"
@@ -9,12 +10,25 @@ class LeafGetter:
     def __init__(self):
         return
 
-    def get_node_array(self, board_state=None, player=None):
+    def get_node_array(self, board_state=None, player=None, is_terminal=False):
         # returns an array of Nodes representing the
         # candidates for next move in game
         potential_moves = self.get_potential_moves(board_state)
-        move_id = self.generate_move_id()
-        return [self.make_node(move_id) for item in potential_moves]
+        node_array = []
+        if is_terminal:
+            for item in potential_moves:
+                x = item["move_coordinates"][0]
+                y = item["move_coordinates"][1]
+                new_board_state = deepcopy(board_state)
+                new_board_state[x][y] = BLACK_STONE
+                move_id = item["move_id"]
+                score = self.get_scores(new_board_state)["relative_black_score"]
+                terminal_node = self.make_terminal_node(move_id, score)
+                node_array.append(terminal_node)
+        else:
+            for item in potential_moves:
+                node_array.append(self.make_node(move_id=item["move_id"]))
+        return node_array
 
     def make_node(self, move_id):
         return Node(
@@ -37,9 +51,18 @@ class LeafGetter:
         for i, row in enumerate(board_state):
             for j, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
-                    intersections = self.find_liberties(i, j, board_size)
-                    potential_moves.extend(intersections)
-        return potential_moves
+                    potential_move = self.find_liberties(i, j, board_size)
+                    potential_moves.extend(potential_move)
+
+        potential_moves_with_ids = []
+        for move in potential_moves:
+            move_id = self.generate_move_id()
+            move_dict = {
+                "move_coordinates": move,
+                "move_id": move_id
+            }
+            potential_moves_with_ids.append(move_dict)
+        return potential_moves_with_ids
 
     def find_liberties(self, x_coordinate, y_coordinate, board_size):
         up = (x_coordinate - 1, y_coordinate)

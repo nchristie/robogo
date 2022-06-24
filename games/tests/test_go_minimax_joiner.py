@@ -85,7 +85,8 @@ class LeafGetterTestCase(TestCase):
 
         # THEN
         expected = [(0,1),(1,0)]
-        actual = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_attack_options_2_groups(self):
@@ -101,7 +102,8 @@ class LeafGetterTestCase(TestCase):
 
         # THEN
         expected = [(0,1),(1,0),(1,2),(2,1)]
-        actual = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_defend_options_2_groups(self):
@@ -117,7 +119,8 @@ class LeafGetterTestCase(TestCase):
 
         # THEN
         expected = [(0,1),(1,0),(1,2),(2,1)]
-        actual = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_attack_and_defend_options(self):
@@ -133,7 +136,8 @@ class LeafGetterTestCase(TestCase):
 
         # THEN
         expected = [(0,1),(1,0),(1,2),(2,1)]
-        actual = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
     def test_get_scores_one_stone(self):
@@ -360,6 +364,30 @@ class LeafGetterTestCase(TestCase):
             "○": 4,
             "relative_black_score": 1
         }
+        self.assertEqual(expected, actual)
+
+    def test_gets_best_move_only_one_option(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["●", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        node_array = leaf_getting_object.get_node_array(
+            board_state=board_state,
+            player="maximizer",
+            is_terminal=True
+        )
+        actual = None
+        # THEN
+        expected = [
+            ["●", "+", "+"],
+            ["●", "+", "+"],
+            ["●", "+", "+"]
+        ]
         self.assertEqual(expected, actual)
 
 
