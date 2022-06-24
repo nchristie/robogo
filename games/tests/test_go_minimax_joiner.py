@@ -4,11 +4,12 @@ from uuid import UUID
 
 class GoNodeTestCase(TestCase):
     def setUp(self):
-        self.my_node = Node(
+        self.my_node = GoNode(
             move_id = "49dedb0d-5cf6-4f84-b228-efbc1dbaf06a",
             player = "white",
             score = 0,
-            leaf_getter=GoNode
+            leaf_getter=GoNode,
+            board_state=None
         )
 
     def test_leaf_getter_makes_array(self):
@@ -18,8 +19,8 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = self.my_node.leaf_getter()
-        node_array = leaf_getting_object.get_node_array(board_state=board_state)
+        self.my_node.board_state = board_state
+        node_array = self.my_node.get_node_array()
 
         # WHEN
         actual = type(node_array)
@@ -35,10 +36,10 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = self.my_node.leaf_getter()
+        self.my_node.board_state = board_state
 
         # WHEN
-        node_array = leaf_getting_object.get_node_array(board_state=board_state)
+        node_array = self.my_node.get_node_array()
 
         # THEN
         for node in node_array:
@@ -46,13 +47,12 @@ class GoNodeTestCase(TestCase):
 
     def test_find_intersections(self):
         # GIVEN
-        leaf_getting_object = self.my_node.leaf_getter()
         x_coordinate = 1
         y_coordinate = 1
         board_size = 3
 
         # WHEN
-        actual = leaf_getting_object.find_liberties(x_coordinate, y_coordinate, board_size)
+        actual = self.my_node.find_liberties(x_coordinate, y_coordinate, board_size)
 
         # THEN
         expected = [(0,1), (1,0), (1,2), (2,1)]
@@ -60,13 +60,12 @@ class GoNodeTestCase(TestCase):
 
     def test_find_intersections_when_boundary(self):
         # GIVEN
-        leaf_getting_object = self.my_node.leaf_getter()
         x_coordinate = 2
         y_coordinate = 2
         board_size = 3
 
         # WHEN
-        actual = leaf_getting_object.find_liberties(x_coordinate, y_coordinate, board_size)
+        actual = self.my_node.find_liberties(x_coordinate, y_coordinate, board_size)
 
         # THEN
         expected = [(1,2), (2,1)]
@@ -79,13 +78,13 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
 
         # THEN
         expected = [(0,1),(1,0)]
-        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = self.my_node.get_potential_moves()
         actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
@@ -96,13 +95,13 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "●"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
 
         # THEN
         expected = [(0,1),(1,0),(1,2),(2,1)]
-        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = self.my_node.get_potential_moves()
         actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
@@ -113,13 +112,13 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "○"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
 
         # THEN
         expected = [(0,1),(1,0),(1,2),(2,1)]
-        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = self.my_node.get_potential_moves()
         actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
@@ -130,13 +129,13 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "○"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
 
         # THEN
         expected = [(0,1),(1,0),(1,2),(2,1)]
-        potential_moves = leaf_getting_object.get_potential_moves(board_state)
+        potential_moves = self.my_node.get_potential_moves()
         actual = [ item["move_coordinates"] for item in potential_moves ]
         self.assertEqual(expected, actual)
 
@@ -147,10 +146,10 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.get_scores(board_state)
+        actual = self.my_node.get_scores()
 
         # THEN
         expected = {
@@ -167,10 +166,10 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.get_scores(board_state)
+        actual = self.my_node.get_scores()
 
         # THEN
         expected = {
@@ -187,10 +186,10 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.get_scores(board_state)
+        actual = self.my_node.get_scores()
 
         # THEN
         expected = {
@@ -207,10 +206,10 @@ class GoNodeTestCase(TestCase):
             ["●", "●", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.get_scores(board_state)
+        actual = self.my_node.get_scores()
 
         # THEN
         expected = {
@@ -227,10 +226,10 @@ class GoNodeTestCase(TestCase):
             ["○", "○", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.get_scores(board_state)
+        actual = self.my_node.get_scores()
 
         # THEN
         expected = {
@@ -247,10 +246,10 @@ class GoNodeTestCase(TestCase):
             ["●", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.get_scores(board_state)
+        actual = self.my_node.get_scores()
 
         # THEN
         expected = {
@@ -267,10 +266,10 @@ class GoNodeTestCase(TestCase):
             ["●", "+", "+"],
             ["+", "+", "+"]
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.transpose_board(board_state)
+        actual = self.my_node.transpose_board()
 
         # THEN
         expected = [
@@ -283,10 +282,9 @@ class GoNodeTestCase(TestCase):
     def test_get_row_score(self):
         # GIVEN
         row = ["+", "+", "+"]
-        leaf_getting_object = GoNode()
 
         # WHEN
-        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+        actual = self.my_node.get_row_score(row, BLACK_STONE)
 
         # THEN
         expected = 0
@@ -295,10 +293,9 @@ class GoNodeTestCase(TestCase):
     def test_get_row_score_one(self):
         # GIVEN
         row = ["●", "+", "+"]
-        leaf_getting_object = GoNode()
 
         # WHEN
-        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+        actual = self.my_node.get_row_score(row, BLACK_STONE)
 
         # THEN
         expected = 1
@@ -307,10 +304,9 @@ class GoNodeTestCase(TestCase):
     def test_get_row_score_one_but_two_stones(self):
         # GIVEN
         row = ["●", "+", "●"]
-        leaf_getting_object = GoNode()
 
         # WHEN
-        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+        actual = self.my_node.get_row_score(row, BLACK_STONE)
 
         # THEN
         expected = 1
@@ -319,10 +315,9 @@ class GoNodeTestCase(TestCase):
     def test_get_row_score_two_groups(self):
         # GIVEN
         row = ["●", "+", "●", "●"]
-        leaf_getting_object = GoNode()
 
         # WHEN
-        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+        actual = self.my_node.get_row_score(row, BLACK_STONE)
 
         # THEN
         expected = 2
@@ -331,10 +326,9 @@ class GoNodeTestCase(TestCase):
     def test_get_row_score_row_begins_and_ends_with_empty_space(self):
         # GIVEN
         row = ["+", "+", "●", "●", "+", "●", "●", "●", "+"]
-        leaf_getting_object = GoNode()
 
         # WHEN
-        actual = leaf_getting_object.get_row_score(row, BLACK_STONE)
+        actual = self.my_node.get_row_score(row, BLACK_STONE)
 
         # THEN
         expected = 3
@@ -353,10 +347,10 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
-        leaf_getting_object = GoNode()
+        self.my_node.board_state=board_state
 
         # WHEN
-        actual = leaf_getting_object.get_scores(board_state)
+        actual = self.my_node.get_scores()
 
         # THEN
         expected = {

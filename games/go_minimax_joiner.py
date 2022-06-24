@@ -19,16 +19,16 @@ class GoNode(Node):
         self.leaf_getter = self.get_node_array
         self.board_state = board_state
 
-    def get_node_array(self, board_state=None, player=None, is_terminal=False):
+    def get_node_array(self, player=None, is_terminal=False):
         # returns an array of Nodes representing the
         # candidates for next move in game
-        potential_moves = self.get_potential_moves(board_state)
+        potential_moves = self.get_potential_moves()
         node_array = []
         if is_terminal:
             for item in potential_moves:
                 x = item["move_coordinates"][0]
                 y = item["move_coordinates"][1]
-                new_board_state = deepcopy(board_state)
+                new_board_state = deepcopy(self.board_state)
                 new_board_state[x][y] = BLACK_STONE
                 move_id = item["move_id"]
                 score = self.get_scores(new_board_state)["relative_black_score"]
@@ -54,10 +54,10 @@ class GoNode(Node):
             leaf_getter=GoNode
         )
 
-    def get_potential_moves(self, board_state):
+    def get_potential_moves(self):
         potential_moves = []
-        board_size = len(board_state[0])
-        for i, row in enumerate(board_state):
+        board_size = len(self.board_state[0])
+        for i, row in enumerate(self.board_state):
             for j, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
                     potential_move = self.find_liberties(i, j, board_size)
@@ -94,7 +94,7 @@ class GoNode(Node):
     def generate_move_id(self):
         return str(uuid.uuid4())
 
-    def get_scores(self, board_state):
+    def get_scores(self):
 
         score_dict = {
             WHITE_STONE: 0,
@@ -102,19 +102,21 @@ class GoNode(Node):
             "relative_black_score": 0
         }
         # first check if there's a string of stones to the right, and if so add up score
-        score_dict = self.get_scores_by_row(board_state, score_dict)
+        score_dict = self.get_scores_by_row(score_dict)
 
         # then check if there's a string of stones below and add up score
-        transposed_board = self.transpose_board(board_state)
-        score_dict = self.get_scores_by_row(transposed_board, score_dict)
+        score_dict = self.get_scores_by_row(score_dict, should_transpose_board=True)
 
         # update relative black score
         score_dict["relative_black_score"] = score_dict[BLACK_STONE] - score_dict[WHITE_STONE]
 
         return score_dict
 
-    def get_scores_by_row(self, board_state, score_dict):
-        for row in board_state:
+    def get_scores_by_row(self, score_dict, should_transpose_board=False):
+        board = self.board_state
+        if should_transpose_board:
+            board = self.transpose_board()
+        for row in board:
             # compare score to max score and replace if it's higher,
             white_score = self.get_row_score(row, WHITE_STONE)
             black_score = self.get_row_score(row, BLACK_STONE)
@@ -125,8 +127,8 @@ class GoNode(Node):
         return score_dict
 
 
-    def transpose_board(self, board_state):
-        board_size = self.get_board_size(board_state)
+    def transpose_board(self):
+        board_size = self.get_board_size()
         transposed_board = []
         for i in range(board_size):
             transposed_board.append([])
@@ -135,12 +137,12 @@ class GoNode(Node):
 
         for i in range(board_size):
             for j in range(board_size):
-                old_board_move = board_state[i][j]
+                old_board_move = self.board_state[i][j]
                 transposed_board[j][i] = old_board_move
         return transposed_board
 
-    def get_board_size(self, board_state):
-        return len(board_state[0])
+    def get_board_size(self):
+        return len(self.board_state[0])
 
     def get_row_score(self, row, stone_colour):
         row_score = [ 0  for x in row]
