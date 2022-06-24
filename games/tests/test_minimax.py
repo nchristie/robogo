@@ -2,52 +2,52 @@ from django.test import TestCase
 from games.minimax import Node
 
 class NodeTestCase(TestCase):
-    def setUp(self):
-        self.my_node = Node()
-
     def test_get_score(self):
         """Get score"""
+        # GIVEN
+        my_node = Node()
         expected = None
-        actual = self.my_node.get_score()
+        actual = my_node.get_score()
         self.assertEqual(expected, actual)
 
     def test_set_score(self):
         """Set score"""
-        self.my_node.set_score(5)
+        # GIVEN
+        my_node = Node()
+        my_node.set_score(5)
         expected = 5
-        actual = self.my_node.get_score()
+        actual = my_node.get_score()
         self.assertEqual(expected, actual)
-
+    
     def test_get_leaves(self):
         """"""
+        # GIVEN
+        my_node = Node()
         expected = []
-        actual = self.my_node.get_leaves()
+        actual = my_node.get_leaves()
         self.assertEqual(expected, actual)
-
-    def test_set_leaves(self):
-        actual = self.my_node.set_leaves()
-        expected = None
-        self.assertEqual(expected, actual)
-
+    
     def test_add_leaf(self):
         """"""
+        # GIVEN
+        my_node = Node()
         score = 4
         move_id = 123
         player = 'maximizer'
-        self.my_node.add_leaf(move_id, player, score)
-        leaves = self.my_node.get_leaves()
+        my_node.add_leaf(move_id, player, score)
+        leaves = my_node.get_leaves()
         expected = (move_id, player, score)
         leaf = leaves[0]
         actual = (leaf.move_id, leaf.player, leaf.score)
         self.assertEqual(expected, actual)
-        self.leaves = []
-
+    
     def test_returns_max_for_maximizer(self):
         # GIVEN
+        my_node = Node()
         available_moves = [
             {
                 "move_id": 14,
-                "score": 1,
+                "score": 1, 
             },
             {
                 "move_id": 15,
@@ -62,27 +62,28 @@ class NodeTestCase(TestCase):
 
         # WHEN
         for move in available_moves:
-            self.my_node.add_leaf(move_id=move['move_id'], score=move['score'], player=player)
-
+            my_node.add_leaf(move_id=move['move_id'], score=move['score'], player=player)
+        
 
         # THEN
         expected = 3
-        actual = self.my_node.get_optimal_move().get_score()
+        actual = my_node.get_optimal_move().get_score()
         self.assertEqual(expected, actual)
 
     def test_returns_min_for_minimizer(self):
         # GIVEN
+        my_node = Node()
         available_moves = [
             {
-                "move_id": 14,
-                "score": 1,
+                "move_id": 17,
+                "score": 1, 
             },
             {
-                "move_id": 15,
+                "move_id": 18,
                 "score": 2
             },
             {
-                "move_id": 16,
+                "move_id": 19,
                 "score": 3
             }
         ]
@@ -90,11 +91,15 @@ class NodeTestCase(TestCase):
 
         # WHEN
         for move in available_moves:
-            self.my_node.add_leaf(move_id=move['move_id'], score=move['score'], player=player)
-
-
+            my_node.add_leaf(
+                move_id=move['move_id'], 
+                score=move['score'], 
+                player=player
+            )
+        
         # THEN
         expected = 1
-        actual = self.my_node.get_optimal_move().get_score()
+        optimal_move = my_node.get_optimal_move()
+        actual = optimal_move.get_score()
         self.assertEqual(expected, actual)
-
+    

@@ -52,12 +52,6 @@ class Board:
     def make_move(self, x, y, player=BLACK_STONE):
         self.state[x][y] = player
 
-    def get_scores(self, player):
-        # TODO this should identify lines of stones and return longest line length for each player
-        player_score = 0
-        return player_score
-
-
 def get_client_ip(request):
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:

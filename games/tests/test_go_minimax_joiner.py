@@ -8,7 +8,7 @@ class GoNodeTestCase(TestCase):
             move_id = "49dedb0d-5cf6-4f84-b228-efbc1dbaf06a",
             player = "maximizer",
             score = 0,
-            leaves = None,
+            leaves = [],
             board_state=None
         )
 
@@ -154,11 +154,7 @@ class GoNodeTestCase(TestCase):
         actual = self.my_node.get_scores()
 
         # THEN
-        expected = {
-            "●": 1,
-            "○": 0,
-            "relative_black_score": 1
-        }
+        expected =  1
         self.assertEqual(expected, actual)
 
     def test_get_scores_two_groups_of_one_stone(self):
@@ -174,11 +170,7 @@ class GoNodeTestCase(TestCase):
         actual = self.my_node.get_scores()
 
         # THEN
-        expected = {
-            "●": 1,
-            "○": 0,
-            "relative_black_score": 1
-        }
+        expected =  1
         self.assertEqual(expected, actual)
 
     def test_get_scores_two_stones_horizontal(self):
@@ -194,11 +186,7 @@ class GoNodeTestCase(TestCase):
         actual = self.my_node.get_scores()
 
         # THEN
-        expected = {
-            "●": 2,
-            "○": 0,
-            "relative_black_score": 2
-        }
+        expected = 2
         self.assertEqual(expected, actual)
 
     def test_get_scores_two_stones_horizontal_other_row(self):
@@ -214,11 +202,7 @@ class GoNodeTestCase(TestCase):
         actual = self.my_node.get_scores()
 
         # THEN
-        expected = {
-            "●": 2,
-            "○": 0,
-            "relative_black_score": 2
-        }
+        expected = 2
         self.assertEqual(expected, actual)
 
     def test_get_scores_white_stones(self):
@@ -234,11 +218,7 @@ class GoNodeTestCase(TestCase):
         actual = self.my_node.get_scores()
 
         # THEN
-        expected = {
-            "●": 0,
-            "○": 2,
-            "relative_black_score": -2
-        }
+        expected = -2
         self.assertEqual(expected, actual)
 
     def test_get_scores_two_stones_vertical(self):
@@ -254,11 +234,7 @@ class GoNodeTestCase(TestCase):
         actual = self.my_node.get_scores()
 
         # THEN
-        expected = {
-            "●": 2,
-            "○": 0,
-            "relative_black_score": 2
-        }
+        expected = 2
         self.assertEqual(expected, actual)
 
     def test_transpose_board(self):
@@ -355,11 +331,7 @@ class GoNodeTestCase(TestCase):
         actual = self.my_node.get_scores()
 
         # THEN
-        expected = {
-            "●": 5,
-            "○": 4,
-            "relative_black_score": 1
-        }
+        expected = 1
         self.assertEqual(expected, actual)
 
     def test_gets_best_move_only_one_option(self):
