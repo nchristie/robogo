@@ -12,14 +12,17 @@ class GoNode(Node):
         move_id=None,
         player=None,
         score=None,
-        leaf_getter=None,
-        board_state=None
+        leaves=None,
+        leaf_setter=None,
+        board_state=None,
+        optimal_move_coordinates=None
     ):
-        super().__init__(move_id, player, score, leaf_getter)
-        self.leaf_getter = self.get_node_array
+        super().__init__(move_id, player, score, leaves, leaf_setter)
+        self.leaf_setter = self.set_node_array
         self.board_state = board_state
+        self.optimal_move_coordinates = optimal_move_coordinates
 
-    def get_node_array(self, player=None, is_terminal=False):
+    def set_node_array(self, player=None, is_terminal=False):
         # returns an array of Nodes representing the
         # candidates for next move in game
         potential_moves = self.get_potential_moves()
@@ -31,28 +34,36 @@ class GoNode(Node):
                 new_board_state = deepcopy(self.board_state)
                 new_board_state[x][y] = BLACK_STONE
                 move_id = item["move_id"]
-                score = self.get_scores(new_board_state)["relative_black_score"]
-                terminal_node = self.make_terminal_node(move_id, score)
+                terminal_node = self.make_terminal_node(new_board_state, move_id, player)
                 node_array.append(terminal_node)
         else:
             for item in potential_moves:
                 node_array.append(self.make_node(move_id=item["move_id"]))
-        return node_array
+
+        self.leaves = node_array
+
+        if is_terminal:
+            optimal_move_id = self.get_optimal_move().move_id
+            for move in potential_moves:
+                if move["move_id"] == optimal_move_id:
+                    self.optimal_move_coordinates = move["move_coordinates"]
 
     def make_node(self, move_id):
-        return Node(
+        return GoNode(
             move_id=move_id,
             player=None,
-            leaf_getter=GoNode
+            leaf_setter=GoNode
         )
 
-    def make_terminal_node(self, move_id, score):
-        return Node(
+    def make_terminal_node(self, board_state, move_id, player):
+        new_node = GoNode(
             move_id=move_id,
-            score=score,
-            player=None,
-            leaf_getter=GoNode
+            player=player,
+            leaf_setter=GoNode,
+            board_state=board_state
         )
+        new_node.score = new_node.get_scores()["relative_black_score"]
+        return new_node
 
     def get_potential_moves(self):
         potential_moves = []

@@ -40,6 +40,7 @@ class NodeTestCase(TestCase):
         leaf = leaves[0]
         actual = (leaf.move_id, leaf.player, leaf.score)
         self.assertEqual(expected, actual)
+        self.leaves = []
 
     def test_returns_max_for_maximizer(self):
         # GIVEN
@@ -66,7 +67,7 @@ class NodeTestCase(TestCase):
 
         # THEN
         expected = 3
-        actual = self.my_node.get_logical_move().get_score()
+        actual = self.my_node.get_optimal_move().get_score()
         self.assertEqual(expected, actual)
 
     def test_returns_min_for_minimizer(self):
@@ -94,6 +95,6 @@ class NodeTestCase(TestCase):
 
         # THEN
         expected = 1
-        actual = self.my_node.get_logical_move().get_score()
+        actual = self.my_node.get_optimal_move().get_score()
         self.assertEqual(expected, actual)
 

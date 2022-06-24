@@ -6,9 +6,10 @@ class GoNodeTestCase(TestCase):
     def setUp(self):
         self.my_node = GoNode(
             move_id = "49dedb0d-5cf6-4f84-b228-efbc1dbaf06a",
-            player = "white",
+            player = "maximizer",
             score = 0,
-            leaf_getter=GoNode,
+            leaves = None,
+            leaf_setter=GoNode,
             board_state=None
         )
 
@@ -20,7 +21,8 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"]
         ]
         self.my_node.board_state = board_state
-        node_array = self.my_node.get_node_array()
+        self.my_node.set_node_array()
+        node_array = self.my_node.leaves
 
         # WHEN
         actual = type(node_array)
@@ -39,7 +41,8 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state = board_state
 
         # WHEN
-        node_array = self.my_node.get_node_array()
+        self.my_node.set_node_array()
+        node_array = self.my_node.leaves
 
         # THEN
         for node in node_array:
@@ -360,28 +363,20 @@ class GoNodeTestCase(TestCase):
         }
         self.assertEqual(expected, actual)
 
-    # def test_gets_best_move_only_one_option(self):
-    #     # GIVEN
-    #     board_state = [
-    #         ["●", "+", "+"],
-    #         ["●", "+", "+"],
-    #         ["+", "+", "+"]
-    #     ]
-    #     leaf_getting_object = GoNode()
+    def test_gets_best_move_only_one_option(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["●", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        self.my_node.board_state=board_state
 
-    #     # WHEN
-    #     node_array = leaf_getting_object.get_node_array(
-    #         board_state=board_state,
-    #         player="maximizer",
-    #         is_terminal=True
-    #     )
-    #     actual = None
-    #     # THEN
-    #     expected = [
-    #         ["●", "+", "+"],
-    #         ["●", "+", "+"],
-    #         ["●", "+", "+"]
-    #     ]
-    #     self.assertEqual(expected, actual)
+        # WHEN
+        self.my_node.set_node_array(player="maximizer", is_terminal=True)
+        actual = self.my_node.optimal_move_coordinates
+        # THEN
+        expected = (2,0)
+        self.assertEqual(expected, actual)
 
 
