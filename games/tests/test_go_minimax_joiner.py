@@ -1,5 +1,6 @@
 from django.test import TestCase
 from games.go_minimax_joiner import LeafGetter, Node
+from uuid import UUID
 
 class LeafGetterTestCase(TestCase):
     def setUp(self):
@@ -12,15 +13,36 @@ class LeafGetterTestCase(TestCase):
     
     def test_leaf_getter_makes_array(self):
         # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "+"]
+        ]
         leaf_getting_object = self.my_node.leaf_getter()
-        node_array = leaf_getting_object.get_node_array()
+        node_array = leaf_getting_object.get_node_array(board_state=board_state)
         
         # WHEN
-        actual = [node.get_move_id() for node in node_array]
+        actual = type(node_array)
         
         # THEN
-        expected = [0,1,2]
+        expected = list
         self.assertEqual(expected, actual)
+
+    def test_leaf_getter_array_has_uuid_move_ids(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = self.my_node.leaf_getter()
+        
+        # WHEN
+        node_array = leaf_getting_object.get_node_array(board_state=board_state)
+        
+        # THEN
+        for node in node_array:
+            assert UUID(node.get_move_id())
     
     def test_find_intersections(self):
         # GIVEN
@@ -112,5 +134,25 @@ class LeafGetterTestCase(TestCase):
         # THEN
         expected = [(0,1),(1,0),(1,2),(2,1)]
         actual = leaf_getting_object.get_potential_moves(board_state)
+        self.assertEqual(expected, actual)
+    
+    def test_get_scores(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        leaf_getting_object = LeafGetter()
+
+        # WHEN
+        actual = leaf_getting_object.get_scores(board_state)
+        
+        # THEN
+        expected = {
+            "●": 1,
+            "○": 0,
+            "relative_black_score": 1
+        }
         self.assertEqual(expected, actual)
         

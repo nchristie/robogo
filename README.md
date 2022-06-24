@@ -15,6 +15,9 @@ Computer which plays Go, a project for Computing and Information Systems MSc at 
 - Run `docker-compose up --build`
 - Go to http://0.0.0.0:8000/games to see the server running
 
+## Testing
+- `docker-compose run --rm web python manage.py test`
+
 ## Troubleshooting
 If you get this error:
 `django.db.utils.OperationalError: FATAL:  the database system is starting up`

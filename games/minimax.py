@@ -1,6 +1,3 @@
-from cmath import e
-import uuid
-
 class Node:
     def __init__(
         self, 
@@ -56,8 +53,5 @@ class Node:
             if leaf_score < min_score:
                 minimizer_move = leaf
         return minimizer_move
-
-def generate_move_id():
-    return str(uuid.uuid4())
 
     

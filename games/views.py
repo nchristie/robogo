@@ -4,11 +4,7 @@ from django.views import View
 from .models import Game, Move
 from .forms import MoveForm
 from random import randint
-
-INTERSECTION = "+"
-WHITE_STONE = "○"
-BLACK_STONE = "●"
-
+from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 
 class Index(View):
     def get(self, request):
@@ -44,7 +40,7 @@ class Index(View):
 
 class Board:
     def __init__(self, size=9):
-        self.state = [[INTERSECTION for j in range(size)] for i in range(size)]
+        self.state = [[EMPTY_POSITION for j in range(size)] for i in range(size)]
 
     def draw(self, moves):
         for move in moves:
