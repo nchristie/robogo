@@ -20,7 +20,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+"]
         ]
         self.my_node.board_state = board_state
-        self.my_node.set_node_array()
+        self.my_node.set_leaves()
         node_array = self.my_node.leaves
 
         # WHEN
@@ -40,7 +40,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state = board_state
 
         # WHEN
-        self.my_node.set_node_array()
+        self.my_node.set_leaves()
         node_array = self.my_node.leaves
 
         # THEN
@@ -344,7 +344,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        self.my_node.set_node_array(player="maximizer", is_terminal=True)
+        self.my_node.set_leaves(player="maximizer", is_terminal=True)
         actual = self.my_node.optimal_move_coordinates
         # THEN
         expected = (2,0)

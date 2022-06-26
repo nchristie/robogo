@@ -20,7 +20,7 @@ class GoNode(Node):
         self.board_state = board_state
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def set_node_array(self, player=None, is_terminal=False):
+    def set_leaves(self, player=None, is_terminal=False):
         # returns an array of Nodes representing the
         # candidates for next move in game
         potential_moves = self.get_potential_moves()
@@ -32,7 +32,7 @@ class GoNode(Node):
                 new_board_state[x][y] = BLACK_STONE
                 move_id = item["move_id"]
                 terminal_node = self.make_terminal_node(new_board_state, move_id, player)
-                self.add_leaf(
+                self.add_go_leaf(
                     move_id=item["move_id"], 
                     player=player, 
                     score=terminal_node.score,
@@ -40,7 +40,7 @@ class GoNode(Node):
                 )
         else:
             for item in potential_moves:
-                self.add_leaf(
+                self.add_go_leaf(
                     move_id=item["move_id"], 
                 )
 
@@ -50,7 +50,7 @@ class GoNode(Node):
                 if move["move_id"] == optimal_move_id:
                     self.optimal_move_coordinates = move["move_coordinates"]
 
-    def add_leaf(self, move_id=None, player=None, score=None, leaves=[], board_state=None):
+    def add_go_leaf(self, move_id=None, player=None, score=None, leaves=[], board_state=None):
         leaf = GoNode(move_id, player, score, leaves, board_state)
         self.leaves.append(leaf)
 
@@ -134,7 +134,6 @@ class GoNode(Node):
             if black_score > score_dict[BLACK_STONE]:
                 score_dict[BLACK_STONE] = black_score
         return score_dict
-
 
     def transpose_board(self):
         board_size = self.get_board_size()

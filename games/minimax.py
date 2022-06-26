@@ -11,6 +11,11 @@ class Node:
         self.player=player
         self.score=score
 
+    def __str__(self):
+        return f"move_id: {self.get_move_id()}, "\
+        f"score: {self.get_score()}, "\
+        f"number of leaves: {len(self.get_leaves())}"
+
     def set_score(self, score):
         self.score = score
 
