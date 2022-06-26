@@ -58,7 +58,7 @@ class GoNodeTestCase(TestCase):
         ]
 
         # WHEN
-        actual = self.my_node.find_liberties(x_coordinate, y_coordinate)
+        actual = self.my_node.find_legal_moves(x_coordinate, y_coordinate)
 
         # THEN
         expected = [(0,1), (1,0), (1,2), (2,1)]
@@ -75,7 +75,7 @@ class GoNodeTestCase(TestCase):
         ]
 
         # WHEN
-        actual = self.my_node.find_liberties(x_coordinate, y_coordinate)
+        actual = self.my_node.find_legal_moves(x_coordinate, y_coordinate)
 
         # THEN
         expected = [(1,2), (2,1)]

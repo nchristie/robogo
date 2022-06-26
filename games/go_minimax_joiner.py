@@ -70,7 +70,7 @@ class GoNode(Node):
         for i, row in enumerate(self.board_state):
             for j, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
-                    potential_move = self.find_liberties(i, j)
+                    potential_move = self.find_legal_moves(i, j)
                     potential_moves.extend(potential_move)
 
         potential_moves_with_ids = []
@@ -83,7 +83,7 @@ class GoNode(Node):
             potential_moves_with_ids.append(move_dict)
         return potential_moves_with_ids
 
-    def find_liberties(self, x_coordinate, y_coordinate):
+    def find_legal_moves(self, x_coordinate, y_coordinate):
         up = (x_coordinate - 1, y_coordinate)
         left = (x_coordinate, y_coordinate - 1)
         right = (x_coordinate, y_coordinate + 1)
@@ -94,11 +94,6 @@ class GoNode(Node):
         for move_coordinates in potential_moves:
             if is_move_valid(self.board_state, move_coordinates):
                 potential_moves_within_boundaries.append(move_coordinates)
-        
-        # TODO needs to make sure move is legal:
-        # 1. isn't where there's already a piece
-        # 2. won't cause own group to be captured
-        # 3. doesn't bring board back to prior state (ko rule)
 
         return potential_moves_within_boundaries
 
