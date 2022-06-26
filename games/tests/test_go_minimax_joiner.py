@@ -51,10 +51,14 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         x_coordinate = 1
         y_coordinate = 1
-        board_size = 3
+        self.my_node.board_state = [
+            ["+", "+", "+"],
+            ["+", "●", "+"],
+            ["+", "+", "+"]
+        ]
 
         # WHEN
-        actual = self.my_node.find_liberties(x_coordinate, y_coordinate, board_size)
+        actual = self.my_node.find_liberties(x_coordinate, y_coordinate)
 
         # THEN
         expected = [(0,1), (1,0), (1,2), (2,1)]
@@ -64,10 +68,14 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         x_coordinate = 2
         y_coordinate = 2
-        board_size = 3
+        self.my_node.board_state = [
+            ["+", "+", "+"],
+            ["+", "+", "+"],
+            ["+", "+", "●"]
+        ]
 
         # WHEN
-        actual = self.my_node.find_liberties(x_coordinate, y_coordinate, board_size)
+        actual = self.my_node.find_liberties(x_coordinate, y_coordinate)
 
         # THEN
         expected = [(1,2), (2,1)]

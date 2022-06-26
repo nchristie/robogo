@@ -1,6 +1,7 @@
 from .minimax import Node
 import uuid
 from copy import deepcopy
+from .game_logic import is_move_valid
 
 EMPTY_POSITION = "+"
 WHITE_STONE = "○"
@@ -69,7 +70,7 @@ class GoNode(Node):
         for i, row in enumerate(self.board_state):
             for j, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
-                    potential_move = self.find_liberties(i, j, board_size)
+                    potential_move = self.find_liberties(i, j)
                     potential_moves.extend(potential_move)
 
         potential_moves_with_ids = []
@@ -82,7 +83,7 @@ class GoNode(Node):
             potential_moves_with_ids.append(move_dict)
         return potential_moves_with_ids
 
-    def find_liberties(self, x_coordinate, y_coordinate, board_size):
+    def find_liberties(self, x_coordinate, y_coordinate):
         up = (x_coordinate - 1, y_coordinate)
         left = (x_coordinate, y_coordinate - 1)
         right = (x_coordinate, y_coordinate + 1)
@@ -90,13 +91,9 @@ class GoNode(Node):
         potential_moves = [up, left, right, down]
 
         potential_moves_within_boundaries = []
-        for move in potential_moves:
-            if (move[0] >= board_size) or (move[0] < 0):
-                continue
-            elif (move[1] >= board_size) or (move[1] < 0):
-                continue
-            else:
-                potential_moves_within_boundaries.append(move)
+        for move_coordinates in potential_moves:
+            if is_move_valid(self.board_state, move_coordinates):
+                potential_moves_within_boundaries.append(move_coordinates)
         
         # TODO needs to make sure move is legal:
         # 1. isn't where there's already a piece
