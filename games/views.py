@@ -6,6 +6,11 @@ from .forms import MoveForm
 from random import randint
 from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE, GoNode
 
+# TODO end game when one player gets 5 stones in a row
+# TODO display winner when someone won
+# TODO give option to start a new game
+# TODO remove drop down with ip addresses an form entry for player colour
+
 class Index(View):
     def __init__(self):
         self.user_game = find_game_by_ip(get_client_ip(request))
@@ -31,14 +36,14 @@ class Index(View):
         # get white response
         # TODO only move if it's white's turn
         # TODO split some logic here out into other function
-        white_x, white_y = get_white_response(my_board.state)
-        white_move = Move(
-          game=self.user_game, 
-          player='white', 
-          x_coordinate=white_x, 
-          y_coordinate=white_y
-        )
-        white_move.save()
+        # white_x, white_y = get_white_response(my_board.state)
+        # white_move = Move(
+        #   game=self.user_game, 
+        #   player='white', 
+        #   x_coordinate=white_x, 
+        #   y_coordinate=white_y
+        # )
+        # white_move.save()
 
         context = {"my_board": my_board, "all_moves": moves, "form": form}
         return render(request, "games/index.html", context)
