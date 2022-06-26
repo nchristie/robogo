@@ -97,6 +97,11 @@ class GoNode(Node):
                 continue
             else:
                 potential_moves_within_boundaries.append(move)
+        
+        # TODO needs to make sure move is legal:
+        # 1. isn't where there's already a piece
+        # 2. won't cause own group to be captured
+        # 3. doesn't bring board back to prior state (ko rule)
 
         return potential_moves_within_boundaries
 

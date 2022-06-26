@@ -4,30 +4,36 @@ from django.views import View
 from .models import Game, Move
 from .forms import MoveForm
 from random import randint
-from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
+from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE, GoNode
 
 class Index(View):
+    def __init__(self):
+        self.user_game = find_game_by_ip(get_client_ip(request))
+
     def get(self, request):
+        # TODO figure out what the get request should do instead of just
+        # forwarding to post request
         return self.post(request)
 
     def post(self, request):
-        user_game = find_game_by_ip(get_client_ip(request))
-        game_id = user_game.id
+        game_id = self.user_game.id
         print(f"user_game id: {game_id}")
         initial_state = {"game": game_id, "player": "black"}
         form = MoveForm(request.POST, initial=initial_state)
         if form.is_valid():
             form.save()
 
-        moves = user_game.move_set.all().order_by("-id")
+        moves = self.user_game.move_set.all().order_by("-id")
         my_board = Board()
 
         my_board.draw(moves)
 
         # get white response
-        white_x, white_y = get_white_response()
+        # TODO only move if it's white's turn
+        # TODO split some logic here out into other function
+        white_x, white_y = get_white_response(my_board.state)
         white_move = Move(
-          game=user_game, 
+          game=self.user_game, 
           player='white', 
           x_coordinate=white_x, 
           y_coordinate=white_y
@@ -36,7 +42,6 @@ class Index(View):
 
         context = {"my_board": my_board, "all_moves": moves, "form": form}
         return render(request, "games/index.html", context)
-
 
 class Board:
     def __init__(self, size=9):
@@ -74,7 +79,15 @@ def find_game_by_ip(ip):
         user_game.save()
     return user_game
 
-def get_white_response():
-      white_x = randint(0,8)
-      white_y = randint(0,8)
-      return (white_x, white_y)
+def get_white_response(board_state):
+      my_node = GoNode(
+          move_id=0,
+          player="minimizer",
+          score=None,
+          leaves=[],
+          board_state=board_state
+      )
+      my_node.set_leaves(player="minimizer", is_terminal=True)
+      white_move = my_node.optimal_move_coordinates
+      print(f"white_move: {white_move}")
+      return white_move
