@@ -12,23 +12,22 @@ from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE, GoNode
 # TODO remove drop down with ip addresses an form entry for player colour
 
 class Index(View):
-    def __init__(self):
-        self.user_game = find_game_by_ip(get_client_ip(request))
-
     def get(self, request):
+        user_game = find_game_by_ip(get_client_ip(request))
         # TODO figure out what the get request should do instead of just
         # forwarding to post request
         return self.post(request)
 
     def post(self, request):
-        game_id = self.user_game.id
+        user_game = find_game_by_ip(get_client_ip(request))
+        game_id = user_game.id
         print(f"user_game id: {game_id}")
         initial_state = {"game": game_id, "player": "black"}
         form = MoveForm(request.POST, initial=initial_state)
         if form.is_valid():
             form.save()
 
-        moves = self.user_game.move_set.all().order_by("-id")
+        moves = user_game.move_set.all().order_by("-id")
         my_board = Board()
 
         my_board.draw(moves)
