@@ -125,3 +125,19 @@ def test_find_groups_in_row_three_groups():
         [(0,6), (0,7), (0,8)]
     ]
     assert expected == actual
+
+def test_find_all_moves():
+    # GIVEN
+    board_state = [
+        ["+", "+", "+", "+", "+", "+"],
+        ["+", "●", "●", "+", "●", "+"],
+        ["+", "+", "+", "+", "+", "+"],
+        ["+", "●", "●", "+", "+", "+"]
+    ]
+
+    # WHEN
+    actual = find_all_moves(board_state)
+
+    # THEN
+    expected = [(1,1), (1,2), (1,4), (3,1), (3,2)]
+    assert expected == actual

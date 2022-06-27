@@ -30,22 +30,33 @@ def is_move_in_free_position(board_state, move_coordinates):
 def move_not_self_capture(board_state, move_coordinates):
     return True
 
+def find_all_moves(board_state):
+    moves = []
+    for i, row in enumerate(board_state):
+        for j, stone_colour in enumerate(row):
+            coordinates = (i,j)
+            contains_stone = stone_colour != EMPTY_POSITION
+            if contains_stone:
+                moves.append(coordinates)
+    return moves
+
+
 # TODO find all groups on board
 def find_groups(board_state):
-    row_groups = []
-    for i, row in enumerate(board_state):
-        row_group = find_groups_in_row(row, i)
-        if row_group:
-            row_groups.extend(row_group)
+    moves = find_all_moves(board_state)
+    groups = []
 
-    column_groups = []
-    transposed_board = transpose_board(board_state)
-    for i, column in enumerate(transposed_board):
-        column_group = find_groups_in_row(column, i, is_transposed=True)
-        if column_group:
-            column_groups.extend(column_group)
+    for move in moves:
+        group = [move]
+        intersections = find_intersecting_positions(move)
+        for intersection in intersections:
+            if intersection in moves:
+                group.append(intersection)
+                moves.remove(intersection)
+        groups.append(group)
+        moves.remove(move)
         
-    return merged_groups
+    return groups
 
 def find_groups_in_row(row, row_index, is_transposed=False):
     groups = []
@@ -84,3 +95,12 @@ def transpose_board(board_state):
 
 def get_board_size(board_state):
     return len(board_state[0])
+
+def find_intersecting_positions(position):
+    x_coordinate = position[0]
+    y_coordinate = position[1]
+    up = (x_coordinate - 1, y_coordinate)
+    left = (x_coordinate, y_coordinate - 1)
+    right = (x_coordinate, y_coordinate + 1)
+    down = (x_coordinate + 1, y_coordinate)
+    return [up, left, right, down]
