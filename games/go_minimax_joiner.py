@@ -1,11 +1,8 @@
 from .minimax import Node
 import uuid
 from copy import deepcopy
-from .game_logic import is_move_valid
-
-EMPTY_POSITION = "+"
-WHITE_STONE = "○"
-BLACK_STONE = "●"
+from .game_logic import is_move_valid, get_board_size, transpose_board
+from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 
 class GoNode(Node):
     def __init__(
@@ -66,11 +63,10 @@ class GoNode(Node):
 
     def get_potential_moves(self):
         potential_moves = []
-        board_size = len(self.board_state[0])
         for i, row in enumerate(self.board_state):
             for j, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
-                    potential_move = self.find_legal_moves(i, j)
+                    potential_move = self.find_legal_moves_around_position(i, j)
                     potential_moves.extend(potential_move)
 
         potential_moves_with_ids = []
@@ -83,19 +79,19 @@ class GoNode(Node):
             potential_moves_with_ids.append(move_dict)
         return potential_moves_with_ids
 
-    def find_legal_moves(self, x_coordinate, y_coordinate):
+    def find_legal_moves_around_position(self, x_coordinate, y_coordinate):
         up = (x_coordinate - 1, y_coordinate)
         left = (x_coordinate, y_coordinate - 1)
         right = (x_coordinate, y_coordinate + 1)
         down = (x_coordinate + 1, y_coordinate)
-        potential_moves = [up, left, right, down]
+        all_intersecting_positions = [up, left, right, down]
 
-        potential_moves_within_boundaries = []
-        for move_coordinates in potential_moves:
+        potential_moves = []
+        for move_coordinates in all_intersecting_positions:
             if is_move_valid(self.board_state, move_coordinates):
-                potential_moves_within_boundaries.append(move_coordinates)
+                potential_moves.append(move_coordinates)
 
-        return potential_moves_within_boundaries
+        return potential_moves
 
     def generate_move_id(self):
         return str(uuid.uuid4())
@@ -121,7 +117,7 @@ class GoNode(Node):
     def get_scores_by_row(self, score_dict, should_transpose_board=False):
         board = self.board_state
         if should_transpose_board:
-            board = self.transpose_board()
+            board = transpose_board(self.board_state)
         for row in board:
             # compare score to max score and replace if it's higher,
             white_score = self.get_row_score(row, WHITE_STONE)
@@ -131,23 +127,6 @@ class GoNode(Node):
             if black_score > score_dict[BLACK_STONE]:
                 score_dict[BLACK_STONE] = black_score
         return score_dict
-
-    def transpose_board(self):
-        board_size = self.get_board_size()
-        transposed_board = []
-        for i in range(board_size):
-            transposed_board.append([])
-            for j in range(board_size):
-                transposed_board[i].append("+")
-
-        for i in range(board_size):
-            for j in range(board_size):
-                old_board_move = self.board_state[i][j]
-                transposed_board[j][i] = old_board_move
-        return transposed_board
-
-    def get_board_size(self):
-        return len(self.board_state[0])
 
     def get_row_score(self, row, stone_colour):
         row_score = [ 0  for x in row]

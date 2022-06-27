@@ -16,11 +16,14 @@ Computer which plays Go, a project for Computing and Information Systems MSc at 
 - Go to http://0.0.0.0:8000/games to see the server running
 
 ## Testing
-All tests:
+All django-compatible tests:
 - `docker-compose run --rm web python manage.py test`
 
 One test (example):
 - `docker-compose run --rm web python manage.py test games.tests.test_go_minimax_joiner.LeafGetterTestCase.test_get_scores_one_stone`
+
+The file which isn't Django compatible:
+`docker-compose run --rm web python3 -m pytest games/tests/test_game_logic.py`
 
 ## Troubleshooting
 If you get this error:

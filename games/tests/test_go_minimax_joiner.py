@@ -47,7 +47,7 @@ class GoNodeTestCase(TestCase):
         for node in node_array:
             assert UUID(node.get_move_id())
 
-    def test_find_intersections(self):
+    def test_find_legal_move(self):
         # GIVEN
         x_coordinate = 1
         y_coordinate = 1
@@ -58,13 +58,13 @@ class GoNodeTestCase(TestCase):
         ]
 
         # WHEN
-        actual = self.my_node.find_legal_moves(x_coordinate, y_coordinate)
+        actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
 
         # THEN
         expected = [(0,1), (1,0), (1,2), (2,1)]
         self.assertEqual(expected, actual)
 
-    def test_find_intersections_when_boundary(self):
+    def test_find_legal_move_when_boundary(self):
         # GIVEN
         x_coordinate = 2
         y_coordinate = 2
@@ -75,11 +75,48 @@ class GoNodeTestCase(TestCase):
         ]
 
         # WHEN
-        actual = self.my_node.find_legal_moves(x_coordinate, y_coordinate)
+        actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
 
         # THEN
         expected = [(1,2), (2,1)]
         self.assertEqual(expected, actual)
+
+    def test_find_legal_move_when_neighbouring_stones(self):
+        # GIVEN
+        x_coordinate = 1
+        y_coordinate = 1
+        self.my_node.board_state = [
+            ["+", "+", "+", "+"],
+            ["+", "●", "+", "+"],
+            ["+", "●", "+", "+"],
+            ["+", "+", "+", "+"]
+        ]
+
+        # WHEN
+        actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
+
+        # THEN
+        expected = [(0,1), (1,0), (1,2)]
+        self.assertEqual(expected, actual)
+
+    def test_find_legal_move_when_surrounded(self):
+        # GIVEN
+        x_coordinate = 1
+        y_coordinate = 1
+        self.my_node.board_state = [
+            ["+", "○", "○", "+"],
+            ["○", "●", "+", "○"],
+            ["+", "○", "○", "+"],
+            ["+", "+", "+", "+"]
+        ]
+
+        # WHEN
+        actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
+
+        # THEN
+        expected = []
+        self.assertEqual(expected, actual)
+
 
     def test_leaf_getter_returns_attack_options(self):
         # GIVEN
@@ -243,26 +280,6 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = 2
-        self.assertEqual(expected, actual)
-
-    def test_transpose_board(self):
-        # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["●", "+", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
-
-        # WHEN
-        actual = self.my_node.transpose_board()
-
-        # THEN
-        expected = [
-            ["●", "●", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "+"]
-        ]
         self.assertEqual(expected, actual)
 
     def test_get_row_score(self):
