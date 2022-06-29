@@ -31,15 +31,15 @@ class GoNode(Node):
                 move_id = item["move_id"]
                 terminal_node = self.make_terminal_node(new_board_state, move_id, player)
                 self.add_go_leaf(
-                    move_id=item["move_id"], 
-                    player=player, 
+                    move_id=item["move_id"],
+                    player=player,
                     score=terminal_node.score,
                     board_state=new_board_state
                 )
         else:
             for item in potential_moves:
                 self.add_go_leaf(
-                    move_id=item["move_id"], 
+                    move_id=item["move_id"],
                 )
 
         if is_terminal:
@@ -137,4 +137,7 @@ class GoNode(Node):
             else:
                 score_count += 1
         return max(row_score)
+
+    def find_connecting_stones():
+        pass
 

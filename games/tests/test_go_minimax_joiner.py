@@ -375,4 +375,14 @@ class GoNodeTestCase(TestCase):
         expected = (2,0)
         self.assertEqual(expected, actual)
 
+    def test_find_connecting_stones(self):
+        # GIVEN
+        board_state = [
+            ["●", "+", "+"],
+            ["●", "+", "+"],
+            ["+", "+", "+"]
+        ]
+        # WHEN
+        # THEN
+
 
