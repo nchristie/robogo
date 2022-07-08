@@ -10,6 +10,7 @@ from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE, GoNode
 # TODO display winner when someone won
 # TODO give option to start a new game
 # TODO remove drop down with ip addresses an form entry for player colour
+# TODO create button for starting new game
 
 class Index(View):
     def get(self, request):
@@ -27,22 +28,24 @@ class Index(View):
         if form.is_valid():
             form.save()
 
-        moves = user_game.move_set.all().order_by("-id")
         my_board = Board()
-
+        moves = user_game.move_set.all().order_by("-id")
         my_board.draw(moves)
 
         # get white response
         # TODO only move if it's white's turn
         # TODO split some logic here out into other function
-        # white_x, white_y = get_white_response(my_board.state)
-        # white_move = Move(
-        #   game=self.user_game, 
-        #   player='white', 
-        #   x_coordinate=white_x, 
-        #   y_coordinate=white_y
-        # )
-        # white_move.save()
+        try:
+            white_x, white_y = get_white_response(my_board.state)
+            white_move = Move(
+            game=user_game,
+            player='white',
+            x_coordinate=white_x,
+            y_coordinate=white_y
+            )
+            white_move.save()
+        except Exception as e:
+            print(f"Failed to get white move with exception: {e}")
 
         context = {"my_board": my_board, "all_moves": moves, "form": form}
         return render(request, "games/index.html", context)
@@ -53,7 +56,7 @@ class Board:
 
     def draw(self, moves):
         for move in moves:
-            player = BLACK_STONE 
+            player = BLACK_STONE
             if len(move.player) > 0 and move.player[0].lower() == "w":
               player = WHITE_STONE
             self.make_move(move.x_coordinate, move.y_coordinate, player)
