@@ -24,10 +24,13 @@ docker-compose run --rm web python manage.py test
 ```
 
 shell:
+docker-compose run --rm web python manage.py shell
+
 from games.models import Game, Move
 
 game = Game.objects.order_by('-id')[0]
 game.move_set.all()  # queryset of related Moves
+game.delete() # deletes current game
 
 My IP:
 172.24.0.1

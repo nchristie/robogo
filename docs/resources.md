@@ -56,3 +56,10 @@
 - https://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
 - https://stackoverflow.com/questions/23463599/how-to-store-ip-address-in-the-database-and-django-admin
 - https://stackoverflow.com/questions/16046478/django-model-nullable-field
+
+# Literature review
+- https://www.moderndescartes.com/essays/implementing_go/
+
+# Citations and references
+- https://www.imperial.ac.uk/admin-services/library/learning-support/reference-management/vancouver-style/citing/
+- https://guides.lib.monash.edu/citing-referencing/vancouver#:~:text=Vancouver%20is%20a%20numbered%20referencing,the%20corresponding%20in%2Dtext%20references.
