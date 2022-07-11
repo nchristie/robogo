@@ -34,3 +34,22 @@ game.delete() # deletes current game
 
 My IP:
 172.24.0.1
+
+def evaluate(self, maximizer_choice, minimizer_choice):
+    # adapted from: https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
+    if self.is_terminal():
+        return self.utility()
+
+    if self.player == "minimizer":
+        for leaf in self.leaves:
+            minimizer_choice = min(minimizer_choice, self.evaluate(leaf, maximizer_choice, minimizer_choice))
+            if minimizer_choice <= maximizer_choice:
+                return minimizer_choice
+            return minimizer_choice
+
+    if self.player == "maximizer":
+        for leaf in self.leaves:
+            maximizer_choice = max(maximizer_choice, self.evaluate(leaf, maximizer_choice, minimizer_choice))
+            if minimizer_choice <= maximizer_choice:
+                return maximizer_choice
+            return maximizer_choice
