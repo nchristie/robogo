@@ -1,4 +1,4 @@
-class Node:
+class MinimaxNode:
     def __init__(
         self,
         move_id=None,
@@ -26,7 +26,7 @@ class Node:
         return self.move_id
 
     def add_leaf(self, move_id=None, player=None, score=None):
-        leaf = Node(move_id, player, score)
+        leaf = MinimaxNode(move_id, player, score)
         self.leaves.append(leaf)
 
     def get_leaves(self):
@@ -47,7 +47,7 @@ class Node:
                 best_move = leaf
                 best_score = best_move.get_score()
         return best_move
-    
+
     def maximizer_strategy(self, leaf_score, best_score):
         return leaf_score > best_score
 

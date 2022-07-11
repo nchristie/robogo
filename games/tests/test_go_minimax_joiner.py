@@ -1,5 +1,5 @@
 from django.test import TestCase
-from games.go_minimax_joiner import GoNode, Node, WHITE_STONE, BLACK_STONE
+from games.go_minimax_joiner import GoNode, MinimaxNode, WHITE_STONE, BLACK_STONE
 from uuid import UUID
 
 class GoNodeTestCase(TestCase):

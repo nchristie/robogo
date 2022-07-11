@@ -1,10 +1,10 @@
-from .minimax import Node
+from .minimax import MinimaxNode
 import uuid
 from copy import deepcopy
 from .game_logic import is_move_valid, get_board_size, transpose_board
 from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 
-class GoNode(Node):
+class GoNode(MinimaxNode):
     def __init__(
         self,
         move_id=None,
