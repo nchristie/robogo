@@ -54,5 +54,26 @@ class MinimaxNode:
     def minimizer_strategy(self, leaf_score, best_score):
         return leaf_score < best_score
 
+    def get_utility(self):
+        # Implemented by class which inherits
+        return
 
+    def evaluate(self, maximizer_choice, minimizer_choice):
+        # adapted from: https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
+        if self.is_terminal():
+            return self.get_utility()
+
+        if self.player == "minimizer":
+            for leaf in self.leaves:
+                minimizer_choice = min(minimizer_choice, self.evaluate(leaf, maximizer_choice, minimizer_choice))
+                if minimizer_choice <= maximizer_choice:
+                    return minimizer_choice
+                return minimizer_choice
+
+        if self.player == "maximizer":
+            for leaf in self.leaves:
+                maximizer_choice = max(maximizer_choice, self.evaluate(leaf, maximizer_choice, minimizer_choice))
+                if minimizer_choice <= maximizer_choice:
+                    return maximizer_choice
+                return maximizer_choice
 

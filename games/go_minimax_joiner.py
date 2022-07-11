@@ -58,7 +58,7 @@ class GoNode(MinimaxNode):
             player=player,
             board_state=board_state
         )
-        new_node.score = new_node.get_scores()
+        new_node.score = new_node.get_utility()
         return new_node
 
     def get_potential_moves(self):
@@ -96,8 +96,11 @@ class GoNode(MinimaxNode):
     def generate_move_id(self):
         return str(uuid.uuid4())
 
-    def get_scores(self):
+    def get_utility(self):
+        score_dict = self.get_score_dict()
+        return score_dict["relative_black_score"]
 
+    def get_score_dict(self):
         score_dict = {
             WHITE_STONE: 0,
             BLACK_STONE: 0,
@@ -112,7 +115,8 @@ class GoNode(MinimaxNode):
         # update relative black score
         score_dict["relative_black_score"] = score_dict[BLACK_STONE] - score_dict[WHITE_STONE]
 
-        return score_dict["relative_black_score"]
+        return score_dict
+
 
     def get_scores_by_row(self, score_dict, should_transpose_board=False):
         board = self.board_state

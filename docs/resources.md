@@ -31,6 +31,7 @@
 - https://levelup.gitconnected.com/how-to-make-a-go-board-with-css-ac4cba7d0b72
 - https://medium.com/riow/django-static-files-dcc3f65a8f3a
 - https://codepen.io/viethoang012/pen/ygzZaB
+- http://www.weddslist.com/goban/
 # Example code for two-player games
 - https://geekflare.com/tic-tac-toe-python-code/
 
@@ -51,6 +52,7 @@
 - https://docs.djangoproject.com/en/4.0/topics/db/models/
 - https://www.youtube.com/watch?v=6aQoW0TRXBk
 - https://stackoverflow.com/questions/65495315/django-retrieving-all-objects-from-one-to-many-model-relationship-in-shell
+
 
 # Get user IP
 - https://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django

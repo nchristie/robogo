@@ -196,7 +196,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        actual = self.my_node.get_scores()
+        actual = self.my_node.get_utility()
 
         # THEN
         expected =  1
@@ -212,7 +212,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        actual = self.my_node.get_scores()
+        actual = self.my_node.get_utility()
 
         # THEN
         expected =  1
@@ -228,7 +228,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        actual = self.my_node.get_scores()
+        actual = self.my_node.get_utility()
 
         # THEN
         expected = 2
@@ -244,7 +244,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        actual = self.my_node.get_scores()
+        actual = self.my_node.get_utility()
 
         # THEN
         expected = 2
@@ -260,7 +260,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        actual = self.my_node.get_scores()
+        actual = self.my_node.get_utility()
 
         # THEN
         expected = -2
@@ -276,7 +276,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        actual = self.my_node.get_scores()
+        actual = self.my_node.get_utility()
 
         # THEN
         expected = 2
@@ -353,7 +353,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state=board_state
 
         # WHEN
-        actual = self.my_node.get_scores()
+        actual = self.my_node.get_utility()
 
         # THEN
         expected = 1

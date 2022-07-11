@@ -6,6 +6,9 @@ from .forms import MoveForm
 from random import randint
 from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE, GoNode
 
+
+WINNING_SCORE = 5
+
 # TODO end game when one player gets 5 stones in a row
 # TODO display winner when someone won
 # TODO give option to start a new game
@@ -32,22 +35,51 @@ class Index(View):
         moves = user_game.move_set.all().order_by("-id")
         my_board.draw(moves)
 
-        # get white response
-        # TODO only move if it's white's turn
-        # TODO split some logic here out into other function
-        try:
-            white_x, white_y = get_white_response(my_board.state)
-            white_move = Move(
-            game=user_game,
-            player='white',
-            x_coordinate=white_x,
-            y_coordinate=white_y
-            )
-            white_move.save()
-        except Exception as e:
-            print(f"Failed to get white move with exception: {e}")
 
-        context = {"my_board": my_board, "all_moves": moves, "form": form}
+        # TODO move the score dict into game logic module
+        my_node = GoNode(
+            move_id=0,
+            player="maximizer",
+            score=None,
+            leaves=[],
+            board_state=my_board.state
+        )
+        scores = my_node.get_score_dict()
+        black_score = scores[BLACK_STONE]
+        white_score = scores[WHITE_STONE]
+        winner = "No-one"
+        if black_score >= WINNING_SCORE:
+            winner = "Black"
+        elif white_score >= WINNING_SCORE:
+            winner = "White"
+
+        if winner == "No-one":
+
+            # get white response
+            # TODO only move if it's white's turn
+            # TODO split some logic here out into other function
+            try:
+                white_x, white_y = get_white_response(my_board.state)
+                white_move = Move(
+                game=user_game,
+                player='white',
+                x_coordinate=white_x,
+                y_coordinate=white_y
+                )
+                white_move.save()
+            except Exception as e:
+                print(f"Failed to get white move with exception: {e}")
+
+
+
+        context = {
+            "my_board": my_board,
+            "all_moves": moves,
+            "form": form,
+            "black_score": black_score,
+            "white_score": white_score,
+            "winner": winner
+        }
         return render(request, "games/index.html", context)
 
 class Board:
