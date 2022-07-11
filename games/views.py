@@ -53,6 +53,7 @@ class Index(View):
 class Board:
     def __init__(self, size=9):
         self.state = [[EMPTY_POSITION for j in range(size)] for i in range(size)]
+        self.size=size
 
     def draw(self, moves):
         for move in moves:
@@ -62,6 +63,11 @@ class Board:
             self.make_move(move.x_coordinate, move.y_coordinate, player)
 
     def make_move(self, x, y, player=BLACK_STONE):
+        legal_move = 0 <= x < self.size
+        legal_move = legal_move & 0 <= y < self.size
+        if not legal_move:
+            print("Illegal move, try again")
+            return
         self.state[x][y] = player
 
 def get_client_ip(request):
