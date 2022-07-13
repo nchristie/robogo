@@ -145,3 +145,59 @@ def test_find_all_moves():
     # THEN
     expected = [(1,1), (1,2), (1,4), (3,1), (3,2)]
     assert expected == actual
+
+def test_get_row_score():
+    # GIVEN
+    row = ["+", "+", "+"]
+
+    # WHEN
+    actual = get_row_score(row, BLACK_STONE)
+
+    # THEN
+    expected = 0
+    assert expected == actual
+
+def test_get_row_score_one():
+    # GIVEN
+    row = ["●", "+", "+"]
+
+    # WHEN
+    actual = get_row_score(row, BLACK_STONE)
+
+    # THEN
+    expected = 1
+    assert expected == actual
+
+def test_get_row_score_one_but_two_stones():
+    # GIVEN
+    row = ["●", "+", "●"]
+
+    # WHEN
+    actual = get_row_score(row, BLACK_STONE)
+
+    # THEN
+    expected = 1
+    assert expected == actual
+
+def test_get_row_score_two_groups():
+    # GIVEN
+    row = ["●", "+", "●", "●"]
+
+    # WHEN
+    actual = get_row_score(row, BLACK_STONE)
+
+    # THEN
+    expected = 2
+    assert expected == actual
+
+def test_get_row_score_row_begins_and_ends_with_empty_space():
+    # GIVEN
+    row = ["+", "+", "●", "●", "+", "●", "●", "●", "+"]
+
+    # WHEN
+    actual = get_row_score(row, BLACK_STONE)
+
+    # THEN
+    expected = 3
+    assert expected == actual
+

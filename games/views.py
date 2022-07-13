@@ -1,10 +1,10 @@
-from string import printable
 from django.shortcuts import render
 from django.views import View
 from .models import Game, Move
 from .forms import MoveForm
-from random import randint
-from .go_minimax_joiner import EMPTY_POSITION, WHITE_STONE, BLACK_STONE, GoNode
+from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
+from .go_minimax_joiner import GoNode
+from .game_logic import get_score_dict
 
 
 WINNING_SCORE = 5
@@ -35,17 +35,7 @@ class Index(View):
         moves = user_game.move_set.all().order_by("-id")
         my_board.draw(moves)
 
-
-        # TODO move the score dict into game logic module
-        my_node = GoNode(
-            move_id=0,
-            player="maximizer",
-            score=None,
-            is_terminal=False,
-            leaves=[],
-            board_state=my_board.state
-        )
-        scores = my_node.get_score_dict()
+        scores = get_score_dict(my_board.state)
         black_score = scores[BLACK_STONE]
         white_score = scores[WHITE_STONE]
         winner = "No-one"

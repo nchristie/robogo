@@ -283,61 +283,6 @@ class GoNodeTestCase(TestCase):
         expected = 2
         self.assertEqual(expected, actual)
 
-    def test_get_row_score(self):
-        # GIVEN
-        row = ["+", "+", "+"]
-
-        # WHEN
-        actual = self.my_node.get_row_score(row, BLACK_STONE)
-
-        # THEN
-        expected = 0
-        self.assertEqual(expected, actual)
-
-    def test_get_row_score_one(self):
-        # GIVEN
-        row = ["●", "+", "+"]
-
-        # WHEN
-        actual = self.my_node.get_row_score(row, BLACK_STONE)
-
-        # THEN
-        expected = 1
-        self.assertEqual(expected, actual)
-
-    def test_get_row_score_one_but_two_stones(self):
-        # GIVEN
-        row = ["●", "+", "●"]
-
-        # WHEN
-        actual = self.my_node.get_row_score(row, BLACK_STONE)
-
-        # THEN
-        expected = 1
-        self.assertEqual(expected, actual)
-
-    def test_get_row_score_two_groups(self):
-        # GIVEN
-        row = ["●", "+", "●", "●"]
-
-        # WHEN
-        actual = self.my_node.get_row_score(row, BLACK_STONE)
-
-        # THEN
-        expected = 2
-        self.assertEqual(expected, actual)
-
-    def test_get_row_score_row_begins_and_ends_with_empty_space(self):
-        # GIVEN
-        row = ["+", "+", "●", "●", "+", "●", "●", "●", "+"]
-
-        # WHEN
-        actual = self.my_node.get_row_score(row, BLACK_STONE)
-
-        # THEN
-        expected = 3
-        self.assertEqual(expected, actual)
-
     def test_get_scores_big_board_lots_of_stones(self):
         # GIVEN
         board_state = [

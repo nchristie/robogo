@@ -1,5 +1,5 @@
-from .stones import EMPTY_POSITION
-from copy import deepcopy
+from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
+
 
 def is_move_valid(board_state, move_coordinates):
     checks = [
@@ -10,7 +10,7 @@ def is_move_valid(board_state, move_coordinates):
         if not check(board_state, move_coordinates):
             return False
     return True
-    
+
 def is_move_within_board_boudaries(board_state, move_coordinates):
     board_size = len(board_state[0])
     for coordinate in move_coordinates:
@@ -55,7 +55,7 @@ def find_groups(board_state):
                 moves.remove(intersection)
         groups.append(group)
         moves.remove(move)
-        
+
     return groups
 
 def find_groups_in_row(row, row_index, is_transposed=False):
@@ -104,3 +104,45 @@ def find_intersecting_positions(position):
     right = (x_coordinate, y_coordinate + 1)
     down = (x_coordinate + 1, y_coordinate)
     return [up, left, right, down]
+
+def get_score_dict(board_state):
+    score_dict = {
+        WHITE_STONE: 0,
+        BLACK_STONE: 0,
+        "relative_black_score": 0
+    }
+    # first check if there's a string of stones to the right, and if so add up score
+    score_dict = get_scores_by_row(board_state, score_dict)
+
+    # then check if there's a string of stones below and add up score
+    score_dict = get_scores_by_row(board_state, score_dict, should_transpose_board=True)
+
+    # update relative black score
+    score_dict["relative_black_score"] = score_dict[BLACK_STONE] - score_dict[WHITE_STONE]
+
+    return score_dict
+
+def get_scores_by_row(board_state, score_dict, should_transpose_board=False):
+    board = board_state
+    if should_transpose_board:
+        board = transpose_board(board_state)
+    for row in board:
+        # compare score to max score and replace if it's higher,
+        white_score = get_row_score(row, WHITE_STONE)
+        black_score = get_row_score(row, BLACK_STONE)
+        if white_score > score_dict[WHITE_STONE]:
+            score_dict[WHITE_STONE] = white_score
+        if black_score > score_dict[BLACK_STONE]:
+            score_dict[BLACK_STONE] = black_score
+    return score_dict
+
+def get_row_score(row, stone_colour):
+    row_score = [ 0  for x in row]
+    score_count = 0
+    for cell in row:
+        if cell == stone_colour:
+            row_score[score_count] += 1
+        else:
+            score_count += 1
+    return max(row_score)
+

@@ -1,8 +1,8 @@
 from .minimax import MinimaxNode
 import uuid
 from copy import deepcopy
-from .game_logic import is_move_valid, get_board_size, transpose_board
-from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
+from .game_logic import is_move_valid, get_score_dict
+from .stones import EMPTY_POSITION, BLACK_STONE
 
 class GoNode(MinimaxNode):
     def __init__(
@@ -107,50 +107,8 @@ class GoNode(MinimaxNode):
         return str(uuid.uuid4())
 
     def get_utility(self):
-        score_dict = self.get_score_dict()
+        score_dict = get_score_dict(self.board_state)
         return score_dict["relative_black_score"]
-
-    def get_score_dict(self):
-        score_dict = {
-            WHITE_STONE: 0,
-            BLACK_STONE: 0,
-            "relative_black_score": 0
-        }
-        # first check if there's a string of stones to the right, and if so add up score
-        score_dict = self.get_scores_by_row(score_dict)
-
-        # then check if there's a string of stones below and add up score
-        score_dict = self.get_scores_by_row(score_dict, should_transpose_board=True)
-
-        # update relative black score
-        score_dict["relative_black_score"] = score_dict[BLACK_STONE] - score_dict[WHITE_STONE]
-
-        return score_dict
-
-
-    def get_scores_by_row(self, score_dict, should_transpose_board=False):
-        board = self.board_state
-        if should_transpose_board:
-            board = transpose_board(self.board_state)
-        for row in board:
-            # compare score to max score and replace if it's higher,
-            white_score = self.get_row_score(row, WHITE_STONE)
-            black_score = self.get_row_score(row, BLACK_STONE)
-            if white_score > score_dict[WHITE_STONE]:
-                score_dict[WHITE_STONE] = white_score
-            if black_score > score_dict[BLACK_STONE]:
-                score_dict[BLACK_STONE] = black_score
-        return score_dict
-
-    def get_row_score(self, row, stone_colour):
-        row_score = [ 0  for x in row]
-        score_count = 0
-        for cell in row:
-            if cell == stone_colour:
-                row_score[score_count] += 1
-            else:
-                score_count += 1
-        return max(row_score)
 
     def find_connecting_stones():
         pass
