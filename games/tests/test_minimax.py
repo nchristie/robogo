@@ -9,6 +9,7 @@ class NodeTestCase(TestCase):
             move_id=1,
             player="maximizer",
             score=None,
+            is_terminal=False,
             leaves=[]
         )
         expected = None
@@ -22,6 +23,7 @@ class NodeTestCase(TestCase):
             move_id=2,
             player="maximizer",
             score=None,
+            is_terminal=False,
             leaves=[]
         )
         my_node_2.set_score(5)
@@ -36,6 +38,7 @@ class NodeTestCase(TestCase):
             move_id=3,
             player="maximizer",
             score=None,
+            is_terminal=False,
             leaves=[]
         )
         expected = []
@@ -49,6 +52,7 @@ class NodeTestCase(TestCase):
             move_id=4,
             player="maximizer",
             score=None,
+            is_terminal=False,
             leaves=[]
         )
         score = 4
@@ -67,6 +71,7 @@ class NodeTestCase(TestCase):
             move_id=5,
             player="maximizer",
             score=None,
+            is_terminal=False,
             leaves=[]
         )
         available_moves = [
@@ -100,6 +105,7 @@ class NodeTestCase(TestCase):
             move_id=6,
             player="maximizer",
             score=None,
+            is_terminal=False,
             leaves=[]
         )
         available_moves = [

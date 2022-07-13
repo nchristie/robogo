@@ -41,6 +41,7 @@ class Index(View):
             move_id=0,
             player="maximizer",
             score=None,
+            is_terminal=False,
             leaves=[],
             board_state=my_board.state
         )
@@ -129,6 +130,7 @@ def get_white_response(board_state):
           move_id=0,
           player="minimizer",
           score=None,
+          is_terminal=False,
           leaves=[],
           board_state=board_state
       )

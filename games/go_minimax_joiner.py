@@ -10,11 +10,12 @@ class GoNode(MinimaxNode):
         move_id=None,
         player=None,
         score=None,
+        is_terminal=False,
         leaves=[],
         board_state=None,
         optimal_move_coordinates=None
     ):
-        super().__init__(move_id, player, score, leaves)
+        super().__init__(move_id, player, score, is_terminal, leaves)
         self.board_state = board_state
         self.optimal_move_coordinates = optimal_move_coordinates
 
@@ -49,13 +50,22 @@ class GoNode(MinimaxNode):
                     self.optimal_move_coordinates = move["move_coordinates"]
 
     def add_go_leaf(self, move_id=None, player=None, score=None, leaves=[], board_state=None):
-        leaf = GoNode(move_id, player, score, leaves, board_state)
+        leaf = GoNode(
+            move_id=move_id,
+            player=player,
+            score=score,
+            is_terminal=False,
+            leaves=leaves,
+            board_state=board_state
+        )
         self.leaves.append(leaf)
 
     def make_terminal_node(self, board_state, move_id, player):
         new_node = GoNode(
             move_id=move_id,
             player=player,
+            score=None,
+            is_terminal=True,
             board_state=board_state
         )
         new_node.score = new_node.get_utility()

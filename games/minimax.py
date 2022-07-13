@@ -4,11 +4,13 @@ class MinimaxNode:
         move_id=None,
         player=None,
         score=None,
+        is_terminal=False,
         leaves=[],
     ):
         self.leaves=leaves
         self.move_id=move_id
         self.player=player
+        self.is_terminal=is_terminal
         self.score=score
 
     def __str__(self):
