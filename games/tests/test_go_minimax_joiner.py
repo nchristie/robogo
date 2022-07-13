@@ -1,24 +1,22 @@
 from django.test import TestCase
 from games.go_minimax_joiner import GoNode, BLACK_STONE
 from uuid import UUID
+
+
 class GoNodeTestCase(TestCase):
     def setUp(self):
         self.my_node = GoNode(
-            move_id = "49dedb0d-5cf6-4f84-b228-efbc1dbaf06a",
-            player = "maximizer",
-            score = 0,
+            move_id="49dedb0d-5cf6-4f84-b228-efbc1dbaf06a",
+            player="maximizer",
+            score=0,
             is_terminal=False,
-            leaves = [],
-            board_state=None
+            leaves=[],
+            board_state=None,
         )
 
     def test_leaf_getter_makes_array(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "+"]
-        ]
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         self.my_node.board_state = board_state
         self.my_node.set_leaves()
         node_array = self.my_node.leaves
@@ -32,11 +30,7 @@ class GoNodeTestCase(TestCase):
 
     def test_leaf_getter_array_has_uuid_move_ids(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "+"]
-        ]
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         self.my_node.board_state = board_state
 
         # WHEN
@@ -51,34 +45,30 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         x_coordinate = 1
         y_coordinate = 1
-        self.my_node.board_state = [
-            ["+", "+", "+"],
-            ["+", "●", "+"],
-            ["+", "+", "+"]
-        ]
+        self.my_node.board_state = [["+", "+", "+"], ["+", "●", "+"], ["+", "+", "+"]]
 
         # WHEN
-        actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
+        actual = self.my_node.find_legal_moves_around_position(
+            x_coordinate, y_coordinate
+        )
 
         # THEN
-        expected = [(0,1), (1,0), (1,2), (2,1)]
+        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
         self.assertEqual(expected, actual)
 
     def test_find_legal_move_when_boundary(self):
         # GIVEN
         x_coordinate = 2
         y_coordinate = 2
-        self.my_node.board_state = [
-            ["+", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "●"]
-        ]
+        self.my_node.board_state = [["+", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
 
         # WHEN
-        actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
+        actual = self.my_node.find_legal_moves_around_position(
+            x_coordinate, y_coordinate
+        )
 
         # THEN
-        expected = [(1,2), (2,1)]
+        expected = [(1, 2), (2, 1)]
         self.assertEqual(expected, actual)
 
     def test_find_legal_move_when_neighbouring_stones(self):
@@ -89,14 +79,16 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+"],
             ["+", "●", "+", "+"],
             ["+", "●", "+", "+"],
-            ["+", "+", "+", "+"]
+            ["+", "+", "+", "+"],
         ]
 
         # WHEN
-        actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
+        actual = self.my_node.find_legal_moves_around_position(
+            x_coordinate, y_coordinate
+        )
 
         # THEN
-        expected = [(0,1), (1,0), (1,2)]
+        expected = [(0, 1), (1, 0), (1, 2)]
         self.assertEqual(expected, actual)
 
     # TODO Implement this logic in the code
@@ -118,115 +110,86 @@ class GoNodeTestCase(TestCase):
     #     expected = []
     #     self.assertEqual(expected, actual)
 
-
     def test_leaf_getter_returns_attack_options(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
 
         # THEN
-        expected = [(0,1),(1,0)]
+        expected = [(0, 1), (1, 0)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [ item["move_coordinates"] for item in potential_moves ]
+        actual = [item["move_coordinates"] for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_attack_options_2_groups(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "●"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
+        self.my_node.board_state = board_state
 
         # WHEN
 
         # THEN
-        expected = [(0,1),(1,0),(1,2),(2,1)]
+        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [ item["move_coordinates"] for item in potential_moves ]
+        actual = [item["move_coordinates"] for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_defend_options_2_groups(self):
         # GIVEN
-        board_state = [
-            ["○", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "○"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["○", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
+        self.my_node.board_state = board_state
 
         # WHEN
 
         # THEN
-        expected = [(0,1),(1,0),(1,2),(2,1)]
+        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [ item["move_coordinates"] for item in potential_moves ]
+        actual = [item["move_coordinates"] for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_attack_and_defend_options(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "○"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
+        self.my_node.board_state = board_state
 
         # WHEN
 
         # THEN
-        expected = [(0,1),(1,0),(1,2),(2,1)]
+        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [ item["move_coordinates"] for item in potential_moves ]
+        actual = [item["move_coordinates"] for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_get_scores_one_stone(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
         actual = self.my_node.get_utility()
 
         # THEN
-        expected =  1
+        expected = 1
         self.assertEqual(expected, actual)
 
     def test_get_scores_two_groups_of_one_stone(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "●"],
-            ["+", "+", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "+", "●"], ["+", "+", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
         actual = self.my_node.get_utility()
 
         # THEN
-        expected =  1
+        expected = 1
         self.assertEqual(expected, actual)
 
     def test_get_scores_two_stones_horizontal(self):
         # GIVEN
-        board_state = [
-            ["●", "●", "+"],
-            ["+", "+", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "●", "+"], ["+", "+", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
         actual = self.my_node.get_utility()
@@ -237,12 +200,8 @@ class GoNodeTestCase(TestCase):
 
     def test_get_scores_two_stones_horizontal_other_row(self):
         # GIVEN
-        board_state = [
-            ["+", "+", "+"],
-            ["●", "●", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["+", "+", "+"], ["●", "●", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
         actual = self.my_node.get_utility()
@@ -253,12 +212,8 @@ class GoNodeTestCase(TestCase):
 
     def test_get_scores_white_stones(self):
         # GIVEN
-        board_state = [
-            ["+", "+", "+"],
-            ["○", "○", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["+", "+", "+"], ["○", "○", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
         actual = self.my_node.get_utility()
@@ -269,12 +224,8 @@ class GoNodeTestCase(TestCase):
 
     def test_get_scores_two_stones_vertical(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["●", "+", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
         actual = self.my_node.get_utility()
@@ -296,7 +247,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
-        self.my_node.board_state=board_state
+        self.my_node.board_state = board_state
 
         # WHEN
         actual = self.my_node.get_utility()
@@ -307,28 +258,18 @@ class GoNodeTestCase(TestCase):
 
     def test_gets_best_move_only_one_option(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["●", "+", "+"],
-            ["+", "+", "+"]
-        ]
-        self.my_node.board_state=board_state
+        board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
 
         # WHEN
         self.my_node.set_leaves(player="maximizer", is_terminal=True)
         actual = self.my_node.optimal_move_coordinates
         # THEN
-        expected = (2,0)
+        expected = (2, 0)
         self.assertEqual(expected, actual)
 
     def test_find_connecting_stones(self):
         # GIVEN
-        board_state = [
-            ["●", "+", "+"],
-            ["●", "+", "+"],
-            ["+", "+", "+"]
-        ]
+        board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
         # WHEN
         # THEN
-
-

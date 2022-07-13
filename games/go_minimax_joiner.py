@@ -4,6 +4,7 @@ from copy import deepcopy
 from .game_logic import is_move_valid, get_score_dict
 from .stones import EMPTY_POSITION, BLACK_STONE
 
+
 class GoNode(MinimaxNode):
     def __init__(
         self,
@@ -13,7 +14,7 @@ class GoNode(MinimaxNode):
         is_terminal=False,
         leaves=[],
         board_state=None,
-        optimal_move_coordinates=None
+        optimal_move_coordinates=None,
     ):
         super().__init__(move_id, player, score, is_terminal, leaves)
         self.board_state = board_state
@@ -30,12 +31,14 @@ class GoNode(MinimaxNode):
                 new_board_state = deepcopy(self.board_state)
                 new_board_state[x][y] = BLACK_STONE
                 move_id = item["move_id"]
-                terminal_node = self.make_terminal_node(new_board_state, move_id, player)
+                terminal_node = self.make_terminal_node(
+                    new_board_state, move_id, player
+                )
                 self.add_go_leaf(
                     move_id=item["move_id"],
                     player=player,
                     score=terminal_node.score,
-                    board_state=new_board_state
+                    board_state=new_board_state,
                 )
         else:
             for item in potential_moves:
@@ -49,14 +52,16 @@ class GoNode(MinimaxNode):
                 if move["move_id"] == optimal_move_id:
                     self.optimal_move_coordinates = move["move_coordinates"]
 
-    def add_go_leaf(self, move_id=None, player=None, score=None, leaves=[], board_state=None):
+    def add_go_leaf(
+        self, move_id=None, player=None, score=None, leaves=[], board_state=None
+    ):
         leaf = GoNode(
             move_id=move_id,
             player=player,
             score=score,
             is_terminal=False,
             leaves=leaves,
-            board_state=board_state
+            board_state=board_state,
         )
         self.leaves.append(leaf)
 
@@ -66,7 +71,7 @@ class GoNode(MinimaxNode):
             player=player,
             score=None,
             is_terminal=True,
-            board_state=board_state
+            board_state=board_state,
         )
         new_node.score = new_node.get_utility()
         return new_node
@@ -82,10 +87,7 @@ class GoNode(MinimaxNode):
         potential_moves_with_ids = []
         for move in potential_moves:
             move_id = self.generate_move_id()
-            move_dict = {
-                "move_coordinates": move,
-                "move_id": move_id
-            }
+            move_dict = {"move_coordinates": move, "move_id": move_id}
             potential_moves_with_ids.append(move_dict)
         return potential_moves_with_ids
 
@@ -112,4 +114,3 @@ class GoNode(MinimaxNode):
 
     def find_connecting_stones():
         pass
-

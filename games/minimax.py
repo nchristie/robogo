@@ -7,16 +7,18 @@ class MinimaxNode:
         is_terminal=False,
         leaves=[],
     ):
-        self.leaves=leaves
-        self.move_id=move_id
-        self.player=player
-        self.is_terminal=is_terminal
-        self.score=score
+        self.leaves = leaves
+        self.move_id = move_id
+        self.player = player
+        self.is_terminal = is_terminal
+        self.score = score
 
     def __str__(self):
-        return f"move_id: {self.get_move_id()}, "\
-        f"score: {self.get_score()}, "\
-        f"number of leaves: {len(self.get_leaves())}"
+        return (
+            f"move_id: {self.get_move_id()}, "
+            f"score: {self.get_score()}, "
+            f"number of leaves: {len(self.get_leaves())}"
+        )
 
     def set_score(self, score):
         self.score = score
@@ -67,15 +69,20 @@ class MinimaxNode:
 
         if self.player == "minimizer":
             for leaf in self.leaves:
-                minimizer_choice = min(minimizer_choice, self.evaluate(leaf, maximizer_choice, minimizer_choice))
+                minimizer_choice = min(
+                    minimizer_choice,
+                    self.evaluate(leaf, maximizer_choice, minimizer_choice),
+                )
                 if minimizer_choice <= maximizer_choice:
                     return minimizer_choice
                 return minimizer_choice
 
         if self.player == "maximizer":
             for leaf in self.leaves:
-                maximizer_choice = max(maximizer_choice, self.evaluate(leaf, maximizer_choice, minimizer_choice))
+                maximizer_choice = max(
+                    maximizer_choice,
+                    self.evaluate(leaf, maximizer_choice, minimizer_choice),
+                )
                 if minimizer_choice <= maximizer_choice:
                     return maximizer_choice
                 return maximizer_choice
-

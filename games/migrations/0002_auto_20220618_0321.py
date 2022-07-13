@@ -13,7 +13,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.CreateModel(
             name="Game",
-            fields=[("id", models.BigAutoField(primary_key=True, serialize=False)),],
+            fields=[
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+            ],
         ),
         migrations.CreateModel(
             name="GameMove",
@@ -36,5 +38,7 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
-        migrations.DeleteModel(name="BoardState",),
+        migrations.DeleteModel(
+            name="BoardState",
+        ),
     ]

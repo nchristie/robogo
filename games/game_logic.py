@@ -2,14 +2,12 @@ from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 
 
 def is_move_valid(board_state, move_coordinates):
-    checks = [
-        is_move_within_board_boudaries,
-        is_move_in_free_position
-    ]
+    checks = [is_move_within_board_boudaries, is_move_in_free_position]
     for check in checks:
         if not check(board_state, move_coordinates):
             return False
     return True
+
 
 def is_move_within_board_boudaries(board_state, move_coordinates):
     board_size = len(board_state[0])
@@ -17,6 +15,7 @@ def is_move_within_board_boudaries(board_state, move_coordinates):
         if (coordinate >= board_size) or (coordinate < 0):
             return False
     return True
+
 
 def is_move_in_free_position(board_state, move_coordinates):
     x_coordinate = move_coordinates[0]
@@ -30,11 +29,12 @@ def is_move_in_free_position(board_state, move_coordinates):
 def move_not_self_capture(board_state, move_coordinates):
     return True
 
+
 def find_all_moves(board_state):
     moves = []
     for i, row in enumerate(board_state):
         for j, stone_colour in enumerate(row):
-            coordinates = (i,j)
+            coordinates = (i, j)
             contains_stone = stone_colour != EMPTY_POSITION
             if contains_stone:
                 moves.append(coordinates)
@@ -58,6 +58,7 @@ def find_groups(board_state):
 
     return groups
 
+
 def find_groups_in_row(row, row_index, is_transposed=False):
     groups = []
     group = []
@@ -79,6 +80,7 @@ def find_groups_in_row(row, row_index, is_transposed=False):
 
 # TODO doesn't bring board back to prior state (ko rule)
 
+
 def transpose_board(board_state):
     board_size = get_board_size(board_state)
     transposed_board = []
@@ -93,8 +95,10 @@ def transpose_board(board_state):
             transposed_board[j][i] = old_board_move
     return transposed_board
 
+
 def get_board_size(board_state):
     return len(board_state[0])
+
 
 def find_intersecting_positions(position):
     x_coordinate = position[0]
@@ -105,12 +109,9 @@ def find_intersecting_positions(position):
     down = (x_coordinate + 1, y_coordinate)
     return [up, left, right, down]
 
+
 def get_score_dict(board_state):
-    score_dict = {
-        WHITE_STONE: 0,
-        BLACK_STONE: 0,
-        "relative_black_score": 0
-    }
+    score_dict = {WHITE_STONE: 0, BLACK_STONE: 0, "relative_black_score": 0}
     # first check if there's a string of stones to the right, and if so add up score
     score_dict = get_scores_by_row(board_state, score_dict)
 
@@ -118,9 +119,12 @@ def get_score_dict(board_state):
     score_dict = get_scores_by_row(board_state, score_dict, should_transpose_board=True)
 
     # update relative black score
-    score_dict["relative_black_score"] = score_dict[BLACK_STONE] - score_dict[WHITE_STONE]
+    score_dict["relative_black_score"] = (
+        score_dict[BLACK_STONE] - score_dict[WHITE_STONE]
+    )
 
     return score_dict
+
 
 def get_scores_by_row(board_state, score_dict, should_transpose_board=False):
     board = board_state
@@ -136,8 +140,9 @@ def get_scores_by_row(board_state, score_dict, should_transpose_board=False):
             score_dict[BLACK_STONE] = black_score
     return score_dict
 
+
 def get_row_score(row, stone_colour):
-    row_score = [ 0  for x in row]
+    row_score = [0 for x in row]
     score_count = 0
     for cell in row:
         if cell == stone_colour:
@@ -145,4 +150,3 @@ def get_row_score(row, stone_colour):
         else:
             score_count += 1
     return max(row_score)
-

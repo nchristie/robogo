@@ -15,6 +15,7 @@ WINNING_SCORE = 5
 # TODO remove drop down with ip addresses an form entry for player colour
 # TODO create button for starting new game
 
+
 class Index(View):
     def get(self, request):
         user_game = find_game_by_ip(get_client_ip(request))
@@ -52,16 +53,14 @@ class Index(View):
             try:
                 white_x, white_y = get_white_response(my_board.state)
                 white_move = Move(
-                game=user_game,
-                player='white',
-                x_coordinate=white_x,
-                y_coordinate=white_y
+                    game=user_game,
+                    player="white",
+                    x_coordinate=white_x,
+                    y_coordinate=white_y,
                 )
                 white_move.save()
             except Exception as e:
                 print(f"Failed to get white move with exception: {e}")
-
-
 
         context = {
             "my_board": my_board,
@@ -69,20 +68,21 @@ class Index(View):
             "form": form,
             "black_score": black_score,
             "white_score": white_score,
-            "winner": winner
+            "winner": winner,
         }
         return render(request, "games/index.html", context)
+
 
 class Board:
     def __init__(self, size=9):
         self.state = [[EMPTY_POSITION for j in range(size)] for i in range(size)]
-        self.size=size
+        self.size = size
 
     def draw(self, moves):
         for move in moves:
             player = BLACK_STONE
             if len(move.player) > 0 and move.player[0].lower() == "w":
-              player = WHITE_STONE
+                player = WHITE_STONE
             self.make_move(move.x_coordinate, move.y_coordinate, player)
 
     def make_move(self, x, y, player=BLACK_STONE):
@@ -92,6 +92,7 @@ class Board:
             print("Illegal move, try again")
             return
         self.state[x][y] = player
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
@@ -115,16 +116,17 @@ def find_game_by_ip(ip):
         user_game.save()
     return user_game
 
+
 def get_white_response(board_state):
-      my_node = GoNode(
-          move_id=0,
-          player="minimizer",
-          score=None,
-          is_terminal=False,
-          leaves=[],
-          board_state=board_state
-      )
-      my_node.set_leaves(player="minimizer", is_terminal=True)
-      white_move = my_node.optimal_move_coordinates
-      print(f"white_move: {white_move}")
-      return white_move
+    my_node = GoNode(
+        move_id=0,
+        player="minimizer",
+        score=None,
+        is_terminal=False,
+        leaves=[],
+        board_state=board_state,
+    )
+    my_node.set_leaves(player="minimizer", is_terminal=True)
+    white_move = my_node.optimal_move_coordinates
+    print(f"white_move: {white_move}")
+    return white_move

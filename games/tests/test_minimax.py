@@ -1,16 +1,13 @@
 from django.test import TestCase
 from games.minimax import MinimaxNode
 
+
 class NodeTestCase(TestCase):
     def test_get_score(self):
         """Get score"""
         # GIVEN
         my_node_1 = MinimaxNode(
-            move_id=1,
-            player="maximizer",
-            score=None,
-            is_terminal=False,
-            leaves=[]
+            move_id=1, player="maximizer", score=None, is_terminal=False, leaves=[]
         )
         expected = None
         actual = my_node_1.get_score()
@@ -20,11 +17,7 @@ class NodeTestCase(TestCase):
         """Set score"""
         # GIVEN
         my_node_2 = MinimaxNode(
-            move_id=2,
-            player="maximizer",
-            score=None,
-            is_terminal=False,
-            leaves=[]
+            move_id=2, player="maximizer", score=None, is_terminal=False, leaves=[]
         )
         my_node_2.set_score(5)
         expected = 5
@@ -35,11 +28,7 @@ class NodeTestCase(TestCase):
         """"""
         # GIVEN
         my_node_3 = MinimaxNode(
-            move_id=3,
-            player="maximizer",
-            score=None,
-            is_terminal=False,
-            leaves=[]
+            move_id=3, player="maximizer", score=None, is_terminal=False, leaves=[]
         )
         expected = []
         actual = my_node_3.get_leaves()
@@ -49,15 +38,11 @@ class NodeTestCase(TestCase):
         """"""
         # GIVEN
         my_node_4 = MinimaxNode(
-            move_id=4,
-            player="maximizer",
-            score=None,
-            is_terminal=False,
-            leaves=[]
+            move_id=4, player="maximizer", score=None, is_terminal=False, leaves=[]
         )
         score = 4
         move_id = 123
-        player = 'maximizer'
+        player = "maximizer"
         my_node_4.add_leaf(move_id, player, score)
         leaves = my_node_4.get_leaves()
         expected = (move_id, player, score)
@@ -68,31 +53,23 @@ class NodeTestCase(TestCase):
     def test_returns_max_for_maximizer(self):
         # GIVEN
         my_node_5 = MinimaxNode(
-            move_id=5,
-            player="maximizer",
-            score=None,
-            is_terminal=False,
-            leaves=[]
+            move_id=5, player="maximizer", score=None, is_terminal=False, leaves=[]
         )
         available_moves = [
             {
                 "move_id": 14,
                 "score": 1,
             },
-            {
-                "move_id": 15,
-                "score": 2
-            },
-            {
-                "move_id": 16,
-                "score": 3
-            }
+            {"move_id": 15, "score": 2},
+            {"move_id": 16, "score": 3},
         ]
         player = "maximizer"
 
         # WHEN
         for move in available_moves:
-            my_node_5.add_leaf(move_id=move['move_id'], score=move['score'], player=player)
+            my_node_5.add_leaf(
+                move_id=move["move_id"], score=move["score"], player=player
+            )
 
         # THEN
         expected = 3
@@ -102,34 +79,22 @@ class NodeTestCase(TestCase):
     def test_returns_min_for_minimizer(self):
         # GIVEN
         my_node_6 = MinimaxNode(
-            move_id=6,
-            player="maximizer",
-            score=None,
-            is_terminal=False,
-            leaves=[]
+            move_id=6, player="maximizer", score=None, is_terminal=False, leaves=[]
         )
         available_moves = [
             {
                 "move_id": 17,
                 "score": 4,
             },
-            {
-                "move_id": 18,
-                "score": 5
-            },
-            {
-                "move_id": 19,
-                "score": 6
-            }
+            {"move_id": 18, "score": 5},
+            {"move_id": 19, "score": 6},
         ]
         player = "minimizer"
 
         # WHEN
         for move in available_moves:
             my_node_6.add_leaf(
-                move_id=move['move_id'],
-                score=move['score'],
-                player=player
+                move_id=move["move_id"], score=move["score"], player=player
             )
 
         # THEN
@@ -137,4 +102,3 @@ class NodeTestCase(TestCase):
         optimal_move = my_node_6.get_optimal_move()
         actual = optimal_move.get_score()
         self.assertEqual(expected, actual)
-

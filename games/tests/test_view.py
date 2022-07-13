@@ -5,7 +5,7 @@ from games.views import Board, find_game_by_ip
 class BoardTestCase(TestCase):
     def setUp(self):
         self.my_board = Board()
-        ip = '000.00.0.0'
+        ip = "000.00.0.0"
         self.user_game = find_game_by_ip(ip)
 
     def test_board_draw(self):
@@ -22,7 +22,7 @@ class BoardTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
         moves = self.user_game.move_set.all().order_by("-id")
-        
+
         self.my_board.draw(moves)
 
         actual = self.my_board.state

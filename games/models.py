@@ -12,7 +12,7 @@ class Game(models.Model):
 
 class Move(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    player = models.CharField(max_length=6) # valid options are 'black' or 'white'
+    player = models.CharField(max_length=6)  # valid options are 'black' or 'white'
     x_coordinate = models.IntegerField()
     y_coordinate = models.IntegerField()
 
