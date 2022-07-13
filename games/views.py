@@ -4,10 +4,10 @@ from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode
-from .game_logic import get_score_dict
+from .game_logic import get_score_dict, WINNING_SCORE
 
 
-WINNING_SCORE = 5
+
 
 # TODO end game when one player gets 5 stones in a row
 # TODO display winner when someone won
