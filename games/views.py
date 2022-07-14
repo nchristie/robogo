@@ -4,7 +4,7 @@ from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode
-from .game_logic import get_score_dict, WINNING_SCORE
+from .game_logic import get_score_dict, WINNING_SCORE, transpose_board
 
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
@@ -57,9 +57,10 @@ class Index(View):
         # Update board with white response
         moves = user_game.move_set.all().order_by("-id")
         my_board.update(moves)
+        transposed_board = transpose_board(my_board.state)
 
         context = {
-            "board_state": my_board.state,
+            "board_state": transposed_board,
             "all_moves": moves,
             "form": form,
             "black_score": black_score,
@@ -70,7 +71,6 @@ class Index(View):
 
 
 class Board:
-    # TODO fix the x and y coordinates being inverted
     def __init__(self, size=9):
         self.state = [[EMPTY_POSITION for j in range(size)] for i in range(size)]
         self.size = size
