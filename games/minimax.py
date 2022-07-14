@@ -37,6 +37,7 @@ class MinimaxNode:
         return self.leaves
 
     def get_optimal_move(self):
+        # input is Node, output is Node
         best_move = self.leaves[0]
         player = best_move.player
         best_score = best_move.get_score()
@@ -62,27 +63,39 @@ class MinimaxNode:
         # Implemented by class which inherits
         return
 
-    def evaluate(self, maximizer_choice, minimizer_choice):
+    def evaluate_node(self, leaf, maximizer_choice_node, minimizer_choice_node):
+        # input is node, output is node
         # adapted from: https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
-        if self.is_terminal():
-            return self.get_utility()
+        if self.is_terminal:
+            self.set_score(self.get_utility())
+            return self
 
         if self.player == "minimizer":
             for leaf in self.leaves:
-                minimizer_choice = min(
-                    minimizer_choice,
-                    self.evaluate(leaf, maximizer_choice, minimizer_choice),
+                minimizer_choice_node = self.node_min(
+                    minimizer_choice_node,
+                    self.evaluate(leaf, maximizer_choice_node, minimizer_choice_node),
                 )
-                if minimizer_choice <= maximizer_choice:
-                    return minimizer_choice
-                return minimizer_choice
+                if minimizer_choice_node.get_score() <= maximizer_choice_node.get_score():
+                    return minimizer_choice_node
+                return minimizer_choice_node
 
         if self.player == "maximizer":
             for leaf in self.leaves:
-                maximizer_choice = max(
-                    maximizer_choice,
-                    self.evaluate(leaf, maximizer_choice, minimizer_choice),
+                maximizer_choice_node = self.node_max(
+                    maximizer_choice_node,
+                    self.evaluate(leaf, maximizer_choice_node, minimizer_choice_node),
                 )
-                if minimizer_choice <= maximizer_choice:
-                    return maximizer_choice
-                return maximizer_choice
+                if minimizer_choice_node.get_score() <= maximizer_choice_node.get_score():
+                    return maximizer_choice_node
+                return maximizer_choice_node
+
+    def node_min(self, first_node, second_node):
+        if second_node.get_score() < first_node.get_score():
+            return second_node
+        return first_node
+
+    def node_max(self, first_node, second_node):
+        if second_node.get_score() > first_node.get_score():
+            return second_node
+        return first_node

@@ -73,7 +73,7 @@ class GoNode(MinimaxNode):
             is_terminal=True,
             board_state=board_state,
         )
-        new_node.score = new_node.get_utility()
+        new_node.set_score(new_node.get_utility())
         return new_node
 
     def get_potential_moves(self):

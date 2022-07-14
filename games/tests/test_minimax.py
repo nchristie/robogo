@@ -2,7 +2,7 @@ from django.test import TestCase
 from games.minimax import MinimaxNode
 
 
-class NodeTestCase(TestCase):
+class MinimaxNodeTestCase(TestCase):
     def test_get_score(self):
         """Get score"""
         # GIVEN
@@ -102,3 +102,42 @@ class NodeTestCase(TestCase):
         optimal_move = my_node_6.get_optimal_move()
         actual = optimal_move.get_score()
         self.assertEqual(expected, actual)
+
+    def test_node_min(self):
+        # GIVEN
+        my_node_none = MinimaxNode(
+            move_id=1, player="maximizer", score=None, is_terminal=False, leaves=[]
+        )
+        my_node_low = MinimaxNode(
+            move_id=1, player="maximizer", score=-5, is_terminal=False, leaves=[]
+        )
+        my_node_high = MinimaxNode(
+            move_id=1, player="maximizer", score=5, is_terminal=False, leaves=[]
+        )
+
+        # WHEN
+        actual = my_node_none.node_min(my_node_low, my_node_high)
+
+        # THEN
+        expected = my_node_low
+        self.assertEqual(expected, actual)
+
+    def test_node_max(self):
+        # GIVEN
+        my_node_none = MinimaxNode(
+            move_id=1, player="maximizer", score=None, is_terminal=False, leaves=[]
+        )
+        my_node_low = MinimaxNode(
+            move_id=1, player="maximizer", score=-5, is_terminal=False, leaves=[]
+        )
+        my_node_high = MinimaxNode(
+            move_id=1, player="maximizer", score=5, is_terminal=False, leaves=[]
+        )
+
+        # WHEN
+        actual = my_node_none.node_max(my_node_low, my_node_high)
+
+        # THEN
+        expected = my_node_high
+        self.assertEqual(expected, actual)
+
