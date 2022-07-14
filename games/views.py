@@ -59,7 +59,7 @@ class Index(View):
         my_board.update(moves)
 
         context = {
-            "my_board": my_board,
+            "board_state": my_board.state,
             "all_moves": moves,
             "form": form,
             "black_score": black_score,
