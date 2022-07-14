@@ -6,17 +6,12 @@ from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode
 from .game_logic import get_score_dict, WINNING_SCORE
 
-
-# TODO end game when one player gets 5 stones in a row
-# TODO display winner when someone won
-# TODO give option to start a new game
-# TODO remove drop down with ip addresses an form entry for player colour
+# TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
 
 
 class Index(View):
     def get(self, request):
-        user_game = find_game_by_ip(get_client_ip(request))
         # TODO figure out what the get request should do instead of just
         # forwarding to post request
         return self.post(request)
@@ -25,6 +20,7 @@ class Index(View):
         user_game = find_game_by_ip(get_client_ip(request))
         game_id = user_game.id
         print(f"user_game id: {game_id}")
+
         initial_state = {"game": game_id, "player": "black"}
         form = MoveForm(request.POST, initial=initial_state)
         if form.is_valid():
@@ -32,7 +28,7 @@ class Index(View):
 
         my_board = Board()
         moves = user_game.move_set.all().order_by("-id")
-        my_board.draw(moves)
+        my_board.update(moves)
 
         scores = get_score_dict(my_board.state)
         black_score = scores[BLACK_STONE]
@@ -44,9 +40,7 @@ class Index(View):
             winner = "White"
 
         if winner == "No-one":
-
             # get white response
-            # TODO only move if it's white's turn
             # TODO split some logic here out into other function
             try:
                 white_x, white_y = get_white_response(my_board.state)
@@ -60,6 +54,10 @@ class Index(View):
             except Exception as e:
                 print(f"Failed to get white move with exception: {e}")
 
+        # Update board with white response
+        moves = user_game.move_set.all().order_by("-id")
+        my_board.update(moves)
+
         context = {
             "my_board": my_board,
             "all_moves": moves,
@@ -72,11 +70,12 @@ class Index(View):
 
 
 class Board:
+    # TODO fix the x and y coordinates being inverted
     def __init__(self, size=9):
         self.state = [[EMPTY_POSITION for j in range(size)] for i in range(size)]
         self.size = size
 
-    def draw(self, moves):
+    def update(self, moves):
         for move in moves:
             player = BLACK_STONE
             if len(move.player) > 0 and move.player[0].lower() == "w":

@@ -47,22 +47,15 @@ class GoNode(MinimaxNode):
                     )
                     for move_coordinates in all_intersecting_positions:
                         if is_move_valid(self.board_state, move_coordinates):
-                            move_id = self.generate_move_id()
-                            move_dict = {
-                                "move_coordinates": move_coordinates,
-                                "move_id": move_id,
-                            }
-
-                            x = move_dict["move_coordinates"][0]
-                            y = move_dict["move_coordinates"][1]
                             new_board_state = deepcopy(self.board_state)
+                            x = move_coordinates[0]
+                            y = move_coordinates[1]
                             new_board_state[x][y] = BLACK_STONE
-                            move_id = move_dict["move_id"]
                             leaf = GoNode(
-                                move_id=move_id,
+                                move_id=self.generate_move_id(),
                                 player="minimizer",
                                 board_state=new_board_state,
-                                move_coordinates=(x, y),
+                                move_coordinates=move_coordinates,
                             )
                             leaf.set_score(leaf.get_utility())
                             yield leaf

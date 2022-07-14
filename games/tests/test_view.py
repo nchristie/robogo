@@ -8,8 +8,8 @@ class BoardTestCase(TestCase):
         ip = "000.00.0.0"
         self.user_game = find_game_by_ip(ip)
 
-    def test_board_draw(self):
-        """Board can be drawn"""
+    def test_board_update(self):
+        """Board can be rendered"""
         expected = [
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
@@ -23,7 +23,7 @@ class BoardTestCase(TestCase):
         ]
         moves = self.user_game.move_set.all().order_by("-id")
 
-        self.my_board.draw(moves)
+        self.my_board.update(moves)
 
         actual = self.my_board.state
         self.assertEqual(actual, expected)

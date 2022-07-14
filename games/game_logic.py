@@ -32,6 +32,11 @@ def move_not_self_capture(board_state, move_coordinates):
     return True
 
 
+# TODO doesn't bring board back to prior state (ko rule)
+def move_doesnt_violate_ko_rule():
+    return
+
+
 def find_all_moves(board_state):
     moves = []
     for i, row in enumerate(board_state):
@@ -78,9 +83,6 @@ def find_groups_in_row(row, row_index, is_transposed=False):
     if group:
         groups.append(group)
     return groups
-
-
-# TODO doesn't bring board back to prior state (ko rule)
 
 
 def transpose_board(board_state):
