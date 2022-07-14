@@ -7,8 +7,6 @@ from .go_minimax_joiner import GoNode
 from .game_logic import get_score_dict, WINNING_SCORE
 
 
-
-
 # TODO end game when one player gets 5 stones in a row
 # TODO display winner when someone won
 # TODO give option to start a new game

@@ -42,11 +42,16 @@ class GoNode(MinimaxNode):
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
-                    all_intersecting_positions = self.find_moves_around_position(x_coordinate, y_coordinate)
+                    all_intersecting_positions = self.find_moves_around_position(
+                        x_coordinate, y_coordinate
+                    )
                     for move_coordinates in all_intersecting_positions:
                         if is_move_valid(self.board_state, move_coordinates):
                             move_id = self.generate_move_id()
-                            move_dict = {"move_coordinates": move_coordinates, "move_id": move_id}
+                            move_dict = {
+                                "move_coordinates": move_coordinates,
+                                "move_id": move_id,
+                            }
 
                             x = move_dict["move_coordinates"][0]
                             y = move_dict["move_coordinates"][1]
@@ -57,11 +62,10 @@ class GoNode(MinimaxNode):
                                 move_id=move_id,
                                 player="minimizer",
                                 board_state=new_board_state,
-                                move_coordinates=(x,y)
+                                move_coordinates=(x, y),
                             )
                             leaf.set_score(leaf.get_utility())
                             yield leaf
-
 
     def find_moves_around_position(self, x_coordinate, y_coordinate):
         up = (x_coordinate - 1, y_coordinate)

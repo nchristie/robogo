@@ -62,7 +62,6 @@ class GoNodeTestCase(TestCase):
         potential_moves = self.my_node.get_potential_moves()
         actual = [item.move_coordinates for item in potential_moves]
 
-
         # THEN
         expected = [(1, 2), (2, 1)]
         self.assertEqual(expected, actual)
@@ -79,7 +78,6 @@ class GoNodeTestCase(TestCase):
         # WHEN
         potential_moves = self.my_node.get_potential_moves()
         actual = [item.move_coordinates for item in potential_moves]
-
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 0), (2, 2), (3, 1)]
@@ -103,7 +101,6 @@ class GoNodeTestCase(TestCase):
     #     # THEN
     #     expected = []
     #     self.assertEqual(expected, actual)
-
 
     def test_get_potential_moves_returns_generator(self):
         # GIVEN

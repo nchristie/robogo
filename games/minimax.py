@@ -76,7 +76,10 @@ class MinimaxNode:
                     minimizer_choice_node,
                     self.evaluate(leaf, maximizer_choice_node, minimizer_choice_node),
                 )
-                if minimizer_choice_node.get_score() <= maximizer_choice_node.get_score():
+                if (
+                    minimizer_choice_node.get_score()
+                    <= maximizer_choice_node.get_score()
+                ):
                     return minimizer_choice_node
                 return minimizer_choice_node
 
@@ -86,7 +89,10 @@ class MinimaxNode:
                     maximizer_choice_node,
                     self.evaluate(leaf, maximizer_choice_node, minimizer_choice_node),
                 )
-                if minimizer_choice_node.get_score() <= maximizer_choice_node.get_score():
+                if (
+                    minimizer_choice_node.get_score()
+                    <= maximizer_choice_node.get_score()
+                ):
                     return maximizer_choice_node
                 return maximizer_choice_node
 

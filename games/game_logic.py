@@ -2,6 +2,7 @@ from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 
 WINNING_SCORE = 5
 
+
 def is_move_valid(board_state, move_coordinates):
     checks = [is_move_within_board_boudaries, is_move_in_free_position]
     for check in checks:
