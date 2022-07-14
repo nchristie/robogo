@@ -123,7 +123,27 @@ def get_white_response(board_state):
         leaves=[],
         board_state=board_state,
     )
-    my_node.set_leaves()
-    white_move = my_node.optimal_move_coordinates
+
+    maximizer_choice_node = GoNode(
+        move_id=0,
+        player="minimizer",
+        score=-float('inf'),
+        is_terminal=False,
+        leaves=[],
+        board_state=board_state,
+    )
+
+    minimizer_choice_node = GoNode(
+        move_id=0,
+        player="minimizer",
+        score=float('inf'),
+        is_terminal=False,
+        leaves=[],
+        board_state=board_state,
+    )
+
+    depth = 4
+    white_move_node = my_node.evaluate_node(my_node, maximizer_choice_node, minimizer_choice_node, depth)
+    white_move = white_move_node.move_coordinates
     print(f"white_move: {white_move}")
     return white_move

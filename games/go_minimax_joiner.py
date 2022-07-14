@@ -22,21 +22,21 @@ class GoNode(MinimaxNode):
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def set_leaves(self):
-        # returns an array of Nodes representing the
-        # candidates for next move in game
-        for leaf in self.get_potential_moves():
-            self.add_leaf(leaf)
+    # def set_leaves(self):
+    #     # returns an array of Nodes representing the
+    #     # candidates for next move in game
+    #     for leaf in self.generate_leaves():
+    #         self.add_leaf(leaf)
 
-        optimal_move_id = self.get_optimal_move().move_id
-        for leaf in self.leaves:
-            if leaf.move_id == optimal_move_id:
-                self.optimal_move_coordinates = leaf.move_coordinates
+    #     optimal_move_id = self.get_optimal_move().move_id
+    #     for leaf in self.leaves:
+    #         if leaf.move_id == optimal_move_id:
+    #             self.optimal_move_coordinates = leaf.move_coordinates
 
     def add_leaf(self, leaf):
         self.leaves.append(leaf)
 
-    def get_potential_moves(self):
+    def generate_leaves(self, player="minimizer"):
         # Currently only gives moves around existing stones on board
         # TODO give all potential moves on board
         for x_coordinate, row in enumerate(self.board_state):
@@ -53,7 +53,7 @@ class GoNode(MinimaxNode):
                             new_board_state[x][y] = BLACK_STONE
                             leaf = GoNode(
                                 move_id=self.generate_move_id(),
-                                player="minimizer",
+                                player=player,
                                 board_state=new_board_state,
                                 move_coordinates=move_coordinates,
                             )

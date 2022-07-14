@@ -36,6 +36,10 @@ class MinimaxNode:
     def get_leaves(self):
         return self.leaves
 
+    def generate_leaves(self):
+        # implemented by inheritor
+        return
+
     def get_optimal_move(self):
         # input is Node, output is Node
         best_move = self.leaves[0]
@@ -60,21 +64,29 @@ class MinimaxNode:
         return leaf_score < best_score
 
     def get_utility(self):
+        print("In minimax get_utility")
         # Implemented by class which inherits
         return
 
-    def evaluate_node(self, leaf, maximizer_choice_node, minimizer_choice_node):
+    def evaluate_node(self, leaf, maximizer_choice_node, minimizer_choice_node, depth):
         # input is node, output is node
         # adapted from: https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
-        if self.is_terminal:
-            self.set_score(self.get_utility())
-            return self
+        depth -= 1
+        print(f"In evaluate_node, depth = {depth}")
 
-        if self.player == "minimizer":
-            for leaf in self.leaves:
+        if depth <= 0:
+            leaf.is_terminal = True
+
+        if leaf.is_terminal:
+            self.set_score(self.get_utility())
+            return leaf
+
+        if leaf.player == "minimizer":
+            # TODO use the new generator for leaves
+            for leaf in self.generate_leaves(player="minimizer"):
                 minimizer_choice_node = self.node_min(
                     minimizer_choice_node,
-                    self.evaluate(leaf, maximizer_choice_node, minimizer_choice_node),
+                    self.evaluate_node(leaf, maximizer_choice_node, minimizer_choice_node, depth),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -84,10 +96,10 @@ class MinimaxNode:
                 return minimizer_choice_node
 
         if self.player == "maximizer":
-            for leaf in self.leaves:
+            for leaf in self.generate_leaves(player="maximizer"):
                 maximizer_choice_node = self.node_max(
                     maximizer_choice_node,
-                    self.evaluate(leaf, maximizer_choice_node, minimizer_choice_node),
+                    self.evaluate_node(leaf, maximizer_choice_node, minimizer_choice_node, depth),
                 )
                 if (
                     minimizer_choice_node.get_score()

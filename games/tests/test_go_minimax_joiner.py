@@ -15,39 +15,39 @@ class GoNodeTestCase(TestCase):
             board_state=None,
         )
 
-    def test_leaf_getter_makes_array(self):
-        # GIVEN
-        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
-        self.my_node.board_state = board_state
-        self.my_node.set_leaves()
-        node_array = self.my_node.leaves
+    # def test_leaf_getter_makes_array(self):
+    #     # GIVEN
+    #     board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
+    #     self.my_node.board_state = board_state
+    #     self.my_node.set_leaves()
+    #     node_array = self.my_node.leaves
 
-        # WHEN
-        actual = type(node_array)
+    #     # WHEN
+    #     actual = type(node_array)
 
-        # THEN
-        expected = list
-        self.assertEqual(expected, actual)
+    #     # THEN
+    #     expected = list
+    #     self.assertEqual(expected, actual)
 
-    def test_leaf_getter_array_has_uuid_move_ids(self):
-        # GIVEN
-        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
-        self.my_node.board_state = board_state
+    # def test_leaf_getter_array_has_uuid_move_ids(self):
+    #     # GIVEN
+    #     board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
+    #     self.my_node.board_state = board_state
 
-        # WHEN
-        self.my_node.set_leaves()
-        node_array = self.my_node.leaves
+    #     # WHEN
+    #     self.my_node.set_leaves()
+    #     node_array = self.my_node.leaves
 
-        # THEN
-        for node in node_array:
-            assert UUID(node.get_move_id())
+    #     # THEN
+    #     for node in node_array:
+    #         assert UUID(node.get_move_id())
 
     def test_find_legal_move(self):
         # GIVEN
         self.my_node.board_state = [["+", "+", "+"], ["+", "●", "+"], ["+", "+", "+"]]
 
         # WHEN
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -59,7 +59,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state = [["+", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
 
         # WHEN
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -76,7 +76,7 @@ class GoNodeTestCase(TestCase):
         ]
 
         # WHEN
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -102,7 +102,7 @@ class GoNodeTestCase(TestCase):
     #     expected = []
     #     self.assertEqual(expected, actual)
 
-    def test_get_potential_moves_returns_generator(self):
+    def test_generate_leaves_returns_generator(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         self.my_node.board_state = board_state
@@ -111,7 +111,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = GeneratorType
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 
@@ -124,7 +124,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0)]
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -137,7 +137,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -150,7 +150,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -163,7 +163,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = self.my_node.get_potential_moves()
+        potential_moves = self.my_node.generate_leaves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 

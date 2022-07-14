@@ -29,8 +29,7 @@ docker-compose run --rm web python manage.py shell
 from games.models import Game, Move
 
 games = Game.objects.order_by('-id')
-game.move_set.all()  # queryset of related Moves
-[game.delete() for game in games] # deletes current game
+games = Game.objects.order_by('-id'); [game.delete() for game in games] # deletes all games
 
 game = Game.objects.order_by('-id')[0]
 game.move_set.all()  # queryset of related Moves
