@@ -270,7 +270,7 @@ class GoNodeTestCase(TestCase):
         self.my_node.board_state = board_state
 
         # WHEN
-        self.my_node.set_leaves(player="maximizer", is_terminal=True)
+        self.my_node.set_leaves(player="maximizer")
         actual = self.my_node.optimal_move_coordinates
         # THEN
         expected = (2, 0)

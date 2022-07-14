@@ -20,37 +20,31 @@ class GoNode(MinimaxNode):
         self.board_state = board_state
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def set_leaves(self, player=None, is_terminal=False):
+    def set_leaves(self, player=None):
         # returns an array of Nodes representing the
         # candidates for next move in game
         potential_moves = [move for move in self.get_potential_moves()]
-        if is_terminal:
-            for item in potential_moves:
-                x = item["move_coordinates"][0]
-                y = item["move_coordinates"][1]
-                new_board_state = deepcopy(self.board_state)
-                new_board_state[x][y] = BLACK_STONE
-                move_id = item["move_id"]
-                terminal_node = self.make_terminal_node(
-                    new_board_state, move_id, player
-                )
-                self.add_go_leaf(
-                    move_id=item["move_id"],
-                    player=player,
-                    score=terminal_node.score,
-                    board_state=new_board_state,
-                )
-        else:
-            for item in potential_moves:
-                self.add_go_leaf(
-                    move_id=item["move_id"],
-                )
 
-        if is_terminal:
-            optimal_move_id = self.get_optimal_move().move_id
-            for move in potential_moves:
-                if move["move_id"] == optimal_move_id:
-                    self.optimal_move_coordinates = move["move_coordinates"]
+        for item in potential_moves:
+            x = item["move_coordinates"][0]
+            y = item["move_coordinates"][1]
+            new_board_state = deepcopy(self.board_state)
+            new_board_state[x][y] = BLACK_STONE
+            move_id = item["move_id"]
+            terminal_node = self.make_terminal_node(
+                new_board_state, move_id, player
+            )
+            self.add_go_leaf(
+                move_id=item["move_id"],
+                player=player,
+                score=terminal_node.score,
+                board_state=new_board_state,
+            )
+
+        optimal_move_id = self.get_optimal_move().move_id
+        for move in potential_moves:
+            if move["move_id"] == optimal_move_id:
+                self.optimal_move_coordinates = move["move_coordinates"]
 
     def add_go_leaf(
         self, move_id=None, player=None, score=None, leaves=[], board_state=None

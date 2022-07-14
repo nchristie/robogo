@@ -126,7 +126,7 @@ def get_white_response(board_state):
         leaves=[],
         board_state=board_state,
     )
-    my_node.set_leaves(player="minimizer", is_terminal=True)
+    my_node.set_leaves(player="minimizer")
     white_move = my_node.optimal_move_coordinates
     print(f"white_move: {white_move}")
     return white_move
