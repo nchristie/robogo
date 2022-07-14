@@ -120,13 +120,13 @@ def find_game_by_ip(ip):
 def get_white_response(board_state):
     my_node = GoNode(
         move_id=0,
-        player="minimizer",
+        player="maximizer",
         score=None,
         is_terminal=False,
         leaves=[],
         board_state=board_state,
     )
-    my_node.set_leaves(player="minimizer")
+    my_node.set_leaves()
     white_move = my_node.optimal_move_coordinates
     print(f"white_move: {white_move}")
     return white_move

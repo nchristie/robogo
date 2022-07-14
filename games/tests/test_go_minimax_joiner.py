@@ -48,7 +48,7 @@ class GoNodeTestCase(TestCase):
 
         # WHEN
         potential_moves = self.my_node.get_potential_moves()
-        actual = [item["move_coordinates"] for item in potential_moves]
+        actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
@@ -60,7 +60,7 @@ class GoNodeTestCase(TestCase):
 
         # WHEN
         potential_moves = self.my_node.get_potential_moves()
-        actual = [item["move_coordinates"] for item in potential_moves]
+        actual = [item.move_coordinates for item in potential_moves]
 
 
         # THEN
@@ -78,7 +78,7 @@ class GoNodeTestCase(TestCase):
 
         # WHEN
         potential_moves = self.my_node.get_potential_moves()
-        actual = [item["move_coordinates"] for item in potential_moves]
+        actual = [item.move_coordinates for item in potential_moves]
 
 
         # THEN
@@ -128,7 +128,7 @@ class GoNodeTestCase(TestCase):
         # THEN
         expected = [(0, 1), (1, 0)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [item["move_coordinates"] for item in potential_moves]
+        actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_attack_options_2_groups(self):
@@ -141,7 +141,7 @@ class GoNodeTestCase(TestCase):
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [item["move_coordinates"] for item in potential_moves]
+        actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_defend_options_2_groups(self):
@@ -154,7 +154,7 @@ class GoNodeTestCase(TestCase):
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [item["move_coordinates"] for item in potential_moves]
+        actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_attack_and_defend_options(self):
@@ -167,7 +167,7 @@ class GoNodeTestCase(TestCase):
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
         potential_moves = self.my_node.get_potential_moves()
-        actual = [item["move_coordinates"] for item in potential_moves]
+        actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
     def test_get_scores_one_stone(self):
@@ -266,11 +266,11 @@ class GoNodeTestCase(TestCase):
 
     def test_gets_best_move_only_one_option(self):
         # GIVEN
-        board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
+        board_state = [["○", "+", "+"], ["○", "+", "+"], ["+", "+", "+"]]
         self.my_node.board_state = board_state
 
         # WHEN
-        self.my_node.set_leaves(player="maximizer")
+        self.my_node.set_leaves()
         actual = self.my_node.optimal_move_coordinates
         # THEN
         expected = (2, 0)
