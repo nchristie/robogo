@@ -60,3 +60,14 @@ def build_game_tree(board_state):
         child_node.set_leaves(player="minimizer", is_terminal=False) # depth of 2
         for grandchild_node in child_node.leaves:
             grandchild_node.set_leaves(player="minimizer", is_terminal=True) # depth of 3
+
+# Generator example:
+# source https://wiki.python.org/moin/Generators
+def firstn(n):
+    num = 0
+    while num < n:
+        yield num
+        num += 1
+
+x = firstn(10)
+next(x)

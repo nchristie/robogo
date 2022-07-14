@@ -1,6 +1,7 @@
 from django.test import TestCase
 from games.go_minimax_joiner import GoNode, BLACK_STONE
 from uuid import UUID
+from types import GeneratorType
 
 
 class GoNodeTestCase(TestCase):
@@ -43,14 +44,11 @@ class GoNodeTestCase(TestCase):
 
     def test_find_legal_move(self):
         # GIVEN
-        x_coordinate = 1
-        y_coordinate = 1
         self.my_node.board_state = [["+", "+", "+"], ["+", "●", "+"], ["+", "+", "+"]]
 
         # WHEN
-        actual = self.my_node.find_legal_moves_around_position(
-            x_coordinate, y_coordinate
-        )
+        potential_moves = self.my_node.get_potential_moves()
+        actual = [item["move_coordinates"] for item in potential_moves]
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
@@ -58,14 +56,12 @@ class GoNodeTestCase(TestCase):
 
     def test_find_legal_move_when_boundary(self):
         # GIVEN
-        x_coordinate = 2
-        y_coordinate = 2
         self.my_node.board_state = [["+", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
 
         # WHEN
-        actual = self.my_node.find_legal_moves_around_position(
-            x_coordinate, y_coordinate
-        )
+        potential_moves = self.my_node.get_potential_moves()
+        actual = [item["move_coordinates"] for item in potential_moves]
+
 
         # THEN
         expected = [(1, 2), (2, 1)]
@@ -73,8 +69,6 @@ class GoNodeTestCase(TestCase):
 
     def test_find_legal_move_when_neighbouring_stones(self):
         # GIVEN
-        x_coordinate = 1
-        y_coordinate = 1
         self.my_node.board_state = [
             ["+", "+", "+", "+"],
             ["+", "●", "+", "+"],
@@ -83,12 +77,12 @@ class GoNodeTestCase(TestCase):
         ]
 
         # WHEN
-        actual = self.my_node.find_legal_moves_around_position(
-            x_coordinate, y_coordinate
-        )
+        potential_moves = self.my_node.get_potential_moves()
+        actual = [item["move_coordinates"] for item in potential_moves]
+
 
         # THEN
-        expected = [(0, 1), (1, 0), (1, 2)]
+        expected = [(0, 1), (1, 0), (1, 2), (2, 0), (2, 2), (3, 1)]
         self.assertEqual(expected, actual)
 
     # TODO Implement this logic in the code
@@ -104,11 +98,25 @@ class GoNodeTestCase(TestCase):
     #     ]
 
     #     # WHEN
-    #     actual = self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)
+    #     actual = [move for move in self.my_node.find_legal_moves_around_position(x_coordinate, y_coordinate)]
 
     #     # THEN
     #     expected = []
     #     self.assertEqual(expected, actual)
+
+
+    def test_get_potential_moves_returns_generator(self):
+        # GIVEN
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
+        self.my_node.board_state = board_state
+
+        # WHEN
+
+        # THEN
+        expected = GeneratorType
+        potential_moves = self.my_node.get_potential_moves()
+        actual = type(potential_moves)
+        self.assertEqual(expected, actual)
 
     def test_leaf_getter_returns_attack_options(self):
         # GIVEN

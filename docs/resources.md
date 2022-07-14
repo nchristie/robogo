@@ -74,3 +74,4 @@ https://stackoverflow.com/
 # Python generators:
 - https://wiki.python.org/moin/Generators
 - https://realpython.com/introduction-to-python-generators/
+- https://stackoverflow.com/questions/2419770/how-to-get-one-value-at-a-time-from-a-generator-function-in-python

@@ -23,7 +23,7 @@ class GoNode(MinimaxNode):
     def set_leaves(self, player=None, is_terminal=False):
         # returns an array of Nodes representing the
         # candidates for next move in game
-        potential_moves = self.get_potential_moves()
+        potential_moves = [move for move in self.get_potential_moves()]
         if is_terminal:
             for item in potential_moves:
                 x = item["move_coordinates"][0]
@@ -77,33 +77,27 @@ class GoNode(MinimaxNode):
         return new_node
 
     def get_potential_moves(self):
-        potential_moves = []
-        for i, row in enumerate(self.board_state):
-            for j, cell in enumerate(row):
+        # Currently returns a list of dictionaries
+        # Currently only gives moves around existing stones on board
+        # TODO give all potential moves on board
+        # TODO Return GoNode instead of dictionary
+        for x_coordinate, row in enumerate(self.board_state):
+            for y_coordinate, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
-                    potential_move = self.find_legal_moves_around_position(i, j)
-                    potential_moves.extend(potential_move)
+                    all_intersecting_positions = self.find_moves_around_position(x_coordinate, y_coordinate)
+                    for move_coordinates in all_intersecting_positions:
+                        if is_move_valid(self.board_state, move_coordinates):
+                            move_id = self.generate_move_id()
+                            move_dict = {"move_coordinates": move_coordinates, "move_id": move_id}
+                            yield move_dict
 
-        potential_moves_with_ids = []
-        for move in potential_moves:
-            move_id = self.generate_move_id()
-            move_dict = {"move_coordinates": move, "move_id": move_id}
-            potential_moves_with_ids.append(move_dict)
-        return potential_moves_with_ids
 
-    def find_legal_moves_around_position(self, x_coordinate, y_coordinate):
+    def find_moves_around_position(self, x_coordinate, y_coordinate):
         up = (x_coordinate - 1, y_coordinate)
         left = (x_coordinate, y_coordinate - 1)
         right = (x_coordinate, y_coordinate + 1)
         down = (x_coordinate + 1, y_coordinate)
-        all_intersecting_positions = [up, left, right, down]
-
-        potential_moves = []
-        for move_coordinates in all_intersecting_positions:
-            if is_move_valid(self.board_state, move_coordinates):
-                potential_moves.append(move_coordinates)
-
-        return potential_moves
+        return [up, left, right, down]
 
     def generate_move_id(self):
         return str(uuid.uuid4())
