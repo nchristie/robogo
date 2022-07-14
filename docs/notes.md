@@ -53,3 +53,10 @@ def evaluate(self, maximizer_choice, minimizer_choice):
             if minimizer_choice <= maximizer_choice:
                 return maximizer_choice
             return maximizer_choice
+
+def build_game_tree(board_state):
+    my_node.set_leaves(player="minimizer", is_terminal=False) # depth of 1
+    for child_node in my_node.leaves:
+        child_node.set_leaves(player="minimizer", is_terminal=False) # depth of 2
+        for grandchild_node in child_node.leaves:
+            grandchild_node.set_leaves(player="minimizer", is_terminal=True) # depth of 3

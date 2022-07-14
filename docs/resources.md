@@ -6,6 +6,8 @@
 # Minimax and Alpha-Beta Search with Python
 - https://levelup.gitconnected.com/mastering-tic-tac-toe-with-minimax-algorithm-3394d65fa88f
 - https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python/
+- https://tonypoer.io/2016/10/28/implementing-minimax-and-alpha-beta-pruning-using-python/
+- https://tonypoer.io/2016/10/08/recursively-parsing-a-list-of-lists-into-a-game-tree-using-python/
 
 # Minimax ideas
 - https://blog.boot.dev/computer-science/binary-search-tree-in-python/ I used binary search tree as the model for creating a tree with many leaves
@@ -68,3 +70,7 @@
 
 # Starting game from shell:
 https://stackoverflow.com/
+
+# Python generators:
+- https://wiki.python.org/moin/Generators
+- https://realpython.com/introduction-to-python-generators/

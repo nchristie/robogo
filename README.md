@@ -20,7 +20,7 @@ All django-compatible tests:
 - `docker-compose run --rm web python manage.py test`
 
 One test (example):
-- `docker-compose run --rm web python manage.py test games.tests.test_go_minimax_joiner.LeafGetterTestCase.test_get_scores_one_stone`
+- `docker-compose run --rm web python manage.py test games.tests.test_minimax.NodeTestCase.test_evaluate_node`
 
 The file which isn't Django compatible:
 `docker-compose run --rm web python3 -m pytest games/tests/test_game_logic.py`
