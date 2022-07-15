@@ -140,3 +140,4 @@ class MinimaxNodeTestCase(TestCase):
         # THEN
         expected = my_node_high
         self.assertEqual(expected, actual)
+

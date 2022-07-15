@@ -203,3 +203,13 @@ def test_get_row_score_row_begins_and_ends_with_empty_space():
     # THEN
     expected = 3
     assert expected == actual
+
+def test_list_all_moves_on_board():
+    # WHEN
+    board_size = 9
+    all_moves = list_all_moves_on_board(board_size)
+    actual = len(all_moves)
+
+    # THEN
+    expected = 81
+    assert expected == actual

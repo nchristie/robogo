@@ -2,12 +2,15 @@
 - https://www.youtube.com/watch?v=STjW3eH0Cik (35:26)
 - https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
 - https://en.wikipedia.org/wiki/Minimax Non-leaf nodes inherit their value from a descendant leaf node
+- https://www.javatpoint.com/ai-alpha-beta-pruning#:~:text=Pseudo%2Dcode%20for%20Alpha%2Dbeta%20Pruning%3A&text=if%20MaximizingPlayer%20then%20%2F%2F%20for,%2C%20alpha%2C%20beta%2C%20False)
+- https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
 
 # Minimax and Alpha-Beta Search with Python
 - https://levelup.gitconnected.com/mastering-tic-tac-toe-with-minimax-algorithm-3394d65fa88f
 - https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python/
 - https://tonypoer.io/2016/10/28/implementing-minimax-and-alpha-beta-pruning-using-python/
 - https://tonypoer.io/2016/10/08/recursively-parsing-a-list-of-lists-into-a-game-tree-using-python/
+
 
 # Minimax ideas
 - https://blog.boot.dev/computer-science/binary-search-tree-in-python/ I used binary search tree as the model for creating a tree with many leaves
@@ -75,3 +78,7 @@ https://stackoverflow.com/
 - https://wiki.python.org/moin/Generators
 - https://realpython.com/introduction-to-python-generators/
 - https://stackoverflow.com/questions/2419770/how-to-get-one-value-at-a-time-from-a-generator-function-in-python
+
+# Python conventions:
+- https://www.geeksforgeeks.org/python-docstrings/#:~:text=Declaring%20Docstrings%3A%20The%20docstrings%20are,functions%20should%20have%20a%20docstring.
+- https://www.programiz.com/python-programming/docstrings

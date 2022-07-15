@@ -99,6 +99,14 @@ def transpose_board(board_state):
             transposed_board[j][i] = old_board_move
     return transposed_board
 
+def list_all_moves_on_board(board_size):
+    all_moves = []
+    for x in range(board_size):
+        for y in range(board_size):
+            move = (x, y)
+            all_moves.append(move)
+    return all_moves
+
 
 def get_board_size(board_state):
     return len(board_state[0])

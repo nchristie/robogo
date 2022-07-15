@@ -73,3 +73,10 @@ def firstn(n):
 
 x = firstn(10)
 next(x)
+
+
+def count_down(start):
+    print(start)
+    next = start - 1
+    if next > 0:
+        count_down(next)
