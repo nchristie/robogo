@@ -36,7 +36,7 @@ class MinimaxNode:
     def get_branches(self):
         return self.branches
 
-    def generate_branches(self):
+    def generate_next_node(self):
         # implemented by inheritor
         return
 
@@ -83,7 +83,7 @@ class MinimaxNode:
             return node
 
         if node.player == "minimizer":
-            for branch in node.generate_branches():
+            for branch in node.generate_next_node():
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
                     node.evaluate_node(branch, maximizer_choice_node, minimizer_choice_node, depth),
@@ -96,7 +96,7 @@ class MinimaxNode:
                 return minimizer_choice_node
 
         if node.player == "maximizer":
-            for branch in node.generate_branches():
+            for branch in node.generate_next_node():
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,
                     node.evaluate_node(branch, maximizer_choice_node, minimizer_choice_node, depth),
@@ -129,7 +129,7 @@ class MinimaxNode:
             return node_score
 
         if node.player == "minimizer":
-            for branch in node.generate_branches():
+            for branch in node.generate_next_node():
                 node.add_branch(branch)
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
@@ -145,7 +145,7 @@ class MinimaxNode:
                 return minimizer_choice_node.get_score()
 
         if node.player == "maximizer":
-            for branch in node.generate_branches():
+            for branch in node.generate_next_node():
                 node.add_branch(branch)
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,

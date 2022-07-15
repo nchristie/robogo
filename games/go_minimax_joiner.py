@@ -34,24 +34,23 @@ class GoNode(MinimaxNode):
     def build_game_tree(self, depth):
         # Base case
         # If we're at a terminal node leave the recursion
+        if depth == 0:
+            self.is_terminal = True
+
         if self.is_terminal:
             return
 
         # recurse case
-        branches = [branch for branch in self.generate_branches()]
-        for branch in branches:
-            if depth == 0:
-                # once we're at full depth make these nodes terminal
-                branch.is_terminal = True
-            self.branches.append(branch)
-            branch.build_game_tree(depth-1)
+        for node in self.generate_next_node():
+            self.branches.append(node)
+            node.build_game_tree(depth-1)
 
     def alternate_player(self):
         if self.player == "minimizer":
             return "maximizer"
         return "minimizer"
 
-    def generate_branches(self):
+    def generate_next_node(self):
         """
         Yields:
             GoNode: next possible move on the board
@@ -66,18 +65,18 @@ class GoNode(MinimaxNode):
                 x = move_coordinates[0]
                 y = move_coordinates[1]
                 new_board_state[x][y] = stone
-                branch = GoNode(
+                next_node = GoNode(
                     move_id=self.generate_move_id(),
                     player=player,
                     board_state=new_board_state,
                     move_coordinates=move_coordinates,
                 )
-                score_dict = get_score_dict(branch.board_state)
+                score_dict = get_score_dict(next_node.board_state)
                 if score_dict[stone] >= WINNING_SCORE:
-                    branch.is_terminal = True
-                yield branch
+                    next_node.is_terminal = True
+                yield next_node
 
-    def generate_branches_around_existing_moves(self, player="minimizer"):
+    def generate_next_node_around_existing_moves(self, player="minimizer"):
         # I've returned this function to the code as I think I may want it later
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
