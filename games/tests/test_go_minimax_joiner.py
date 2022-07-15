@@ -12,12 +12,12 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
         # WHEN
-        potential_moves = my_node_1.generate_leaves_around_existing_moves()
+        potential_moves = my_node_1.generate_branches_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -31,12 +31,12 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
         # WHEN
-        potential_moves = my_node_2.generate_leaves_around_existing_moves()
+        potential_moves = my_node_2.generate_branches_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -55,12 +55,12 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
         # WHEN
-        potential_moves = my_node_3.generate_leaves_around_existing_moves()
+        potential_moves = my_node_3.generate_branches_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -69,14 +69,14 @@ class GoNodeTestCase(TestCase):
 
     # TODO test_find_legal_move_when_surrounded
 
-    def test_generate_leaves_returns_generator(self):
+    def test_generate_branches_returns_generator(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_4 = GoNode(
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -84,18 +84,18 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = GeneratorType
-        potential_moves = my_node_4.generate_leaves()
+        potential_moves = my_node_4.generate_branches()
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 
-    def test_leaf_getter_returns_attack_options(self):
+    def test_branch_getter_returns_attack_options(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_5 = GoNode(
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -103,18 +103,18 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0)]
-        potential_moves = my_node_5.generate_leaves_around_existing_moves()
+        potential_moves = my_node_5.generate_branches_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
-    def test_leaf_getter_returns_attack_options_2_groups(self):
+    def test_branch_getter_returns_attack_options_2_groups(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
         my_node_6 = GoNode(
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -122,18 +122,18 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_6.generate_leaves_around_existing_moves()
+        potential_moves = my_node_6.generate_branches_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
-    def test_leaf_getter_returns_defend_options_2_groups(self):
+    def test_branch_getter_returns_defend_options_2_groups(self):
         # GIVEN
         board_state = [["○", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
         my_node_7 = GoNode(
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -141,18 +141,18 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_7.generate_leaves_around_existing_moves()
+        potential_moves = my_node_7.generate_branches_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
-    def test_leaf_getter_returns_attack_and_defend_options(self):
+    def test_branch_getter_returns_attack_and_defend_options(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
         my_node_8 = GoNode(
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -160,7 +160,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_8.generate_leaves_around_existing_moves()
+        potential_moves = my_node_8.generate_branches_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -171,7 +171,7 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -189,7 +189,7 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -207,7 +207,7 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -225,7 +225,7 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -243,7 +243,7 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -261,7 +261,7 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -289,7 +289,7 @@ class GoNodeTestCase(TestCase):
             player="maximizer",
             score=0,
             is_terminal=False,
-            leaves=[],
+            branches=[],
             board_state=board_state,
         )
 
@@ -321,7 +321,7 @@ class GoNodeTestCase(TestCase):
 
         # WHEN
         game_tree_node_1.build_game_tree(depth)
-        actual = game_tree_node_1.get_leaves()[0].get_leaves()
+        actual = game_tree_node_1.get_branches()[0].get_branches()
 
         # THEN
         expected = []
@@ -343,7 +343,7 @@ class GoNodeTestCase(TestCase):
 
         # WHEN
         game_tree_node_2.build_game_tree(depth)
-        actual = len(game_tree_node_2.get_leaves())
+        actual = len(game_tree_node_2.get_branches())
 
         # THEN
         expected = 7
@@ -363,8 +363,8 @@ class GoNodeTestCase(TestCase):
 
         # WHEN
         game_tree_node_3.build_game_tree(depth)
-        leaves = game_tree_node_3.get_leaves()
-        actual = all([leaf.is_terminal for leaf in leaves])
+        branches = game_tree_node_3.get_branches()
+        actual = all([branch.is_terminal for branch in branches])
 
         # THEN
         expected = True
@@ -384,8 +384,8 @@ class GoNodeTestCase(TestCase):
 
         # WHEN
         game_tree_node_4.build_game_tree(depth)
-        leaves = game_tree_node_4.get_leaves()
-        actual = all([leaf.is_terminal for leaf in leaves])
+        branches = game_tree_node_4.get_branches()
+        actual = all([branch.is_terminal for branch in branches])
 
         # THEN
         expected = False
@@ -410,8 +410,8 @@ class GoNodeTestCase(TestCase):
 
     #     # WHEN
     #     game_tree_node_5.build_game_tree(depth)
-    #     leaves = game_tree_node_5.get_leaves()
-    #     terminality = [leaf.is_terminal for leaf in leaves]
+    #     branches = game_tree_node_5.get_branches()
+    #     terminality = [branch.is_terminal for branch in branches]
     #     actual = sum(item == True for item in terminality)
 
     #     # THEN
@@ -437,8 +437,8 @@ class GoNodeTestCase(TestCase):
 
     #     # WHEN
     #     game_tree_node_6.build_game_tree(depth)
-    #     leaves = game_tree_node_6.get_leaves()
-    #     terminality = [leaf.is_terminal for leaf in leaves]
+    #     branches = game_tree_node_6.get_branches()
+    #     terminality = [branch.is_terminal for branch in branches]
     #     actual = sum(item == True for item in terminality)
 
     #     # THEN

@@ -122,7 +122,7 @@ def get_white_response(board_state):
         player="maximizer",
         score=None,
         is_terminal=False,
-        leaves=[],
+        branches=[],
         board_state=board_state,
     )
 
@@ -131,7 +131,7 @@ def get_white_response(board_state):
         player="minimizer",
         score=-float('inf'),
         is_terminal=False,
-        leaves=[],
+        branches=[],
         board_state=board_state,
     )
 
@@ -140,15 +140,15 @@ def get_white_response(board_state):
         player="minimizer",
         score=float('inf'),
         is_terminal=False,
-        leaves=[],
+        branches=[],
         board_state=board_state,
     )
 
     white_move_node = my_node.evaluate_node(my_node, maximizer_choice_node, minimizer_choice_node, DEPTH)
     # TODO once evaluate_node is updated we should have a built a tree and be able to use that to assess
     # the best move with the following lines of code:
-    # white_move_node = my_node.leaves[0]
-    # for node in my_node.leaves:
+    # white_move_node = my_node.branches[0]
+    # for node in my_node.branches:
     # white_move_node = node if node.get_score() > white_move_node.get_score()
     white_move = white_move_node.move_coordinates
     print(f"white_move: {white_move}")

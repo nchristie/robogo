@@ -7,7 +7,7 @@ class MinimaxNodeTestCase(TestCase):
         """Get score"""
         # GIVEN
         my_node_1 = MinimaxNode(
-            move_id=1, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=1, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         expected = None
         actual = my_node_1.get_score()
@@ -17,43 +17,43 @@ class MinimaxNodeTestCase(TestCase):
         """Set score"""
         # GIVEN
         my_node_2 = MinimaxNode(
-            move_id=2, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=2, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         my_node_2.set_score(5)
         expected = 5
         actual = my_node_2.get_score()
         self.assertEqual(expected, actual)
 
-    def test_get_leaves(self):
+    def test_get_branches(self):
         """"""
         # GIVEN
         my_node_3 = MinimaxNode(
-            move_id=3, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=3, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         expected = []
-        actual = my_node_3.get_leaves()
+        actual = my_node_3.get_branches()
         self.assertEqual(expected, actual)
 
-    def test_add_leaf(self):
+    def test_add_branch(self):
         """"""
         # GIVEN
         my_node_4 = MinimaxNode(
-            move_id=4, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=4, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         score = 4
         move_id = 123
         player = "maximizer"
-        my_node_4.add_leaf(move_id, player, score)
-        leaves = my_node_4.get_leaves()
+        my_node_4.add_branch(move_id, player, score)
+        branches = my_node_4.get_branches()
         expected = (move_id, player, score)
-        leaf = leaves[0]
-        actual = (leaf.move_id, leaf.player, leaf.score)
+        branch = branches[0]
+        actual = (branch.move_id, branch.player, branch.score)
         self.assertEqual(expected, actual)
 
     def test_returns_max_for_maximizer(self):
         # GIVEN
         my_node_5 = MinimaxNode(
-            move_id=5, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=5, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         available_moves = [
             {
@@ -67,7 +67,7 @@ class MinimaxNodeTestCase(TestCase):
 
         # WHEN
         for move in available_moves:
-            my_node_5.add_leaf(
+            my_node_5.add_branch(
                 move_id=move["move_id"], score=move["score"], player=player
             )
 
@@ -79,7 +79,7 @@ class MinimaxNodeTestCase(TestCase):
     def test_returns_min_for_minimizer(self):
         # GIVEN
         my_node_6 = MinimaxNode(
-            move_id=6, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=6, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         available_moves = [
             {
@@ -93,7 +93,7 @@ class MinimaxNodeTestCase(TestCase):
 
         # WHEN
         for move in available_moves:
-            my_node_6.add_leaf(
+            my_node_6.add_branch(
                 move_id=move["move_id"], score=move["score"], player=player
             )
 
@@ -106,13 +106,13 @@ class MinimaxNodeTestCase(TestCase):
     def test_node_min(self):
         # GIVEN
         my_node_none = MinimaxNode(
-            move_id=1, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=1, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         my_node_low = MinimaxNode(
-            move_id=1, player="maximizer", score=-5, is_terminal=False, leaves=[]
+            move_id=1, player="maximizer", score=-5, is_terminal=False, branches=[]
         )
         my_node_high = MinimaxNode(
-            move_id=1, player="maximizer", score=5, is_terminal=False, leaves=[]
+            move_id=1, player="maximizer", score=5, is_terminal=False, branches=[]
         )
 
         # WHEN
@@ -125,13 +125,13 @@ class MinimaxNodeTestCase(TestCase):
     def test_node_max(self):
         # GIVEN
         my_node_none = MinimaxNode(
-            move_id=1, player="maximizer", score=None, is_terminal=False, leaves=[]
+            move_id=1, player="maximizer", score=None, is_terminal=False, branches=[]
         )
         my_node_low = MinimaxNode(
-            move_id=1, player="maximizer", score=-5, is_terminal=False, leaves=[]
+            move_id=1, player="maximizer", score=-5, is_terminal=False, branches=[]
         )
         my_node_high = MinimaxNode(
-            move_id=1, player="maximizer", score=5, is_terminal=False, leaves=[]
+            move_id=1, player="maximizer", score=5, is_terminal=False, branches=[]
         )
 
         # WHEN

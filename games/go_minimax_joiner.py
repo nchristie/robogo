@@ -21,18 +21,18 @@ class GoNode(MinimaxNode):
         player=None,
         score=None,
         is_terminal=False,
-        leaves=[],
+        branches=[],
         board_state=None,
         move_coordinates=(),
         optimal_move_coordinates=None,
     ):
-        super().__init__(move_id, player, score, is_terminal, leaves)
+        super().__init__(move_id, player, score, is_terminal, branches)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def add_leaf(self, leaf):
-        self.leaves.append(leaf)
+    def add_branch(self, branch):
+        self.branches.append(branch)
 
     def build_game_tree(self, depth):
         # Base case
@@ -41,20 +41,20 @@ class GoNode(MinimaxNode):
             return
 
         # recurse case
-        leaves = [leaf for leaf in self.generate_leaves()]
-        for leaf in leaves:
+        branches = [branch for branch in self.generate_branches()]
+        for branch in branches:
             if depth == 0:
                 # once we're at full depth make these nodes terminal
-                leaf.is_terminal = True
-            self.add_leaf(leaf)
-            leaf.build_game_tree(depth-1)
+                branch.is_terminal = True
+            self.add_branch(branch)
+            branch.build_game_tree(depth-1)
 
     def alternate_player(self):
         if self.player == "minimizer":
             return "maximizer"
         return "minimizer"
 
-    def generate_leaves(self):
+    def generate_branches(self):
         """
         Yields:
             GoNode: next possible move on the board
@@ -69,18 +69,18 @@ class GoNode(MinimaxNode):
                 x = move_coordinates[0]
                 y = move_coordinates[1]
                 new_board_state[x][y] = stone
-                leaf = GoNode(
+                branch = GoNode(
                     move_id=self.generate_move_id(),
                     player=player,
                     board_state=new_board_state,
                     move_coordinates=move_coordinates,
                 )
-                score_dict = get_score_dict(leaf.board_state)
+                score_dict = get_score_dict(branch.board_state)
                 if score_dict[stone] >= WINNING_SCORE:
-                    leaf.is_terminal = True
-                yield leaf
+                    branch.is_terminal = True
+                yield branch
 
-    def generate_leaves_around_existing_moves(self, player="minimizer"):
+    def generate_branches_around_existing_moves(self, player="minimizer"):
         # I've returned this function to the code as I think I may want it later
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
@@ -94,14 +94,14 @@ class GoNode(MinimaxNode):
                             x = move_coordinates[0]
                             y = move_coordinates[1]
                             new_board_state[x][y] = BLACK_STONE
-                            leaf = GoNode(
+                            branch = GoNode(
                                 move_id=self.generate_move_id(),
                                 player=player,
                                 board_state=new_board_state,
                                 move_coordinates=move_coordinates,
                             )
-                            leaf.set_score(leaf.get_utility())
-                            yield leaf
+                            branch.set_score(branch.get_utility())
+                            yield branch
 
     def find_moves_around_position(self, x_coordinate, y_coordinate):
         # I've returned this function to the code as I think I may want it later

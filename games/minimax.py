@@ -5,9 +5,9 @@ class MinimaxNode:
         player=None,
         score=None,
         is_terminal=False,
-        leaves=[],
+        branches=[],
     ):
-        self.leaves = leaves
+        self.branches = branches
         self.move_id = move_id
         self.player = player
         self.is_terminal = is_terminal
@@ -17,7 +17,7 @@ class MinimaxNode:
         return (
             f"move_id: {self.get_move_id()}, "
             f"score: {self.get_score()}, "
-            f"number of leaves: {len(self.get_leaves())}"
+            f"number of branches: {len(self.get_branches())}"
         )
 
     def set_score(self, score):
@@ -29,20 +29,20 @@ class MinimaxNode:
     def get_move_id(self):
         return self.move_id
 
-    def add_leaf(self, move_id=None, player=None, score=None):
-        leaf = MinimaxNode(move_id, player, score)
-        self.leaves.append(leaf)
+    def add_branch(self, move_id=None, player=None, score=None):
+        branch = MinimaxNode(move_id, player, score)
+        self.branches.append(branch)
 
-    def get_leaves(self):
-        return self.leaves
+    def get_branches(self):
+        return self.branches
 
-    def generate_leaves(self):
+    def generate_branches(self):
         # implemented by inheritor
         return
 
     def get_optimal_move(self):
         # input is Node, output is Node
-        best_move = self.leaves[0]
+        best_move = self.branches[0]
         player = best_move.player
         best_score = best_move.get_score()
 
@@ -50,18 +50,18 @@ class MinimaxNode:
         if player == "minimizer":
             strategy = self.minimizer_strategy
 
-        for leaf in self.leaves:
-            leaf_score = leaf.get_score()
-            if strategy(leaf_score, best_score):
-                best_move = leaf
+        for branch in self.branches:
+            branch_score = branch.get_score()
+            if strategy(branch_score, best_score):
+                best_move = branch
                 best_score = best_move.get_score()
         return best_move
 
-    def maximizer_strategy(self, leaf_score, best_score):
-        return leaf_score > best_score
+    def maximizer_strategy(self, branch_score, best_score):
+        return branch_score > best_score
 
-    def minimizer_strategy(self, leaf_score, best_score):
-        return leaf_score < best_score
+    def minimizer_strategy(self, branch_score, best_score):
+        return branch_score < best_score
 
     def get_utility(self):
         print("In minimax get_utility")
@@ -83,10 +83,10 @@ class MinimaxNode:
             return node
 
         if node.player == "minimizer":
-            for leaf in node.generate_leaves():
+            for branch in node.generate_branches():
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
-                    node.evaluate_node(leaf, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(branch, maximizer_choice_node, minimizer_choice_node, depth),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -96,10 +96,10 @@ class MinimaxNode:
                 return minimizer_choice_node
 
         if node.player == "maximizer":
-            for leaf in node.generate_leaves():
+            for branch in node.generate_branches():
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,
-                    node.evaluate_node(leaf, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(branch, maximizer_choice_node, minimizer_choice_node, depth),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -129,11 +129,11 @@ class MinimaxNode:
             return node_score
 
         if node.player == "minimizer":
-            for leaf in node.generate_leaves():
-                node.add_leaf(leaf)
+            for branch in node.generate_branches():
+                node.add_branch(branch)
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
-                    node.evaluate_node(leaf, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(branch, maximizer_choice_node, minimizer_choice_node, depth),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -145,11 +145,11 @@ class MinimaxNode:
                 return minimizer_choice_node.get_score()
 
         if node.player == "maximizer":
-            for leaf in node.generate_leaves():
-                node.add_leaf(leaf)
+            for branch in node.generate_branches():
+                node.add_branch(branch)
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,
-                    node.evaluate_node(leaf, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(branch, maximizer_choice_node, minimizer_choice_node, depth),
                 )
                 if (
                     minimizer_choice_node.get_score()
