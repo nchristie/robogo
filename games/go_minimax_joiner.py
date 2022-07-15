@@ -31,9 +31,6 @@ class GoNode(MinimaxNode):
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def add_branch(self, branch):
-        self.branches.append(branch)
-
     def build_game_tree(self, depth):
         # Base case
         # If we're at a terminal node leave the recursion
@@ -46,7 +43,7 @@ class GoNode(MinimaxNode):
             if depth == 0:
                 # once we're at full depth make these nodes terminal
                 branch.is_terminal = True
-            self.add_branch(branch)
+            self.branches.append(branch)
             branch.build_game_tree(depth-1)
 
     def alternate_player(self):
