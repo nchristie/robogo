@@ -4,13 +4,11 @@ class MinimaxNode:
         move_id=None,
         player=None,
         score=None,
-        is_terminal=False,
         branches=[],
     ):
         self.branches = branches
         self.move_id = move_id
         self.player = player
-        self.is_terminal = is_terminal
         self.score = score
 
     def __str__(self):
@@ -78,9 +76,9 @@ class MinimaxNode:
         depth -= 1
 
         if depth <= 0:
-            node.is_terminal = True
+            return
 
-        if node.is_terminal:
+        if node.is_leaf_node():
             print(f"terminal node found at depth of {depth}")
             node.set_score(node.get_utility())
             return node
@@ -123,9 +121,9 @@ class MinimaxNode:
             raise Exception("Error: depth is <0")
 
         if depth == 0:
-            node.is_terminal = True
+            return
 
-        if node.is_terminal:
+        if node.is_leaf_node():
             print(f"terminal node found at depth of {depth}")
             node_score = node.get_utility()
             node.set_score(node_score)
@@ -173,3 +171,7 @@ class MinimaxNode:
         if second_node.get_score() > first_node.get_score():
             return second_node
         return first_node
+
+    def is_leaf_node(self):
+        return self.branches == []
+

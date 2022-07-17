@@ -121,7 +121,6 @@ def get_white_response(board_state):
         move_id=0,
         player="maximizer",
         score=None,
-        is_terminal=False,
         branches=[],
         board_state=board_state,
     )
@@ -130,7 +129,6 @@ def get_white_response(board_state):
         move_id=0,
         player="minimizer",
         score=-float('inf'),
-        is_terminal=False,
         branches=[],
         board_state=board_state,
     )
@@ -139,7 +137,6 @@ def get_white_response(board_state):
         move_id=0,
         player="minimizer",
         score=float('inf'),
-        is_terminal=False,
         branches=[],
         board_state=board_state,
     )

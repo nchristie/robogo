@@ -14,7 +14,7 @@ STONE_DICT = {
     WHITE_STONE: "minimizer"
 }
 
-MAX_TREE_DEPTH = 4
+MAX_TREE_DEPTH = 15
 
 class GoNode(MinimaxNode):
     """
@@ -26,13 +26,12 @@ class GoNode(MinimaxNode):
         move_id=None,
         player=None,
         score=None,
-        is_terminal=False,
         branches=[],
         board_state=None,
         move_coordinates=(),
         optimal_move_coordinates=None,
     ):
-        super().__init__(move_id, player, score, is_terminal, branches)
+        super().__init__(move_id, player, score, branches)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
@@ -47,40 +46,49 @@ class GoNode(MinimaxNode):
         """
         # Base case
         # If we're at a terminal node leave the recursion
-        # import pdb; pdb.set_trace()
         if depth == 0:
-            self.is_terminal = True
-
-        if self.is_terminal:
-            print(f"candidate_move_node {type(self)}")
-            print(f"depth: {depth}, move_id: {self.move_id} is_terminal: {self.is_terminal}")
-            print(f"returning at depth of {depth} owing to terminal node")
+            # print(f"candidate_move_node {type(self)}")
+            # print(f"depth: {depth}, move_id: {self.move_id} is_leaf_node: {self.is_leaf_node()}")
+            # print(f"returning at depth of {depth} owing to terminal node")
             return
 
         # recurse case
+        # first build tree horizontally
         for candidate_move_node in self.generate_next_node():
-            print(f"candidate_move_node {type(candidate_move_node)}")
-            print(f"depth: {depth}, move_id: {candidate_move_node.move_id} is_terminal: {candidate_move_node.is_terminal}")
+            # print(f"candidate_move_node {type(candidate_move_node)}")
+            # print(f"depth: {depth}, move_id: {candidate_move_node.move_id} is_leaf_node: {candidate_move_node.is_leaf_node()}")
             self.branches.append(candidate_move_node)
 
+        # next use recursion to build tree vertically
         depth-=1
         for branch in self.branches:
             return branch.build_game_tree(depth)
 
-        print(f"Returning because end of function depth {depth}")
+        # print(f"Returning because end of function depth {depth}")
         return
 
 
     def find_depth(self, depth):
         if depth > MAX_TREE_DEPTH:
-            raise Exception(f"Maximum depth of tree {MAX_TREE_DEPTH} exceeded")
+            raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
 
-        if self.is_terminal:
-            print("at final node in tree")
-            print(self.board_state)
+        # Base case
+        # If we're at a terminal node leave the recursion
+        if self.is_leaf_node():
+            print(f"candidate_move_node {type(self)}")
+            print(f"depth: {depth}, move_id: {self.move_id} is_leaf_node: {self.is_leaf_node()}")
+            print(f"returning at depth of {depth} owing to terminal node")
             return depth
 
-        return self.get_branches()[0].find_depth(depth+1)
+        # recurse case
+        depth+=1
+        for i, branch in enumerate(self.branches):
+            print(f"candidate_move_node {type(branch)}")
+            print(f"depth: {depth}, branch index: {i}, move_id: {branch.move_id} is_leaf_node: {branch.is_leaf_node()}")
+            return branch.find_depth(depth)
+
+        print(f"Returning because end of function depth {depth}")
+        return
 
 
     def alternate_player(self):
@@ -115,9 +123,7 @@ class GoNode(MinimaxNode):
                     move_coordinates=move_coordinates,
                 )
                 # print(next_node.move_id)
-                score_dict = get_score_dict(next_node.board_state)
-                if score_dict[stone] >= WINNING_SCORE:
-                    next_node.is_terminal = True
+                # score_dict = get_score_dict(next_node.board_state)
                 yield next_node
 
     def generate_next_node_around_existing_moves(self, player="minimizer"):
