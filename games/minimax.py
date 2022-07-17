@@ -30,6 +30,9 @@ class MinimaxNode:
         return self.move_id
 
     def add_branch(self, move_id=None, player=None, score=None):
+        # TODO this is only used in the tests, probably worth
+        # rewriting to append a node, and have a separate
+        # node making method instead
         branch = MinimaxNode(move_id, player, score)
         self.branches.append(branch)
 

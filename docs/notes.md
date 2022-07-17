@@ -74,7 +74,7 @@ def firstn(n):
 x = firstn(10)
 next(x)
 
-
+# very simple recursion
 def count_down(start):
     print(start)
     next = start - 1

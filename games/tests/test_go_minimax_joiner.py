@@ -464,3 +464,24 @@ class GoNodeTestCase(TestCase):
         # THEN
         expected = 1
         self.assertEqual(expected, actual)
+
+    def test_build_game_tree_builds_to_given_depth(self):
+        # GIVEN
+        player="maximizer"
+        game_tree_node_7 = GoNode(
+                    player=player,
+                    board_state=[["●", "+"], ["+", "+"]],
+                    is_terminal=False
+                )
+
+        node_7_depth = 4
+        # hack to get around suspected test pollution
+        game_tree_node_7.branches = []
+        game_tree_node_7.build_game_tree(node_7_depth)
+
+        # WHEN
+        actual = game_tree_node_7.find_depth(0)
+
+        # THEN
+        expected = node_7_depth
+        self.assertEqual(expected, actual)

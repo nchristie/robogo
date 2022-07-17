@@ -14,7 +14,13 @@ STONE_DICT = {
     WHITE_STONE: "minimizer"
 }
 
+MAX_TREE_DEPTH = 4
+
 class GoNode(MinimaxNode):
+    """
+    Node which inherits from MinimaxNode and layers over the logic
+    relevant to five-in-a-row Go
+    """
     def __init__(
         self,
         move_id=None,
@@ -32,20 +38,57 @@ class GoNode(MinimaxNode):
         self.optimal_move_coordinates = optimal_move_coordinates
 
     def build_game_tree(self, depth):
+        """
+        Starts from current node and builds game tree to a given
+        depth
+
+        Parameters:
+            depth (int): how far down the tree we want to build
+        """
         # Base case
         # If we're at a terminal node leave the recursion
+        # import pdb; pdb.set_trace()
         if depth == 0:
             self.is_terminal = True
 
         if self.is_terminal:
+            print(f"candidate_move_node {type(self)}")
+            print(f"depth: {depth}, move_id: {self.move_id} is_terminal: {self.is_terminal}")
+            print(f"returning at depth of {depth} owing to terminal node")
             return
 
         # recurse case
-        for node in self.generate_next_node():
-            self.branches.append(node)
-            node.build_game_tree(depth-1)
+        for candidate_move_node in self.generate_next_node():
+            print(f"candidate_move_node {type(candidate_move_node)}")
+            print(f"depth: {depth}, move_id: {candidate_move_node.move_id} is_terminal: {candidate_move_node.is_terminal}")
+            self.branches.append(candidate_move_node)
+
+        depth-=1
+        for branch in self.branches:
+            return branch.build_game_tree(depth)
+
+        print(f"Returning because end of function depth {depth}")
+        return
+
+
+    def find_depth(self, depth):
+        if depth > MAX_TREE_DEPTH:
+            raise Exception(f"Maximum depth of tree {MAX_TREE_DEPTH} exceeded")
+
+        if self.is_terminal:
+            print("at final node in tree")
+            print(self.board_state)
+            return depth
+
+        return self.get_branches()[0].find_depth(depth+1)
+
 
     def alternate_player(self):
+        """
+        Returns:
+            str: The opposite player to that of the current
+            node. Valid options: "minimizer", "maximizer".
+        """
         if self.player == "minimizer":
             return "maximizer"
         return "minimizer"
@@ -71,6 +114,7 @@ class GoNode(MinimaxNode):
                     board_state=new_board_state,
                     move_coordinates=move_coordinates,
                 )
+                # print(next_node.move_id)
                 score_dict = get_score_dict(next_node.board_state)
                 if score_dict[stone] >= WINNING_SCORE:
                     next_node.is_terminal = True
@@ -108,9 +152,19 @@ class GoNode(MinimaxNode):
         return [up, left, right, down]
 
     def generate_move_id(self):
+        """
+        Creates a unique id for each move
+        Returns:
+            uuid
+        """
         return str(uuid.uuid4())
 
     def get_utility(self):
+        """
+        Finds value of node. To be used for terminal nodes only
+        Returns:
+            int corresponding to black's score relative to white's
+        """
         score_dict = get_score_dict(self.board_state)
         return score_dict["relative_black_score"]
 

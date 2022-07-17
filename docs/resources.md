@@ -82,3 +82,6 @@ https://stackoverflow.com/
 # Python conventions:
 - https://www.geeksforgeeks.org/python-docstrings/#:~:text=Declaring%20Docstrings%3A%20The%20docstrings%20are,functions%20should%20have%20a%20docstring.
 - https://www.programiz.com/python-programming/docstrings
+
+# Test pollution:
+- https://tech.octopus.energy/news/2022/05/23/flakey-python-tests.html#anti-pattern-5-test-pollution
