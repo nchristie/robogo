@@ -1,5 +1,5 @@
 from django.test import TestCase
-from games.go_minimax_joiner import GoNode, BLACK_STONE
+from games.go_minimax_joiner import GoNode
 from uuid import UUID
 from types import GeneratorType
 from unittest import skip, skipIf
@@ -12,7 +12,7 @@ class GoNodeTestCase(TestCase):
         my_node_1 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -30,7 +30,7 @@ class GoNodeTestCase(TestCase):
         my_node_2 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -53,7 +53,7 @@ class GoNodeTestCase(TestCase):
         my_node_3 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -73,7 +73,7 @@ class GoNodeTestCase(TestCase):
         my_node_4 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -85,13 +85,13 @@ class GoNodeTestCase(TestCase):
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 
-    def test_branch_getter_returns_attack_options(self):
+    def test_child_getter_returns_attack_options(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_5 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -103,13 +103,13 @@ class GoNodeTestCase(TestCase):
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
-    def test_branch_getter_returns_attack_options_2_groups(self):
+    def test_child_getter_returns_attack_options_2_groups(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
         my_node_6 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -121,13 +121,13 @@ class GoNodeTestCase(TestCase):
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
-    def test_branch_getter_returns_defend_options_2_groups(self):
+    def test_child_getter_returns_defend_options_2_groups(self):
         # GIVEN
         board_state = [["○", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
         my_node_7 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -139,13 +139,13 @@ class GoNodeTestCase(TestCase):
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
-    def test_branch_getter_returns_attack_and_defend_options(self):
+    def test_child_getter_returns_attack_and_defend_options(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
         my_node_8 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -163,7 +163,7 @@ class GoNodeTestCase(TestCase):
         my_node_9 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -180,7 +180,7 @@ class GoNodeTestCase(TestCase):
         my_node_10 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -197,7 +197,7 @@ class GoNodeTestCase(TestCase):
         my_node_11 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -214,7 +214,7 @@ class GoNodeTestCase(TestCase):
         my_node_12 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -231,7 +231,7 @@ class GoNodeTestCase(TestCase):
         my_node_13 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -248,7 +248,7 @@ class GoNodeTestCase(TestCase):
         my_node_14 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -275,7 +275,7 @@ class GoNodeTestCase(TestCase):
         my_node_15 = GoNode(
             player="maximizer",
             score=0,
-            branches=[],
+            children=[],
             board_state=board_state,
         )
 
@@ -292,34 +292,34 @@ class GoNodeTestCase(TestCase):
 
     # TODO test_gets_best_move_only_one_option(self):
 
-    def test_build_game_tree_doesnt_build_past_terminal_node(self):
+    def test_build_game_tree_recursive_doesnt_build_past_terminal_node(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
 
         player="minimizer"
         game_tree_node_1 = GoNode(
                     player=player,
-                    move_id="test_build_game_tree_doesnt_build_past_terminal_node",
+                    move_id="test_build_game_tree_recursive_doesnt_build_past_terminal_node",
                     board_state=board_state,
                 )
 
         depth = 0
 
         # hack to get around suspected test pollution
-        game_tree_node_1.branches = []
+        game_tree_node_1.children = []
 
         # WHEN
 
 
-        game_tree_node_1.build_game_tree(depth)
-        actual = game_tree_node_1.get_branches()
+        game_tree_node_1.build_game_tree_recursive(depth)
+        actual = game_tree_node_1.get_children()
         print()
 
         # THEN
         expected = []
         self.assertEqual(expected, actual)
 
-    def test_build_game_tree_builds(self):
+    def test_build_game_tree_recursive_builds(self):
         # GIVEN
         player="maximizer"
         game_tree_node_2 = GoNode(
@@ -333,19 +333,19 @@ class GoNodeTestCase(TestCase):
 
         depth = 1
         # hack to get around suspected test pollution
-        game_tree_node_2.branches = []
+        game_tree_node_2.children = []
 
 
         # WHEN
-        game_tree_node_2.build_game_tree(depth)
-        actual = len(game_tree_node_2.get_branches())
+        game_tree_node_2.build_game_tree_recursive(depth)
+        actual = len(game_tree_node_2.get_children())
 
         # THEN
         expected = 7
         self.assertEqual(expected, actual)
 
     @skip("Removing concept of terminal from nodes")
-    def test_build_game_tree_sets_nodes_as_terminal(self):
+    def test_build_game_tree_recursive_sets_nodes_as_terminal(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
         player="maximizer"
@@ -358,19 +358,19 @@ class GoNodeTestCase(TestCase):
         depth = 1
 
         # hack to get around suspected test pollution
-        game_tree_node_3.branches = []
+        game_tree_node_3.children = []
 
         # WHEN
-        game_tree_node_3.build_game_tree(depth)
-        branches = game_tree_node_3.get_branches()
-        actual = all([branch.is_terminal for branch in branches])
+        game_tree_node_3.build_game_tree_recursive(depth)
+        children = game_tree_node_3.get_children()
+        actual = all([child.is_terminal for child in children])
 
         # THEN
         expected = True
         self.assertEqual(expected, actual)
 
     @skip("Removing concept of terminal from nodes")
-    def test_build_game_tree_doesnt_set_terminal_for_intermediary_nodes(self):
+    def test_build_game_tree_recursive_doesnt_set_terminal_for_intermediary_nodes(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
         player="maximizer"
@@ -383,12 +383,12 @@ class GoNodeTestCase(TestCase):
         depth = 2
 
         # hack to get around suspected test pollution
-        game_tree_node_4.branches = []
+        game_tree_node_4.children = []
 
         # WHEN
-        game_tree_node_4.build_game_tree(depth)
-        branches = game_tree_node_4.get_branches()
-        actual = all([branch.is_terminal for branch in branches])
+        game_tree_node_4.build_game_tree_recursive(depth)
+        children = game_tree_node_4.get_children()
+        actual = all([child.is_terminal for child in children])
 
         # THEN
         expected = False
@@ -409,14 +409,14 @@ class GoNodeTestCase(TestCase):
                 )
 
         # hack to get around suspected test pollution
-        game_tree_node_5.branches = []
+        game_tree_node_5.children = []
 
         depth = 2
 
         # WHEN
-        game_tree_node_5.build_game_tree(depth)
-        branches = game_tree_node_5.get_branches()
-        terminality = [branch.is_terminal for branch in branches]
+        game_tree_node_5.build_game_tree_recursive(depth)
+        children = game_tree_node_5.get_children()
+        terminality = [child.is_terminal for child in children]
         actual = sum(item == True for item in terminality)
 
         # THEN
@@ -440,36 +440,35 @@ class GoNodeTestCase(TestCase):
                 )
 
         # hack to get around suspected test pollution
-        game_tree_node_6.branches = []
+        game_tree_node_6.children = []
 
         depth = 2
 
         # WHEN
-        game_tree_node_6.build_game_tree(depth)
-        branches = game_tree_node_6.get_branches()
-        terminality = [branch.is_terminal for branch in branches]
+        game_tree_node_6.build_game_tree_recursive(depth)
+        children = game_tree_node_6.get_children()
+        terminality = [child.is_terminal for child in children]
         actual = sum(item == True for item in terminality)
 
         # THEN
         expected = 1
         self.assertEqual(expected, actual)
 
-    @skip("Working on this at the moment")
-    def test_build_game_tree_builds_to_given_depth(self):
+    def test_build_game_tree_recursive_builds_to_given_depth(self):
         # GIVEN
         player="maximizer"
         game_tree_node_7 = GoNode(
                     player=player,
-                    board_state=[["●", "+"], ["+", "+"]],
+                    board_state=[["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]],
                 )
 
-        node_7_depth = 3
+        node_7_depth = 5
         # hack to get around suspected test pollution
-        game_tree_node_7.branches = []
-        game_tree_node_7.build_game_tree(node_7_depth)
+        game_tree_node_7.children = []
+        game_tree_node_7.build_game_tree_recursive(node_7_depth)
 
         # WHEN
-        actual = game_tree_node_7.find_depth(0)
+        actual = game_tree_node_7.find_depth_recursive(game_tree_node_7, 0)
 
         # THEN
         expected = node_7_depth

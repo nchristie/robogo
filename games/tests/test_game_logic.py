@@ -1,5 +1,6 @@
 from games.game_logic import *
 import pytest
+from games.go_minimax_joiner import GoNode
 
 
 def test_find_groups_one_group():
@@ -213,3 +214,59 @@ def test_list_all_moves_on_board():
     # THEN
     expected = 81
     assert expected == actual
+
+
+def test_build_game_tree_recursive_depth():
+    # GIVEN
+    player="maximizer"
+    game_tree_node_3 = GoNode(
+                move_id="root_node",
+                player=player,
+                board_state=[["●", "+"], ["+", "+"]],
+            )
+
+    node_3_depth = 3
+    # hack to get around suspected test pollution
+    game_tree_node_3.children = []
+    build_game_tree_recursive(game_tree_node_3, node_3_depth, set())
+
+    # WHEN
+    actual = game_tree_node_3.children[0].children[0].children[0].children
+
+    # THEN
+    expected = []
+    assert expected == actual
+
+
+def test_find_depth_recursive():
+    # GIVEN
+    player="maximizer"
+    game_tree_node_1 = GoNode(
+                move_id="root_node",
+                player=player,
+                board_state=[
+                    ["●", "+", "+"],
+                    ["+", "+", "+"],
+                    ["+", "+", "+"]
+                ],
+            )
+
+    node_1_depth = 4
+    # hack to get around suspected test pollution
+    game_tree_node_1.children = []
+    build_game_tree_recursive(game_tree_node_1, node_1_depth, set())
+
+    # WHEN
+    # import pdb; pdb.set_trace()
+    # actual = game_tree_node_1.children[0].children[0].children[0].children
+
+    # # # THEN
+    # expected = []
+    # assert expected == actual
+
+    actual = find_depth_recursive(game_tree_node_1, 0)
+    # import pdb; pdb.set_trace()
+    expected = node_1_depth
+    assert expected == actual
+
+

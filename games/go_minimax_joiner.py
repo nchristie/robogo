@@ -1,7 +1,7 @@
 from .minimax import MinimaxNode
 import uuid
 from copy import deepcopy
-from .game_logic import is_move_valid, get_score_dict, list_all_moves_on_board, WINNING_SCORE
+from .game_logic import is_move_valid, get_score_dict, list_all_moves_on_board, short_id
 from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 
 PLAYER_DICT = {
@@ -14,7 +14,7 @@ STONE_DICT = {
     WHITE_STONE: "minimizer"
 }
 
-MAX_TREE_DEPTH = 15
+MAX_TREE_DEPTH = 5
 
 class GoNode(MinimaxNode):
     """
@@ -26,17 +26,18 @@ class GoNode(MinimaxNode):
         move_id=None,
         player=None,
         score=None,
-        branches=[],
+        children=[],
+        parent=None,
         board_state=None,
         move_coordinates=(),
         optimal_move_coordinates=None,
     ):
-        super().__init__(move_id, player, score, branches)
+        super().__init__(move_id, player, score, children, parent)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def build_game_tree(self, depth):
+    def build_game_tree_recursive(self, depth):
         """
         Starts from current node and builds game tree to a given
         depth
@@ -44,6 +45,7 @@ class GoNode(MinimaxNode):
         Parameters:
             depth (int): how far down the tree we want to build
         """
+        print("In build_game_tree_recursive")
         # Base case
         # If we're at a terminal node leave the recursion
         if depth == 0:
@@ -57,39 +59,56 @@ class GoNode(MinimaxNode):
         for candidate_move_node in self.generate_next_node():
             # print(f"candidate_move_node {type(candidate_move_node)}")
             # print(f"depth: {depth}, move_id: {candidate_move_node.move_id} is_leaf_node: {candidate_move_node.is_leaf_node()}")
-            self.branches.append(candidate_move_node)
+            self.children.append(candidate_move_node)
 
         # next use recursion to build tree vertically
         depth-=1
-        for branch in self.branches:
-            return branch.build_game_tree(depth)
+        for child in self.children:
+            print(short_id(child.move_id))
+            return child.build_game_tree_recursive(depth)
 
         # print(f"Returning because end of function depth {depth}")
         return
 
+    def find_depth_iterative(self):
+        depth = 0
+        stack = []
+        visited = set()
+        stack.append(self)
+        while len(stack):
+            if depth > MAX_TREE_DEPTH:
+                raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
 
-    def find_depth(self, depth):
+            current = stack.pop()
+            if current in visited:
+                continue
+            visited.add(current)
+
+            if current.is_leaf_node():
+                return depth
+            depth += 1
+            stack.append(current.children[0])
+        return depth
+
+    def find_depth_recursive_(self, node, depth):
         if depth > MAX_TREE_DEPTH:
             raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
 
         # Base case
         # If we're at a terminal node leave the recursion
-        if self.is_leaf_node():
-            print(f"candidate_move_node {type(self)}")
-            print(f"depth: {depth}, move_id: {self.move_id} is_leaf_node: {self.is_leaf_node()}")
+        if node.is_leaf_node():
+            print(f"candidate_move_node {type(node)}")
+            print(f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}")
             print(f"returning at depth of {depth} owing to terminal node")
             return depth
 
         # recurse case
-        depth+=1
-        for i, branch in enumerate(self.branches):
-            print(f"candidate_move_node {type(branch)}")
-            print(f"depth: {depth}, branch index: {i}, move_id: {branch.move_id} is_leaf_node: {branch.is_leaf_node()}")
-            return branch.find_depth(depth)
+        for i, child in enumerate(node.children):
+            print(f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, candidate_move_node {type(child)}")
+            return self.find_depth_recursive(child, depth+1)
 
         print(f"Returning because end of function depth {depth}")
         return
-
 
     def alternate_player(self):
         """
@@ -106,6 +125,7 @@ class GoNode(MinimaxNode):
         Yields:
             GoNode: next possible move on the board
         """
+        # print(f"In generate_next_node, own id = {short_id(self.move_id)}")
         player = self.alternate_player()
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
@@ -117,13 +137,13 @@ class GoNode(MinimaxNode):
                 y = move_coordinates[1]
                 new_board_state[x][y] = stone
                 next_node = GoNode(
-                    move_id=self.generate_move_id(),
+                    move_id=self.make_move_id(),
                     player=player,
                     board_state=new_board_state,
                     move_coordinates=move_coordinates,
+                    children=[]
                 )
-                # print(next_node.move_id)
-                # score_dict = get_score_dict(next_node.board_state)
+                # print(short_id(next_node.move_id))
                 yield next_node
 
     def generate_next_node_around_existing_moves(self, player="minimizer"):
@@ -140,14 +160,14 @@ class GoNode(MinimaxNode):
                             x = move_coordinates[0]
                             y = move_coordinates[1]
                             new_board_state[x][y] = BLACK_STONE
-                            branch = GoNode(
-                                move_id=self.generate_move_id(),
+                            child = GoNode(
+                                move_id=self.make_move_id(),
                                 player=player,
                                 board_state=new_board_state,
                                 move_coordinates=move_coordinates,
                             )
-                            branch.set_score(branch.get_utility())
-                            yield branch
+                            # child.set_score(child.get_utility())
+                            yield child
 
     def find_moves_around_position(self, x_coordinate, y_coordinate):
         # I've returned this function to the code as I think I may want it later
@@ -157,7 +177,7 @@ class GoNode(MinimaxNode):
         down = (x_coordinate + 1, y_coordinate)
         return [up, left, right, down]
 
-    def generate_move_id(self):
+    def make_move_id(self):
         """
         Creates a unique id for each move
         Returns:
@@ -175,3 +195,5 @@ class GoNode(MinimaxNode):
         return score_dict["relative_black_score"]
 
     # TODO find_connecting_stones():
+
+

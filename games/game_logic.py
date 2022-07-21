@@ -1,6 +1,7 @@
 from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 
 WINNING_SCORE = 5
+MAX_TREE_DEPTH = 5
 
 
 def is_move_valid(board_state, move_coordinates):
@@ -162,3 +163,109 @@ def get_row_score(row, stone_colour):
         else:
             score_count += 1
     return max(row_score)
+
+def find_depth_recursive(node, depth):
+    if depth > MAX_TREE_DEPTH:
+        raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
+
+    # Base case
+    # If we're at a terminal node leave the recursion
+    if node.is_leaf_node():
+        print(f"candidate_move_node {type(node)}")
+        print(f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}")
+        print(f"returning at depth of {depth} owing to terminal node")
+        return depth
+
+    # recurse case
+    for i, child in enumerate(node.children):
+        print(f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, candidate_move_node {type(child)}")
+        return find_depth_recursive(child, depth+1)
+
+    print(f"Returning because end of function depth {depth}")
+    return
+
+def find_depth_iterative(node, max_depth):
+    # Source: https://stackoverflow.com/questions/71846315/depth-limited-dfs-general-non-binary-tree-search
+    stack = [(node, 0)]
+    visited = set()
+    while stack:
+        node, node_depth = stack.pop()
+        if node in visited:
+            continue
+        visited.add(node)
+
+        # Any other processing for this node comes here
+        if node.is_leaf_node():
+            return node_depth
+
+        if node_depth < max_depth:
+            for child in reversed(node.children):
+                stack.append((child, node_depth + 1))
+    return node_depth
+
+def short_id(a_uuid):
+    return str(a_uuid)[:5]
+
+def build_game_tree_recursive(node, depth, board_states):
+    """
+    Starts from current node and builds game tree to a given
+    depth
+
+    Parameters:
+        depth (int): how far down the tree we want to build
+    """
+    print("In build_game_tree_recursive", short_id(node.move_id), depth)
+    print(node.board_state)
+
+    board_states.add(str(node.board_state))
+
+    if depth < 0:
+        raise Exception(f"Maximum tree depth exceeded")
+
+    # Base case
+    # If we're at a terminal node leave the recursion
+    if depth == 0:
+        print(f"Returning at depth of {depth}")
+        assert not node.children, f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
+        return
+
+    # recurse case
+    for candidate_move_node in node.generate_next_node():
+        if str(candidate_move_node.board_state) in board_states:
+            continue
+        # use recursion to build tree vertically
+        if not candidate_move_node.children:
+            candidate_move_node.children = []
+        if not build_game_tree_recursive(candidate_move_node, depth-1, board_states):
+            # build tree horizontally
+            print(f"Appending nodes at depth of {depth}")
+            candidate_move_node.set_parent(node)
+            node.children.append(candidate_move_node)
+            print(f"number of children: {len(node.children)}")
+
+    print("Returning at end of function")
+    return
+
+
+def build_game_tree_iterative(node, max_depth):
+    # Source: https://stackoverflow.com/questions/71846315/depth-limited-dfs-general-non-binary-tree-search
+    stack = [(node, 0)]
+    visited = set()
+    while stack:
+        node, node_depth = stack.pop()
+        if node in visited:
+            continue
+        visited.add(node)
+
+        # Any other processing for this node comes here
+        for candidate_move_node in node.generate_next_node():
+            node.children.append(candidate_move_node)
+
+        if node_depth < max_depth:
+            for child in reversed(node.children):
+                stack.append((child, node_depth + 1))
+
+        if node_depth >= max_depth:
+            node.children = []
+            return
+    return
