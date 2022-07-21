@@ -245,27 +245,3 @@ def build_game_tree_recursive(node, depth, board_states):
 
     print("Returning at end of function")
     return
-
-
-def build_game_tree_iterative(node, max_depth):
-    # Source: https://stackoverflow.com/questions/71846315/depth-limited-dfs-general-non-binary-tree-search
-    stack = [(node, 0)]
-    visited = set()
-    while stack:
-        node, node_depth = stack.pop()
-        if node in visited:
-            continue
-        visited.add(node)
-
-        # Any other processing for this node comes here
-        for candidate_move_node in node.generate_next_node():
-            node.children.append(candidate_move_node)
-
-        if node_depth < max_depth:
-            for child in reversed(node.children):
-                stack.append((child, node_depth + 1))
-
-        if node_depth >= max_depth:
-            node.children = []
-            return
-    return

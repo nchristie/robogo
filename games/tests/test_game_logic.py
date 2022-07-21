@@ -257,7 +257,6 @@ def test_find_depth_recursive():
     build_game_tree_recursive(game_tree_node_1, node_1_depth, set())
 
     # WHEN
-    # import pdb; pdb.set_trace()
     # actual = game_tree_node_1.children[0].children[0].children[0].children
 
     # # # THEN
@@ -265,7 +264,6 @@ def test_find_depth_recursive():
     # assert expected == actual
 
     actual = find_depth_recursive(game_tree_node_1, 0)
-    # import pdb; pdb.set_trace()
     expected = node_1_depth
     assert expected == actual
 

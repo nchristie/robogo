@@ -292,57 +292,6 @@ class GoNodeTestCase(TestCase):
 
     # TODO test_gets_best_move_only_one_option(self):
 
-    def test_build_game_tree_recursive_doesnt_build_past_terminal_node(self):
-        # GIVEN
-        board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
-
-        player="minimizer"
-        game_tree_node_1 = GoNode(
-                    player=player,
-                    move_id="test_build_game_tree_recursive_doesnt_build_past_terminal_node",
-                    board_state=board_state,
-                )
-
-        depth = 0
-
-        # hack to get around suspected test pollution
-        game_tree_node_1.children = []
-
-        # WHEN
-
-
-        game_tree_node_1.build_game_tree_recursive(depth)
-        actual = game_tree_node_1.get_children()
-        print()
-
-        # THEN
-        expected = []
-        self.assertEqual(expected, actual)
-
-    def test_build_game_tree_recursive_builds(self):
-        # GIVEN
-        player="maximizer"
-        game_tree_node_2 = GoNode(
-                    player=player,
-                    board_state=[
-                        ["●", "+", "+"],
-                        ["●", "+", "+"],
-                        ["+", "+", "+"]
-                    ],
-                )
-
-        depth = 1
-        # hack to get around suspected test pollution
-        game_tree_node_2.children = []
-
-
-        # WHEN
-        game_tree_node_2.build_game_tree_recursive(depth)
-        actual = len(game_tree_node_2.get_children())
-
-        # THEN
-        expected = 7
-        self.assertEqual(expected, actual)
 
     @skip("Removing concept of terminal from nodes")
     def test_build_game_tree_recursive_sets_nodes_as_terminal(self):
@@ -452,24 +401,4 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = 1
-        self.assertEqual(expected, actual)
-
-    def test_build_game_tree_recursive_builds_to_given_depth(self):
-        # GIVEN
-        player="maximizer"
-        game_tree_node_7 = GoNode(
-                    player=player,
-                    board_state=[["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]],
-                )
-
-        node_7_depth = 5
-        # hack to get around suspected test pollution
-        game_tree_node_7.children = []
-        game_tree_node_7.build_game_tree_recursive(node_7_depth)
-
-        # WHEN
-        actual = game_tree_node_7.find_depth_recursive(game_tree_node_7, 0)
-
-        # THEN
-        expected = node_7_depth
         self.assertEqual(expected, actual)
