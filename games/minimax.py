@@ -2,16 +2,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class MinimaxNode:
-    def __init__(
-        self,
-        move_id=None,
-        player=None,
-        score=None,
-        parent=None,
-        children=[]
-    ):
-        self.parent=parent
+    def __init__(self, move_id=None, player=None, score=None, parent=None, children=[]):
+        self.parent = parent
         self.children = children
         self.move_id = move_id
         self.player = player
@@ -96,7 +90,9 @@ class MinimaxNode:
             for child in node.generate_next_node():
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
-                    node.evaluate_node(child, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(
+                        child, maximizer_choice_node, minimizer_choice_node, depth
+                    ),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -109,7 +105,9 @@ class MinimaxNode:
             for child in node.generate_next_node():
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,
-                    node.evaluate_node(child, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(
+                        child, maximizer_choice_node, minimizer_choice_node, depth
+                    ),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -118,7 +116,9 @@ class MinimaxNode:
                     return maximizer_choice_node
                 return maximizer_choice_node
 
-    def build_minimax_alpha_beta_game_tree(self, node, maximizer_choice_node, minimizer_choice_node, depth):
+    def build_minimax_alpha_beta_game_tree(
+        self, node, maximizer_choice_node, minimizer_choice_node, depth
+    ):
         # input is node, output is node
         # TODO input is node, output is the best available value,
         # TODO side effect is setting values on entire tree
@@ -143,7 +143,9 @@ class MinimaxNode:
                 node.add_child(child)
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
-                    node.evaluate_node(child, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(
+                        child, maximizer_choice_node, minimizer_choice_node, depth
+                    ),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -159,7 +161,9 @@ class MinimaxNode:
                 node.add_child(child)
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,
-                    node.evaluate_node(child, maximizer_choice_node, minimizer_choice_node, depth),
+                    node.evaluate_node(
+                        child, maximizer_choice_node, minimizer_choice_node, depth
+                    ),
                 )
                 if (
                     minimizer_choice_node.get_score()
@@ -169,7 +173,6 @@ class MinimaxNode:
                     return maximizer_choice_node.get_score()
                 node.set_score(maximizer_choice_node.get_score())
                 return maximizer_choice_node.get_score()
-
 
     def node_min(self, first_node, second_node):
         if second_node.get_score() < first_node.get_score():
@@ -184,4 +187,3 @@ class MinimaxNode:
     def is_leaf_node(self):
         # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, move_id = {self.move_id}")
         return not self.children
-

@@ -6,9 +6,7 @@ class MinimaxNodeTestCase(TestCase):
     def test_get_score(self):
         """Get score"""
         # GIVEN
-        my_node_1 = MinimaxNode(
-            move_id=1, player="maximizer", score=None, children=[]
-        )
+        my_node_1 = MinimaxNode(move_id=1, player="maximizer", score=None, children=[])
         expected = None
         actual = my_node_1.get_score()
         self.assertEqual(expected, actual)
@@ -16,9 +14,7 @@ class MinimaxNodeTestCase(TestCase):
     def test_set_score(self):
         """Set score"""
         # GIVEN
-        my_node_2 = MinimaxNode(
-            move_id=2, player="maximizer", score=None, children=[]
-        )
+        my_node_2 = MinimaxNode(move_id=2, player="maximizer", score=None, children=[])
         my_node_2.set_score(5)
         expected = 5
         actual = my_node_2.get_score()
@@ -27,9 +23,7 @@ class MinimaxNodeTestCase(TestCase):
     def test_get_children(self):
         """"""
         # GIVEN
-        my_node_3 = MinimaxNode(
-            move_id=3, player="maximizer", score=None, children=[]
-        )
+        my_node_3 = MinimaxNode(move_id=3, player="maximizer", score=None, children=[])
         expected = []
         actual = my_node_3.get_children()
         self.assertEqual(expected, actual)
@@ -37,9 +31,7 @@ class MinimaxNodeTestCase(TestCase):
     def test_add_child(self):
         """"""
         # GIVEN
-        my_node_4 = MinimaxNode(
-            move_id=4, player="maximizer", score=None, children=[]
-        )
+        my_node_4 = MinimaxNode(move_id=4, player="maximizer", score=None, children=[])
         score = 4
         move_id = 123
         player = "maximizer"
@@ -52,9 +44,7 @@ class MinimaxNodeTestCase(TestCase):
 
     def test_returns_max_for_maximizer(self):
         # GIVEN
-        my_node_5 = MinimaxNode(
-            move_id=5, player="maximizer", score=None, children=[]
-        )
+        my_node_5 = MinimaxNode(move_id=5, player="maximizer", score=None, children=[])
         available_moves = [
             {
                 "move_id": 14,
@@ -78,9 +68,7 @@ class MinimaxNodeTestCase(TestCase):
 
     def test_returns_min_for_minimizer(self):
         # GIVEN
-        my_node_6 = MinimaxNode(
-            move_id=6, player="maximizer", score=None, children=[]
-        )
+        my_node_6 = MinimaxNode(move_id=6, player="maximizer", score=None, children=[])
         available_moves = [
             {
                 "move_id": 17,
@@ -108,12 +96,8 @@ class MinimaxNodeTestCase(TestCase):
         my_node_none = MinimaxNode(
             move_id=1, player="maximizer", score=None, children=[]
         )
-        my_node_low = MinimaxNode(
-            move_id=1, player="maximizer", score=-5, children=[]
-        )
-        my_node_high = MinimaxNode(
-            move_id=1, player="maximizer", score=5, children=[]
-        )
+        my_node_low = MinimaxNode(move_id=1, player="maximizer", score=-5, children=[])
+        my_node_high = MinimaxNode(move_id=1, player="maximizer", score=5, children=[])
 
         # WHEN
         actual = my_node_none.node_min(my_node_low, my_node_high)
@@ -127,12 +111,8 @@ class MinimaxNodeTestCase(TestCase):
         my_node_none = MinimaxNode(
             move_id=1, player="maximizer", score=None, children=[]
         )
-        my_node_low = MinimaxNode(
-            move_id=1, player="maximizer", score=-5, children=[]
-        )
-        my_node_high = MinimaxNode(
-            move_id=1, player="maximizer", score=5, children=[]
-        )
+        my_node_low = MinimaxNode(move_id=1, player="maximizer", score=-5, children=[])
+        my_node_high = MinimaxNode(move_id=1, player="maximizer", score=5, children=[])
 
         # WHEN
         actual = my_node_none.node_max(my_node_low, my_node_high)
@@ -140,4 +120,3 @@ class MinimaxNodeTestCase(TestCase):
         # THEN
         expected = my_node_high
         self.assertEqual(expected, actual)
-

@@ -293,17 +293,16 @@ class GoNodeTestCase(TestCase):
 
     # TODO test_gets_best_move_only_one_option(self):
 
-
     @skip("Removing concept of terminal from nodes")
     def test_build_game_tree_recursive_sets_nodes_as_terminal(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
-        player="maximizer"
+        player = "maximizer"
 
         game_tree_node_3 = GoNode(
-                    player=player,
-                    board_state=board_state,
-                )
+            player=player,
+            board_state=board_state,
+        )
 
         depth = 1
 
@@ -323,12 +322,12 @@ class GoNodeTestCase(TestCase):
     def test_build_game_tree_recursive_doesnt_set_terminal_for_intermediary_nodes(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
-        player="maximizer"
+        player = "maximizer"
 
         game_tree_node_4 = GoNode(
-                    player=player,
-                    board_state=board_state,
-                )
+            player=player,
+            board_state=board_state,
+        )
 
         depth = 2
 
@@ -348,15 +347,15 @@ class GoNodeTestCase(TestCase):
     def test_build_game_sets_terminal_for_winning_white_nodes(self):
         # GIVEN
         game_tree_node_5 = GoNode(
-                    player="maximizer",
-                    board_state=[
-                        ["○", "+", "+", "+", "+"],
-                        ["○", "+", "+", "+", "+"],
-                        ["○", "+", "+", "+", "+"],
-                        ["○", "+", "+", "+", "+"],
-                        ["+", "+", "+", "+", "+"]
-                    ]
-                )
+            player="maximizer",
+            board_state=[
+                ["○", "+", "+", "+", "+"],
+                ["○", "+", "+", "+", "+"],
+                ["○", "+", "+", "+", "+"],
+                ["○", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+            ],
+        )
 
         # hack to get around suspected test pollution
         game_tree_node_5.children = []
@@ -376,18 +375,18 @@ class GoNodeTestCase(TestCase):
     @skip("Removing concept of terminal from nodes")
     def test_build_game_sets_terminal_for_black_winning_nodes(self):
         # GIVEN
-        player="minimizer"
+        player = "minimizer"
         board_state = [
             ["●", "+", "+", "+", "+"],
             ["●", "+", "+", "+", "+"],
             ["●", "+", "+", "+", "+"],
             ["●", "+", "+", "+", "+"],
-            ["+", "+", "+", "+", "+"]
+            ["+", "+", "+", "+", "+"],
         ]
         game_tree_node_6 = GoNode(
-                    player=player,
-                    board_state=board_state,
-                )
+            player=player,
+            board_state=board_state,
+        )
 
         # hack to get around suspected test pollution
         game_tree_node_6.children = []
@@ -407,21 +406,17 @@ class GoNodeTestCase(TestCase):
     def test_evaluate_node(self):
         # GIVEN
         board_state = [
-            ["+","○","○","○","○","+","+","+","+"],
-            ["+","+","+","+","+","●","+","+","+"],
-            ["+","+","+","+","+","●","+","+","+"],
-            ["+","+","+","+","+","●","+","+","+"],
-            ["+","+","+","+","+","●","+","+","+"],
-            ["+","+","+","+","+","○","+","+","+"],
-            ["+","+","+","+","+","+","+","+","+"],
-            ["+","+","+","+","+","+","+","+","+"],
-            ["+","+","+","+","+","+","+","+","+"]
+            ["+", "○", "○", "○", "○", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "○", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
-        root_node = GoNode(
-            move_id = "root_node",
-            player="black",
-            board_state=board_state
-        )
+        root_node = GoNode(move_id="root_node", player="black", board_state=board_state)
 
         depth = 2
 
@@ -430,7 +425,7 @@ class GoNodeTestCase(TestCase):
         maximizer_choice_node = GoNode(
             move_id="dummy_node_maximizer",
             player="minimizer",
-            score=-float('inf'),
+            score=-float("inf"),
             children=[],
             board_state=board_state,
         )
@@ -438,20 +433,16 @@ class GoNodeTestCase(TestCase):
         minimizer_choice_node = GoNode(
             move_id="dummy_node_minimizer",
             player="minimizer",
-            score=float('inf'),
+            score=float("inf"),
             children=[],
             board_state=board_state,
         )
 
         # WHEN
         actual = root_node.evaluate_node(
-            root_node,
-            maximizer_choice_node,
-            minimizer_choice_node,
-            depth
+            root_node, maximizer_choice_node, minimizer_choice_node, depth
         ).move_coordinates
 
         # THEN
         expected = (0, 5)
         self.assertEqual(expected, actual)
-

@@ -205,6 +205,7 @@ def test_get_row_score_row_begins_and_ends_with_empty_space():
     expected = 3
     assert expected == actual
 
+
 def test_list_all_moves_on_board():
     # WHEN
     board_size = 9
@@ -218,12 +219,12 @@ def test_list_all_moves_on_board():
 
 def test_build_game_tree_recursive_depth():
     # GIVEN
-    player="maximizer"
+    player = "maximizer"
     game_tree_node_3 = GoNode(
-                move_id="root_node",
-                player=player,
-                board_state=[["●", "+"], ["+", "+"]],
-            )
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "+"], ["+", "+"]],
+    )
 
     node_3_depth = 3
     # hack to get around suspected test pollution
@@ -240,16 +241,12 @@ def test_build_game_tree_recursive_depth():
 
 def test_find_depth_recursive():
     # GIVEN
-    player="maximizer"
+    player = "maximizer"
     game_tree_node_1 = GoNode(
-                move_id="root_node",
-                player=player,
-                board_state=[
-                    ["●", "+", "+"],
-                    ["+", "+", "+"],
-                    ["+", "+", "+"]
-                ],
-            )
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]],
+    )
 
     node_1_depth = 4
     # hack to get around suspected test pollution
@@ -266,5 +263,3 @@ def test_find_depth_recursive():
     actual = find_depth_recursive(game_tree_node_1, 0)
     expected = node_1_depth
     assert expected == actual
-
-

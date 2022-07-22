@@ -103,6 +103,7 @@ def transpose_board(board_state):
             transposed_board[j][i] = old_board_move
     return transposed_board
 
+
 def list_all_moves_on_board(board_size):
     all_moves = []
     for x in range(board_size):
@@ -167,6 +168,7 @@ def get_row_score(row, stone_colour):
             score_count += 1
     return max(row_score)
 
+
 def find_depth_recursive(node, depth):
     if depth > MAX_TREE_DEPTH:
         raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
@@ -175,17 +177,22 @@ def find_depth_recursive(node, depth):
     # If we're at a terminal node leave the recursion
     if node.is_leaf_node():
         logger.debug(f"candidate_move_node {type(node)}")
-        logger.debug(f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}")
+        logger.debug(
+            f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}"
+        )
         logger.debug(f"returning at depth of {depth} owing to terminal node")
         return depth
 
     # recurse case
     for i, child in enumerate(node.children):
-        logger.debug(f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, candidate_move_node {type(child)}")
-        return find_depth_recursive(child, depth+1)
+        logger.debug(
+            f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, candidate_move_node {type(child)}"
+        )
+        return find_depth_recursive(child, depth + 1)
 
     logger.debug(f"Returning because end of function depth {depth}")
     return
+
 
 def find_depth_iterative(node, max_depth):
     # Source: https://stackoverflow.com/questions/71846315/depth-limited-dfs-general-non-binary-tree-search
@@ -206,8 +213,10 @@ def find_depth_iterative(node, max_depth):
                 stack.append((child, node_depth + 1))
     return node_depth
 
+
 def short_id(a_uuid):
     return str(a_uuid)[:5]
+
 
 # TODO use this function as a basis for an evaluate function which builds
 # game tree and then returns the best next move coordinates using minimax
@@ -232,7 +241,9 @@ def build_game_tree_recursive(node, depth, board_states):
     # If we're at a terminal node leave the recursion
     if depth == 0:
         logger.debug(f"Returning at depth of {depth}")
-        assert not node.children, f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
+        assert (
+            not node.children
+        ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
         return
 
     # recurse case
@@ -245,7 +256,7 @@ def build_game_tree_recursive(node, depth, board_states):
         # if candidate_move_node.children == None:
         if not candidate_move_node.children:
             candidate_move_node.children = []
-        if not build_game_tree_recursive(candidate_move_node, depth-1, board_states):
+        if not build_game_tree_recursive(candidate_move_node, depth - 1, board_states):
 
             # not build_game_tree_recursive(..) will be True if we've reached the end of
             # depth count-down or if we've visited every potential child node horizontally,

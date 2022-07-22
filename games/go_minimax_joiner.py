@@ -7,23 +7,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-PLAYER_DICT = {
-    "maximizer": BLACK_STONE,
-    "minimizer": WHITE_STONE
-}
+PLAYER_DICT = {"maximizer": BLACK_STONE, "minimizer": WHITE_STONE}
 
-STONE_DICT = {
-    BLACK_STONE: "maximizer",
-    WHITE_STONE: "minimizer"
-}
+STONE_DICT = {BLACK_STONE: "maximizer", WHITE_STONE: "minimizer"}
 
 MAX_TREE_DEPTH = 5
+
 
 class GoNode(MinimaxNode):
     """
     Node which inherits from MinimaxNode and layers over the logic
     relevant to five-in-a-row Go
     """
+
     def __init__(
         self,
         move_id=None,
@@ -71,13 +67,13 @@ class GoNode(MinimaxNode):
                 y = move_coordinates[1]
                 new_board_state[x][y] = stone
 
-                #TODO add parent node
+                # TODO add parent node
                 next_node = GoNode(
                     move_id=self.make_move_id(),
                     player=player,
                     board_state=new_board_state,
                     move_coordinates=move_coordinates,
-                    children=[]
+                    children=[],
                 )
                 # logger.debug(short_id(next_node.move_id))
                 yield next_node
@@ -131,5 +127,3 @@ class GoNode(MinimaxNode):
         return score_dict["relative_black_score"]
 
     # TODO find_connecting_stones():
-
-

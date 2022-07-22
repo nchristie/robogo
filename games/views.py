@@ -132,7 +132,7 @@ def get_white_response(board_state):
     maximizer_choice_node = GoNode(
         move_id=0,
         player="minimizer",
-        score=-float('inf'),
+        score=-float("inf"),
         children=[],
         board_state=board_state,
     )
@@ -140,12 +140,14 @@ def get_white_response(board_state):
     minimizer_choice_node = GoNode(
         move_id=0,
         player="minimizer",
-        score=float('inf'),
+        score=float("inf"),
         children=[],
         board_state=board_state,
     )
 
-    white_move_node = my_node.evaluate_node(my_node, maximizer_choice_node, minimizer_choice_node, DEPTH)
+    white_move_node = my_node.evaluate_node(
+        my_node, maximizer_choice_node, minimizer_choice_node, DEPTH
+    )
     # TODO once evaluate_node is updated we should have a built a tree and be able to use that to assess
     # the best move with the following lines of code:
     # white_move_node = my_node.children[0]
