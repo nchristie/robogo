@@ -206,6 +206,9 @@ def find_depth_iterative(node, max_depth):
 def short_id(a_uuid):
     return str(a_uuid)[:5]
 
+# TODO use this function as a basis for an evaluate function which builds
+# game tree and then returns the best next move coordinates using minimax
+# and alpha-beta pruning
 def build_game_tree_recursive(node, depth, board_states):
     """
     Starts from current node and builds game tree to a given
@@ -214,6 +217,7 @@ def build_game_tree_recursive(node, depth, board_states):
     Parameters:
         depth (int): how far down the tree we want to build
     """
+    # TODO replace print statements with logging (throughout codebase)
     print("In build_game_tree_recursive", short_id(node.move_id), depth)
     print(node.board_state)
 
@@ -234,9 +238,18 @@ def build_game_tree_recursive(node, depth, board_states):
         if str(candidate_move_node.board_state) in board_states:
             continue
         # use recursion to build tree vertically
+
+        # TODO s/ with following line
+        # if candidate_move_node.children == None:
         if not candidate_move_node.children:
             candidate_move_node.children = []
         if not build_game_tree_recursive(candidate_move_node, depth-1, board_states):
+
+            # not build_game_tree_recursive(..) will be True if we've reached the end of
+            # depth count-down or if we've visited every potential child node horizontally,
+            # so this means first we'll get to the point we want to stop building and add
+            # children, then work back up the tree and add child nodes
+
             # build tree horizontally
             print(f"Appending nodes at depth of {depth}")
             candidate_move_node.set_parent(node)

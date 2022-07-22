@@ -52,6 +52,10 @@ class GoNode(MinimaxNode):
         Yields:
             GoNode: next possible move on the board
         """
+        # TODO return a dictionary with the parameters to go into the GoNode
+        #   instead of the GoNode itself - this is so we can use the add_child
+        #   method instead of doing an append to node.children
+
         # print(f"In generate_next_node, own id = {short_id(self.move_id)}")
         player = self.alternate_player()
         stone = PLAYER_DICT[player]
@@ -63,6 +67,8 @@ class GoNode(MinimaxNode):
                 x = move_coordinates[0]
                 y = move_coordinates[1]
                 new_board_state[x][y] = stone
+                
+                #TODO add parent node
                 next_node = GoNode(
                     move_id=self.make_move_id(),
                     player=player,
