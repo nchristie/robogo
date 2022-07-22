@@ -319,7 +319,8 @@ def evaluate(node, depth, board_states, alpha, beta):
             not node.children
         ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
         # TODO return score (I think)
-        return
+        node.set_score(node.get_utility())
+        return node.get_score()
 
     # recurse case
     for candidate_move_node in node.generate_next_node():
@@ -338,18 +339,19 @@ def evaluate(node, depth, board_states, alpha, beta):
             node.children = []
         if candidate_move_node.children == None:
             candidate_move_node.children = []
-        if not evaluate(candidate_move_node, depth - 1, board_states):
 
-            # not evaluate(..) will be True if we've reached the end of
-            # depth count-down or if we've visited every potential child node horizontally,
-            # so this means first we'll get to the point we want to stop building and add
-            # children, then work back up the tree and add child nodes
+        candidate_move_node.set_score(evaluate(candidate_move_node, depth - 1, board_states, alpha, beta))
 
-            # build tree horizontally
-            logger.debug(f"Appending nodes at depth of {depth}")
-            candidate_move_node.set_parent(node)
-            node.children.append(candidate_move_node)
-            logger.debug(f"number of children: {len(node.children)}")
+        # not evaluate(..) will be True if we've reached the end of
+        # depth count-down or if we've visited every potential child node horizontally,
+        # so this means first we'll get to the point we want to stop building and add
+        # children, then work back up the tree and add child nodes
+
+        # build tree horizontally
+        logger.debug(f"Appending nodes at depth of {depth}")
+        candidate_move_node.set_parent(node)
+        node.children.append(candidate_move_node)
+        logger.debug(f"number of children: {len(node.children)}")
 
     logger.debug("Returning at end of function")
-    return
+    return node.get_score()

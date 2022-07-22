@@ -264,7 +264,7 @@ def test_find_depth_recursive():
     expected = node_1_depth
     assert expected == actual
 
-
+@pytest.mark.skip("WIP")
 def test_evaluate_node():
     # GIVEN
     board_state = [
@@ -306,3 +306,49 @@ def test_evaluate_node():
     # THEN
     expected = (0, 5)
     assert expected == actual
+
+def test_evaluate_assigns_scores():
+    # GIVEN
+    player = "maximizer"
+    game_tree_node_3 = GoNode(
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "●"], ["+", "+"]],
+    )
+
+    node_3_depth = 0
+    alpha, beta = MINUS_INF, PLUS_INF
+    # hack to get around suspected test pollution
+    game_tree_node_3.children = []
+    evaluate(game_tree_node_3, node_3_depth, set(), alpha, beta)
+
+    # WHEN
+    actual = game_tree_node_3.get_score()
+
+    # THEN
+    expected = 2
+    assert expected == actual
+
+@pytest.mark.xfail # WIP
+def test_evaluate_assigns_scores_based_on_leaves():
+    # GIVEN
+    player = "maximizer"
+    game_tree_node_3 = GoNode(
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "●"], ["+", "+"]],
+    )
+
+    node_3_depth = 1
+    alpha, beta = MINUS_INF, PLUS_INF
+    # hack to get around suspected test pollution
+    game_tree_node_3.children = []
+    evaluate(game_tree_node_3, node_3_depth, set(), alpha, beta)
+
+    # WHEN
+    actual = game_tree_node_3.get_score()
+
+    # THEN
+    expected = 2
+    assert expected == actual
+
