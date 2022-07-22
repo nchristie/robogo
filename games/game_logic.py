@@ -1,4 +1,7 @@
 from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
+import logging
+
+logger = logging.getLogger(__name__)
 
 WINNING_SCORE = 5
 MAX_TREE_DEPTH = 5
@@ -171,17 +174,17 @@ def find_depth_recursive(node, depth):
     # Base case
     # If we're at a terminal node leave the recursion
     if node.is_leaf_node():
-        print(f"candidate_move_node {type(node)}")
-        print(f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}")
-        print(f"returning at depth of {depth} owing to terminal node")
+        logger.debug(f"candidate_move_node {type(node)}")
+        logger.debug(f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}")
+        logger.debug(f"returning at depth of {depth} owing to terminal node")
         return depth
 
     # recurse case
     for i, child in enumerate(node.children):
-        print(f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, candidate_move_node {type(child)}")
+        logger.debug(f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, candidate_move_node {type(child)}")
         return find_depth_recursive(child, depth+1)
 
-    print(f"Returning because end of function depth {depth}")
+    logger.debug(f"Returning because end of function depth {depth}")
     return
 
 def find_depth_iterative(node, max_depth):
@@ -217,9 +220,8 @@ def build_game_tree_recursive(node, depth, board_states):
     Parameters:
         depth (int): how far down the tree we want to build
     """
-    # TODO replace print statements with logging (throughout codebase)
-    print("In build_game_tree_recursive", short_id(node.move_id), depth)
-    print(node.board_state)
+    logger.debug(f"In build_game_tree_recursive, {short_id(node.move_id)} {depth}")
+    logger.debug(node.board_state)
 
     board_states.add(str(node.board_state))
 
@@ -229,7 +231,7 @@ def build_game_tree_recursive(node, depth, board_states):
     # Base case
     # If we're at a terminal node leave the recursion
     if depth == 0:
-        print(f"Returning at depth of {depth}")
+        logger.debug(f"Returning at depth of {depth}")
         assert not node.children, f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
         return
 
@@ -251,10 +253,10 @@ def build_game_tree_recursive(node, depth, board_states):
             # children, then work back up the tree and add child nodes
 
             # build tree horizontally
-            print(f"Appending nodes at depth of {depth}")
+            logger.debug(f"Appending nodes at depth of {depth}")
             candidate_move_node.set_parent(node)
             node.children.append(candidate_move_node)
-            print(f"number of children: {len(node.children)}")
+            logger.debug(f"number of children: {len(node.children)}")
 
-    print("Returning at end of function")
+    logger.debug("Returning at end of function")
     return

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 class MinimaxNode:
     def __init__(
         self,
@@ -70,7 +74,7 @@ class MinimaxNode:
         return child_score < best_score
 
     def get_utility(self):
-        print("In minimax get_utility")
+        logger.debug("In minimax get_utility")
         # Implemented by class which inherits
         return
 
@@ -84,7 +88,7 @@ class MinimaxNode:
             return
 
         if node.is_leaf_node():
-            print(f"terminal node found at depth of {depth}")
+            logger.debug(f"terminal node found at depth of {depth}")
             node.set_score(node.get_utility())
             return node
 
@@ -129,7 +133,7 @@ class MinimaxNode:
             return
 
         if node.is_leaf_node():
-            print(f"terminal node found at depth of {depth}")
+            logger.debug(f"terminal node found at depth of {depth}")
             node_score = node.get_utility()
             node.set_score(node_score)
             return node_score
@@ -178,6 +182,6 @@ class MinimaxNode:
         return first_node
 
     def is_leaf_node(self):
-        # print(f"Checking if leaf node, number of children = {len(self.children)}, move_id = {self.move_id}")
+        # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, move_id = {self.move_id}")
         return not self.children
 

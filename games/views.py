@@ -6,6 +6,10 @@ from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode
 from .game_logic import get_score_dict, WINNING_SCORE, transpose_board
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 DEPTH = 100000
 
 # TODO remove drop down with ip addresses and form entry for player colour
@@ -21,7 +25,7 @@ class Index(View):
     def post(self, request):
         user_game = find_game_by_ip(get_client_ip(request))
         game_id = user_game.id
-        print(f"user_game id: {game_id}")
+        logger.info(f"user_game id: {game_id}")
 
         initial_state = {"game": game_id, "player": "black"}
         form = MoveForm(request.POST, initial=initial_state)
@@ -54,7 +58,7 @@ class Index(View):
                 )
                 white_move.save()
             except Exception as e:
-                print(f"Failed to get white move with exception: {e}")
+                logger.error(f"Failed to get white move with exception: {e}")
 
         # Update board with white response
         moves = user_game.move_set.all().order_by("-id")
@@ -88,7 +92,7 @@ class Board:
         legal_move = 0 <= x < self.size
         legal_move = legal_move & 0 <= y < self.size
         if not legal_move:
-            print("Illegal move, try again")
+            logger.error("Illegal move, try again")
             return
         self.state[x][y] = player
 
@@ -106,10 +110,10 @@ def find_game_by_ip(ip):
     # Find existing game for user if there is one
     try:
         user_game = Game.objects.get(user_ip=ip)
-        print(f"Found game for ip: {ip}")
+        logger.info(f"Found game for ip: {ip}")
     # Initiate new game if not
     except:
-        print(f"Couldn't find game for ip: {ip}, creating new game")
+        logger.info(f"Couldn't find game for ip: {ip}, creating new game")
         user_game = Game()
         user_game.user_ip = ip
         user_game.save()
@@ -148,5 +152,5 @@ def get_white_response(board_state):
     # for node in my_node.children:
     # white_move_node = node if node.get_score() > white_move_node.get_score()
     white_move = white_move_node.move_coordinates
-    print(f"white_move: {white_move}")
+    logger.info(f"white_move: {white_move}")
     return white_move

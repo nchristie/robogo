@@ -85,3 +85,7 @@ https://stackoverflow.com/
 
 # Test pollution:
 - https://tech.octopus.energy/news/2022/05/23/flakey-python-tests.html#anti-pattern-5-test-pollution
+
+# Logging
+- https://docs.djangoproject.com/en/4.0/topics/logging/
+- https://www.sentinelone.com/blog/getting-started-quickly-django-logging/

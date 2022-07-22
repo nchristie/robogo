@@ -25,6 +25,9 @@ One test (example):
 The file which isn't Django compatible:
 `docker-compose run --rm web python3 -m pytest games/tests/test_game_logic.py`
 
+See logs while running tests:
+`docker-compose run --rm web python3 -m pytest games/tests/test_game_logic.py --log-level=DEBUG`
+
 Run all tests:
 `docker-compose run --rm web python3 -m pytest games/tests/test_game_logic.py && docker-compose run --rm web python manage.py test`
 

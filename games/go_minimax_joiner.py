@@ -3,6 +3,9 @@ import uuid
 from copy import deepcopy
 from .game_logic import is_move_valid, get_score_dict, list_all_moves_on_board, short_id
 from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
+import logging
+
+logger = logging.getLogger(__name__)
 
 PLAYER_DICT = {
     "maximizer": BLACK_STONE,
@@ -56,7 +59,7 @@ class GoNode(MinimaxNode):
         #   instead of the GoNode itself - this is so we can use the add_child
         #   method instead of doing an append to node.children
 
-        # print(f"In generate_next_node, own id = {short_id(self.move_id)}")
+        # logger.debug(f"In generate_next_node, own id = {short_id(self.move_id)}")
         player = self.alternate_player()
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
@@ -67,7 +70,7 @@ class GoNode(MinimaxNode):
                 x = move_coordinates[0]
                 y = move_coordinates[1]
                 new_board_state[x][y] = stone
-                
+
                 #TODO add parent node
                 next_node = GoNode(
                     move_id=self.make_move_id(),
@@ -76,7 +79,7 @@ class GoNode(MinimaxNode):
                     move_coordinates=move_coordinates,
                     children=[]
                 )
-                # print(short_id(next_node.move_id))
+                # logger.debug(short_id(next_node.move_id))
                 yield next_node
 
     def generate_next_node_around_existing_moves(self, player="minimizer"):
