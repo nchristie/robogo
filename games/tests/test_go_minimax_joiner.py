@@ -3,6 +3,7 @@ from games.go_minimax_joiner import GoNode
 from uuid import UUID
 from types import GeneratorType
 from unittest import skip, skipIf
+from games.game_logic import build_game_tree_recursive
 
 
 class GoNodeTestCase(TestCase):
@@ -402,3 +403,55 @@ class GoNodeTestCase(TestCase):
         # THEN
         expected = 1
         self.assertEqual(expected, actual)
+
+    def test_evaluate_node(self):
+        # GIVEN
+        board_state = [
+            ["+","○","○","○","○","+","+","+","+"],
+            ["+","+","+","+","+","●","+","+","+"],
+            ["+","+","+","+","+","●","+","+","+"],
+            ["+","+","+","+","+","●","+","+","+"],
+            ["+","+","+","+","+","●","+","+","+"],
+            ["+","+","+","+","+","○","+","+","+"],
+            ["+","+","+","+","+","+","+","+","+"],
+            ["+","+","+","+","+","+","+","+","+"],
+            ["+","+","+","+","+","+","+","+","+"]
+        ]
+        root_node = GoNode(
+            move_id = "root_node",
+            player="black",
+            board_state=board_state
+        )
+
+        depth = 2
+
+        build_game_tree_recursive(root_node, depth, set())
+
+        maximizer_choice_node = GoNode(
+            move_id="dummy_node_maximizer",
+            player="minimizer",
+            score=-float('inf'),
+            children=[],
+            board_state=board_state,
+        )
+
+        minimizer_choice_node = GoNode(
+            move_id="dummy_node_minimizer",
+            player="minimizer",
+            score=float('inf'),
+            children=[],
+            board_state=board_state,
+        )
+
+        # WHEN
+        actual = root_node.evaluate_node(
+            root_node,
+            maximizer_choice_node,
+            minimizer_choice_node,
+            depth
+        ).move_coordinates
+
+        # THEN
+        expected = (0, 5)
+        self.assertEqual(expected, actual)
+
