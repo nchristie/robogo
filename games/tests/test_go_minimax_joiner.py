@@ -372,7 +372,7 @@ class GoNodeTestCase(TestCase):
         expected = 1
         self.assertEqual(expected, actual)
 
-    @skip("Removing concept of terminal from nodes")
+    @skip("This functionality was removed, might return later")
     def test_build_game_sets_terminal_for_black_winning_nodes(self):
         # GIVEN
         player = "minimizer"
@@ -396,13 +396,14 @@ class GoNodeTestCase(TestCase):
         # WHEN
         game_tree_node_6.build_game_tree_recursive(depth)
         children = game_tree_node_6.get_children()
-        terminality = [child.is_terminal for child in children]
+        terminality = [child.is_leaf_node() for child in children]
         actual = sum(item == True for item in terminality)
 
         # THEN
         expected = 1
         self.assertEqual(expected, actual)
 
+    @skip("WIP")
     def test_evaluate_node(self):
         # GIVEN
         board_state = [

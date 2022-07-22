@@ -253,8 +253,9 @@ def build_game_tree_recursive(node, depth, board_states):
         # use recursion to build tree vertically
 
         # TODO s/ with following line
-        # if candidate_move_node.children == None:
-        if not candidate_move_node.children:
+        if node.children == None:
+            node.children = []
+        if candidate_move_node.children == None:
             candidate_move_node.children = []
         if not build_game_tree_recursive(candidate_move_node, depth - 1, board_states):
 
