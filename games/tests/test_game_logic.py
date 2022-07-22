@@ -263,3 +263,46 @@ def test_find_depth_recursive():
     actual = find_depth_recursive(game_tree_node_1, 0)
     expected = node_1_depth
     assert expected == actual
+
+
+def test_evaluate_node():
+    # GIVEN
+    board_state = [
+        ["+", "○", "○", "○", "○", "+", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "●", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "○", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+        ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+    ]
+    root_node = GoNode(move_id="root_node", player="black", board_state=board_state)
+
+    depth = 2
+
+    maximizer_choice_node = GoNode(
+        move_id="dummy_node_maximizer",
+        player="minimizer",
+        score=-float("inf"),
+        children=[],
+        board_state=board_state,
+    )
+
+    minimizer_choice_node = GoNode(
+        move_id="dummy_node_minimizer",
+        player="minimizer",
+        score=float("inf"),
+        children=[],
+        board_state=board_state,
+    )
+
+    # WHEN
+    actual = root_node.evaluate_node(
+        root_node, maximizer_choice_node, minimizer_choice_node, depth
+    ).optimal_move
+
+    # THEN
+    expected = (0, 5)
+    assert expected == actual

@@ -1,7 +1,14 @@
 from .minimax import MinimaxNode
 import uuid
 from copy import deepcopy
-from .game_logic import is_move_valid, get_score_dict, list_all_moves_on_board, short_id
+from .game_logic import (
+    WINNING_SCORE,
+    PLUS_INF,
+    MINUS_INF,
+    is_move_valid,
+    get_score_dict,
+    list_all_moves_on_board,
+)
 from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 import logging
 
@@ -124,6 +131,12 @@ class GoNode(MinimaxNode):
             int corresponding to black's score relative to white's
         """
         score_dict = get_score_dict(self.board_state)
-        return score_dict["relative_black_score"]
+
+        score = score_dict["relative_black_score"]
+        if score_dict[BLACK_STONE] >= WINNING_SCORE:
+            score = PLUS_INF
+        if score_dict[WHITE_STONE] >= WINNING_SCORE:
+            score = MINUS_INF
+        return score
 
     # TODO find_connecting_stones():

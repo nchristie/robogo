@@ -6,6 +6,9 @@ logger = logging.getLogger(__name__)
 WINNING_SCORE = 5
 MAX_TREE_DEPTH = 5
 
+PLUS_INF = float("inf")
+MINUS_INF = -float("inf")
+
 
 def is_move_valid(board_state, move_coordinates):
     checks = [is_move_within_board_boudaries, is_move_in_free_position]
@@ -218,9 +221,8 @@ def short_id(a_uuid):
     return str(a_uuid)[:5]
 
 
-# TODO use this function as a basis for an evaluate function which builds
-# game tree and then returns the best next move coordinates using minimax
-# and alpha-beta pruning
+# TODO this function should be removable once alpha-beta
+# function works
 def build_game_tree_recursive(node, depth, board_states):
     """
     Starts from current node and builds game tree to a given
@@ -260,6 +262,85 @@ def build_game_tree_recursive(node, depth, board_states):
         if not build_game_tree_recursive(candidate_move_node, depth - 1, board_states):
 
             # not build_game_tree_recursive(..) will be True if we've reached the end of
+            # depth count-down or if we've visited every potential child node horizontally,
+            # so this means first we'll get to the point we want to stop building and add
+            # children, then work back up the tree and add child nodes
+
+            # build tree horizontally
+            logger.debug(f"Appending nodes at depth of {depth}")
+            candidate_move_node.set_parent(node)
+            node.children.append(candidate_move_node)
+            logger.debug(f"number of children: {len(node.children)}")
+
+    logger.debug("Returning at end of function")
+    return
+
+
+# TODO use this function as a basis for an evaluate function which builds
+# game tree and then returns the best next move coordinates using minimax
+# and alpha-beta pruning
+def evaluate(node, depth, board_states, alpha, beta):
+    """
+    Starts from current node and builds game tree to a given
+    depth then returns the best next move using the information
+    gathered. Only builds branches which have optimal game moves
+
+    Parameters:
+        depth (int): how far down the tree we want to build
+        board_states (set): all the board states which have been
+            encountered so far
+        minimizer_score (int): best score from perspective of
+            minimizing player
+        maximizer_score (int): best score from perspective of
+            maximizing player
+
+    Returns:
+        best available score
+
+    Side effects:
+        - builds tree from root node
+        - applies scores at leaves, and inheritance of those
+            scores up the tree
+    """
+    logger.debug(f"In evaluate, {short_id(node.move_id)} {depth}")
+    logger.debug(node.board_state)
+
+    board_states.add(str(node.board_state))
+
+    if depth < 0:
+        raise Exception(f"Maximum tree depth exceeded")
+
+    # Base case
+    # If we're at a terminal node leave the recursion
+    if depth == 0:
+        logger.debug(f"Returning at depth of {depth}")
+        # TODO set score for leaf node using utility function
+        assert (
+            not node.children
+        ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
+        # TODO return score (I think)
+        return
+
+    # recurse case
+    for candidate_move_node in node.generate_next_node():
+        if str(candidate_move_node.board_state) in board_states:
+            continue
+
+        # TODO if candidate_move_node score is a winning score then don't build
+        # branches further
+
+        # use recursion to build tree vertically
+
+        # TODO node.children and candidate_move_node.children should never be
+        # None, find out why this has been happening and fix. Raise error here
+        # instead of fixing in place
+        if node.children == None:
+            node.children = []
+        if candidate_move_node.children == None:
+            candidate_move_node.children = []
+        if not evaluate(candidate_move_node, depth - 1, board_states):
+
+            # not evaluate(..) will be True if we've reached the end of
             # depth count-down or if we've visited every potential child node horizontally,
             # so this means first we'll get to the point we want to stop building and add
             # children, then work back up the tree and add child nodes

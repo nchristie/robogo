@@ -267,6 +267,33 @@ class GoNodeTestCase(TestCase):
             ["+", "●", "+", "+", "+", "+", "+", "○", "+"],
             ["+", "●", "+", "●", "●", "●", "●", "○", "+"],
             ["+", "+", "+", "+", "●", "+", "+", "○", "+"],
+            ["+", "+", "●", "●", "●", "●", "+", "○", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "+", "○", "○", "○", "+", "+", "○", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+        ]
+        my_node_15 = GoNode(
+            player="maximizer",
+            score=0,
+            children=[],
+            board_state=board_state,
+        )
+
+        # WHEN
+        actual = my_node_15.get_utility()
+
+        # THEN
+        expected = 0
+        self.assertEqual(expected, actual)
+
+    def test_get_scores_winner(self):
+        # GIVEN
+        board_state = [
+            ["+", "●", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "●", "+", "+", "+", "+", "+", "○", "+"],
+            ["+", "●", "+", "●", "●", "●", "●", "○", "+"],
+            ["+", "+", "+", "+", "●", "+", "+", "○", "+"],
             ["+", "+", "●", "●", "●", "●", "●", "○", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "○", "○", "○", "+", "+", "○", "+"],
@@ -284,7 +311,34 @@ class GoNodeTestCase(TestCase):
         actual = my_node_15.get_utility()
 
         # THEN
-        expected = 1
+        expected = float("inf")
+        self.assertEqual(expected, actual)
+
+    def test_get_scores_winner_white(self):
+        # GIVEN
+        board_state = [
+            ["+", "●", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "●", "+", "+", "+", "+", "+", "○", "+"],
+            ["+", "●", "+", "●", "●", "●", "●", "○", "+"],
+            ["+", "+", "+", "+", "●", "+", "+", "○", "+"],
+            ["+", "+", "●", "●", "●", "●", "+", "○", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "○", "+"],
+            ["+", "+", "○", "○", "○", "+", "+", "○", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+        ]
+        my_node_15 = GoNode(
+            player="maximizer",
+            score=0,
+            children=[],
+            board_state=board_state,
+        )
+
+        # WHEN
+        actual = my_node_15.get_utility()
+
+        # THEN
+        expected = -float("inf")
         self.assertEqual(expected, actual)
 
     # TODO test_find_connecting_stones
