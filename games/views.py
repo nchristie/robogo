@@ -4,7 +4,16 @@ from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode
-from .game_logic import get_score_dict, WINNING_SCORE, transpose_board
+from .game_logic import (
+    get_score_dict,
+    WINNING_SCORE,
+    transpose_board,
+    evaluate,
+    PLUS_INF,
+    MINUS_INF,
+    get_best_next_move,
+)
+import itertools
 
 import logging
 
@@ -48,17 +57,20 @@ class Index(View):
         if winner == "No-one":
             # get white response
             # TODO split some logic here out into other function
-            try:
-                white_x, white_y = get_white_response(my_board.state)
-                white_move = Move(
-                    game=user_game,
-                    player="white",
-                    x_coordinate=white_x,
-                    y_coordinate=white_y,
-                )
-                white_move.save()
-            except Exception as e:
-                logger.error(f"Failed to get white move with exception: {e}")
+            if BLACK_STONE in list(itertools.chain(*my_board.state)):
+                try:
+                    white_x, white_y = get_white_response(my_board.state)
+                    white_move = Move(
+                        game=user_game,
+                        player="white",
+                        x_coordinate=white_x,
+                        y_coordinate=white_y,
+                    )
+                    white_move.save()
+                except Exception as e:
+                    logger.error(f"Failed to get white move with exception: {e}")
+            else:
+                logger.error(f"No black stones on board")
 
         # Update board with white response
         moves = user_game.move_set.all().order_by("-id")
@@ -129,25 +141,11 @@ def get_white_response(board_state):
         board_state=board_state,
     )
 
-    maximizer_choice_node = GoNode(
-        move_id=0,
-        player="minimizer",
-        score=-float("inf"),
-        children=[],
-        board_state=board_state,
+    best_score = evaluate(
+        node=my_node, depth=6, board_states=set(), alpha=MINUS_INF, beta=PLUS_INF
     )
+    white_move_node = get_best_next_move(my_node, best_score)
 
-    minimizer_choice_node = GoNode(
-        move_id=0,
-        player="minimizer",
-        score=float("inf"),
-        children=[],
-        board_state=board_state,
-    )
-
-    white_move_node = my_node.evaluate_node(
-        my_node, maximizer_choice_node, minimizer_choice_node, DEPTH
-    )
     # TODO once evaluate_node is updated we should have a built a tree and be able to use that to assess
     # the best move with the following lines of code:
     # white_move_node = my_node.children[0]

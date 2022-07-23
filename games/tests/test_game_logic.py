@@ -354,6 +354,7 @@ def test_evaluate_assigns_scores_based_on_leaves():
     expected = 1
     assert expected == actual
 
+
 def test_evaluate_works_at_depth_of_2():
     # GIVEN
     player = "maximizer"
@@ -375,6 +376,7 @@ def test_evaluate_works_at_depth_of_2():
     # THEN
     expected = 1
     assert expected == actual
+
 
 def test_evaluate_works_at_depth_of_3():
     # GIVEN
@@ -398,3 +400,51 @@ def test_evaluate_works_at_depth_of_3():
     expected = 0
     assert expected == actual
 
+
+def test_evaluate_returns_correct_score():
+    # GIVEN
+    player = "maximizer"
+    game_tree_node_6 = GoNode(
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "○", "+"], ["+", "○", "+"], ["+", "+", "●"]],
+    )
+
+    node_6_depth = 4
+    alpha, beta = MINUS_INF, PLUS_INF
+    # hack to get around suspected test pollution
+    game_tree_node_6.children = []
+    evaluate(game_tree_node_6, node_6_depth, set(), alpha, beta)
+
+    # WHEN
+    actual = game_tree_node_6.get_score()
+
+    # THEN
+    expected = 1
+    assert expected == actual
+
+
+# @pytest.mark.skip("WIP")
+def test_get_best_next_move():
+    # GIVEN
+    player = "maximizer"
+    game_tree_node_7 = GoNode(
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "○", "+"], ["+", "○", "+"], ["+", "+", "●"]],
+    )
+
+    node_7_depth = 4
+    alpha, beta = MINUS_INF, PLUS_INF
+    # hack to get around suspected test pollution
+    game_tree_node_7.children = []
+    evaluate(game_tree_node_7, node_7_depth, set(), alpha, beta)
+
+    # WHEN
+    best_score = game_tree_node_7.get_score()
+
+    actual = get_best_next_move(game_tree_node_7, best_score).move_coordinates
+
+    # THEN
+    expected = [["●", "○", "+"], ["+", "○", "+"], ["+", "○", "●"]]
+    assert expected == actual

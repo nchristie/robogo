@@ -9,10 +9,7 @@ MAX_TREE_DEPTH = 5
 PLUS_INF = float("inf")
 MINUS_INF = -float("inf")
 
-INITIAL_OPTIMAL_VALUES = {
-    "maximizer": MINUS_INF,
-    "minimizer": PLUS_INF
-}
+INITIAL_OPTIMAL_VALUES = {"maximizer": MINUS_INF, "minimizer": PLUS_INF}
 
 
 def is_move_valid(board_state, move_coordinates):
@@ -305,7 +302,9 @@ def evaluate(node, depth, board_states, alpha, beta):
         - applies scores at leaves, and inheritance of those
             scores up the tree
     """
-    logger.debug(f"In evaluate, parent node: {node.move_id} depth: {depth}, board_state: {node.board_state}, player: {node.player}")
+    logger.debug(
+        f"In evaluate, parent node: {node.move_id} depth: {depth}, board_state: {node.board_state}, player: {node.player}"
+    )
 
     board_states.add(str(node.board_state))
 
@@ -322,7 +321,9 @@ def evaluate(node, depth, board_states, alpha, beta):
             not node.children
         ), f"Node at depth 0 shouldn't have children move_id: {node.move_id}, board_state: {node.board_state}, number of children: {len(node.children)}"
         node.set_score(node.get_utility())
-        logger.debug(f"Returning at depth of {depth} with score of {node.get_score()} at node: {node.move_id}")
+        logger.debug(
+            f"Returning at depth of {depth} with score of {node.get_score()} at node: {node.move_id}"
+        )
         return node.get_score()
 
     # recurse case
@@ -353,12 +354,15 @@ def evaluate(node, depth, board_states, alpha, beta):
         if node.player == "minimizer":
             beta = min(beta, optimal_value)
         if beta <= alpha:
-            logger.debug(f"Breakpoint reached for maximizer alpha: {alpha}, beta: {beta}, node score: {value}, node id: {node.move_id}")
+            logger.debug(
+                f"Breakpoint reached for {node.player} alpha: {alpha}, beta: {beta}, node score: {value}, node id: {node.move_id}"
+            )
             break
 
-
         # build tree horizontally
-        logger.debug(f"Appending child node {child.move_id} to parent node {node.move_id} at depth of {depth}")
+        logger.debug(
+            f"Appending child node {child.move_id} to parent node {node.move_id} at depth of {depth}"
+        )
         child.set_parent(node)
         node.children.append(child)
         logger.debug(f"Node {node.move_id} now has {len(node.children)} children")
@@ -370,8 +374,16 @@ def evaluate(node, depth, board_states, alpha, beta):
         return optimal_value
     raise Exception("Reached end of evaluate function without returning")
 
+
 def get_optimal_value(old_optimal_value, new_value, player):
     if player == "minimizer":
         return min(old_optimal_value, new_value)
     if player == "maximizer":
         return max(old_optimal_value, new_value)
+
+
+def get_best_next_move(node, best_score):
+    for child in node.children:
+        if child.get_score() == best_score:
+            return child
+    raise Exception(f"Best score not found in children of node: {node.move_id}")

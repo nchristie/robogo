@@ -7,7 +7,7 @@ from .game_logic import (
     MINUS_INF,
     is_move_valid,
     get_score_dict,
-    list_all_moves_on_board
+    list_all_moves_on_board,
 )
 from .stones import EMPTY_POSITION, BLACK_STONE, WHITE_STONE
 import logging
