@@ -1,4 +1,5 @@
 import logging
+from .game_logic import short_id
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ class MinimaxNode:
 
     def get_score(self):
         if not self.score:
-            raise Exception("Score has not been set")
+            raise Exception(f"Score has not been set for node {short_id(self.move_id)}")
         return self.score
 
     def get_move_id(self):
@@ -42,7 +43,7 @@ class MinimaxNode:
     def get_children(self):
         return self.children
 
-    def generate_next_node(self):
+    def generate_next_child(self):
         # implemented by inheritor
         return
 
@@ -89,7 +90,7 @@ class MinimaxNode:
             return node
 
         if node.player == "minimizer":
-            for child in node.generate_next_node():
+            for child in node.generate_next_child():
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
                     node.evaluate_node(
@@ -104,7 +105,7 @@ class MinimaxNode:
                 return minimizer_choice_node
 
         if node.player == "maximizer":
-            for child in node.generate_next_node():
+            for child in node.generate_next_child():
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,
                     node.evaluate_node(
@@ -141,7 +142,7 @@ class MinimaxNode:
             return node_score
 
         if node.player == "minimizer":
-            for child in node.generate_next_node():
+            for child in node.generate_next_child():
                 node.add_child(child)
                 minimizer_choice_node = node.node_min(
                     minimizer_choice_node,
@@ -159,7 +160,7 @@ class MinimaxNode:
                 return minimizer_choice_node.get_score()
 
         if node.player == "maximizer":
-            for child in node.generate_next_node():
+            for child in node.generate_next_child():
                 node.add_child(child)
                 maximizer_choice_node = node.node_max(
                     maximizer_choice_node,

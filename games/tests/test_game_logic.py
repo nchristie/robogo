@@ -351,5 +351,28 @@ def test_evaluate_assigns_scores_based_on_leaves():
     actual = game_tree_node_3.get_score()
 
     # THEN
-    expected = 2
+    expected = 1
     assert expected == actual
+
+def test_evaluate_works_at_depth_of_2():
+    # GIVEN
+    player = "maximizer"
+    game_tree_node_4 = GoNode(
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "●"], ["+", "+"]],
+    )
+
+    node_4_depth = 2
+    alpha, beta = MINUS_INF, PLUS_INF
+    # hack to get around suspected test pollution
+    game_tree_node_4.children = []
+    evaluate(game_tree_node_4, node_4_depth, set(), alpha, beta)
+
+    # WHEN
+    actual = game_tree_node_4.get_score()
+
+    # THEN
+    expected = 1
+    assert expected == actual
+

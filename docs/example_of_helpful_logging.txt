@@ -1,0 +1,209 @@
+robogo $ docker-compose run --rm web python3 -m pytest games/tests/test_game_logic.py --log-level=DEBUG
+Creating robogo_web_run ... done
+=================================================================== test session starts ====================================================================
+platform linux -- Python 3.10.5, pytest-7.1.2, pluggy-1.0.0
+rootdir: /code
+collected 21 items
+
+games/tests/test_game_logic.py .xx..............s..F                                                                                                 [100%]
+
+========================================================================= FAILURES =========================================================================
+____________________________________________________________ test_evaluate_works_at_depth_of_2 _____________________________________________________________
+
+    def test_evaluate_works_at_depth_of_2():
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_4 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "●"], ["+", "+"]],
+        )
+
+        node_4_depth = 2
+        alpha, beta = MINUS_INF, PLUS_INF
+        # hack to get around suspected test pollution
+        game_tree_node_4.children = []
+>       evaluate(game_tree_node_4, node_4_depth, set(), alpha, beta)
+
+games/tests/test_game_logic.py:370:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+games/game_logic.py:359: in evaluate
+    f"Returning at end of maximizer recursion: {short_id(child.move_id)} score: {child.get_score()}"
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <games.go_minimax_joiner.GoNode object at 0x7efc0cb26c80>
+
+    def get_score(self):
+        if not self.score:
+>           raise Exception(f"Score has not been set for node {short_id(self.move_id)}")
+E           Exception: Score has not been set for node cd322
+
+games/minimax.py:27: Exception
+-------------------------------------------------------------------- Captured log call ---------------------------------------------------------------------
+DEBUG    games.game_logic:game_logic.py:305 In evaluate, node: root_ depth: 2, board_state: [['●', '●'], ['+', '+']]
+DEBUG    games.game_logic:game_logic.py:305 In evaluate, node: cd322 depth: 1, board_state: [['●', '●'], ['○', '+']]
+DEBUG    games.game_logic:game_logic.py:305 In evaluate, node: 90de4 depth: 0, board_state: [['●', '●'], ['○', '●']]
+DEBUG    games.go_minimax_joiner:go_minimax_joiner.py:134 In get_utility for node: 90de4
+DEBUG    games.go_minimax_joiner:go_minimax_joiner.py:145 Utility for node 90de4 = 1
+DEBUG    games.game_logic:game_logic.py:321 Returning at depth of 0 with score of 1
+DEBUG    games.game_logic:game_logic.py:388 Breakpoint reached for minimizer
+DEBUG    games.game_logic:game_logic.py:353 Appending child node cd322 to parent node root_ at depth of 2
+DEBUG    games.game_logic:game_logic.py:356 Node root_ now has 1 children
+================================================================= short test summary info ==================================================================
+FAILED games/tests/test_game_logic.py::test_evaluate_works_at_depth_of_2 - Exception: Score has not been set for node cd322
+==================================================== 1 failed, 17 passed, 1 skipped, 2 xfailed in 0.44s ====================================================
+ERROR: 1
+
++++++++++++++++++++++++++++++++
+
+TEST:
+
+def test_evaluate_works_at_depth_of_2():
+    # GIVEN
+    player = "maximizer"
+    game_tree_node_4 = GoNode(
+        move_id="root_node",
+        player=player,
+        board_state=[["●", "●"], ["+", "+"]],
+    )
+
+    node_4_depth = 2
+    alpha, beta = MINUS_INF, PLUS_INF
+    # hack to get around suspected test pollution
+    game_tree_node_4.children = []
+    evaluate(game_tree_node_4, node_4_depth, set(), alpha, beta)
+
+    # WHEN
+    actual = game_tree_node_4.get_score()
+
+    # THEN
+    expected = 0
+    assert expected == actual
+
++++++++++++++++++++++++++++++++
+
+CODE:
+
+def evaluate(node, depth, board_states, alpha, beta):
+    """
+    Starts from current node and builds game tree to a given
+    depth then returns the best next move using the information
+    gathered. Only builds branches which have optimal game moves
+
+    Parameters:
+        depth (int): how far down the tree we want to build
+        board_states (set): all the board states which have been
+            encountered so far
+        minimizer_score (int): best score from perspective of
+            minimizing player
+        maximizer_score (int): best score from perspective of
+            maximizing player
+
+    Returns:
+        best available score
+
+    Side effects:
+        - builds tree from root node
+        - applies scores at leaves, and inheritance of those
+            scores up the tree
+    """
+    logger.debug(f"In evaluate, node: {short_id(node.move_id)} depth: {depth}, board_state: {node.board_state}")
+    # logger.debug(node.board_state)
+
+    board_states.add(str(node.board_state))
+
+    if depth < 0:
+        raise Exception(f"Maximum tree depth exceeded")
+
+    # Base case
+    # If we're at a terminal node leave the recursion
+    if depth == 0:
+        # TODO set score for leaf node using utility function
+        assert (
+            not node.children
+        ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
+        node.set_score(node.get_utility())
+        logger.debug(f"Returning at depth of {depth} with score of {node.get_score()}")
+        return node.get_score()
+
+    # recurse case maximizer
+    if node.player == "maximizer":
+        optimal_value = MINUS_INF
+        for child in node.generate_next_child():
+            if str(child.board_state) in board_states:
+                continue
+
+            # TODO if child score is a winning score then don't build
+            # branches further
+
+            # use recursion to build tree vertically
+
+            # TODO node.children and child.children should never be
+            # None, find out why this has been happening and fix. Raise error here
+            # instead of fixing in place
+            if node.children == None:
+                node.children = []
+            if child.children == None:
+                child.children = []
+
+            value = evaluate(child, depth - 1, board_states, alpha, beta)
+            optimal_value = max(optimal_value, value)
+            alpha = max(alpha, optimal_value)
+            if beta <= alpha:
+                logger.debug("Breakpoint reached for maximizer")
+                break
+            node.set_score(optimal_value)
+
+            # build tree horizontally
+            logger.debug(f"Appending child node {short_id(child.move_id)} to parent node {short_id(node.move_id)} at depth of {depth}")
+            child.set_parent(node)
+            node.children.append(child)
+            logger.debug(f"Node {short_id(node.move_id)} now has {len(node.children)} children")
+
+            logger.debug(
+                f"Returning at end of maximizer recursion: {short_id(child.move_id)} score: {child.get_score()}"
+            )
+
+        return optimal_value
+
+    # recurse case minimizer
+    if node.player == "minimizer":
+        optimal_value = MINUS_INF
+        for child in node.generate_next_child():
+            if str(child.board_state) in board_states:
+                continue
+
+            # TODO if child score is a winning score then don't build
+            # branches further
+
+            # use recursion to build tree vertically
+
+            # TODO node.children and child.children should never be
+            # None, find out why this has been happening and fix. Raise error here
+            # instead of fixing in place
+            if node.children == None:
+                node.children = []
+            if child.children == None:
+                child.children = []
+
+            value = evaluate(child, depth - 1, board_states, alpha, beta)
+            optimal_value = min(optimal_value, value)
+            beta = min(beta, optimal_value)
+            if beta <= alpha:
+                logger.debug("Breakpoint reached for minimizer")
+                break
+            node.set_score(optimal_value)
+
+            # build tree horizontally
+            logger.debug(f"Appending child node {short_id(child.move_id)} to parent node {short_id(node.move_id)} at depth of {depth}")
+            child.set_parent(node)
+            node.children.append(child)
+            logger.debug(f"Node {short_id(node.move_id)} now has {len(node.children)} children")
+
+            logger.debug(
+                f"Returning at end of maximizer recursion: {short_id(child.move_id)} score: {child.get_score()}"
+            )
+
+        return optimal_value
+
+    raise Exception("Reached end of evaluate function without returning")

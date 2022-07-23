@@ -18,7 +18,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_1.generate_next_node_around_existing_moves()
+        potential_moves = my_node_1.generate_next_child_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -36,7 +36,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_2.generate_next_node_around_existing_moves()
+        potential_moves = my_node_2.generate_next_child_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -59,7 +59,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_3.generate_next_node_around_existing_moves()
+        potential_moves = my_node_3.generate_next_child_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
 
         # THEN
@@ -68,7 +68,7 @@ class GoNodeTestCase(TestCase):
 
     # TODO test_find_legal_move_when_surrounded
 
-    def test_generate_next_node_returns_generator(self):
+    def test_generate_next_child_returns_generator(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_4 = GoNode(
@@ -82,7 +82,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = GeneratorType
-        potential_moves = my_node_4.generate_next_node()
+        potential_moves = my_node_4.generate_next_child()
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 
@@ -100,7 +100,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0)]
-        potential_moves = my_node_5.generate_next_node_around_existing_moves()
+        potential_moves = my_node_5.generate_next_child_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -118,7 +118,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_6.generate_next_node_around_existing_moves()
+        potential_moves = my_node_6.generate_next_child_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -136,7 +136,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_7.generate_next_node_around_existing_moves()
+        potential_moves = my_node_7.generate_next_child_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -154,7 +154,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_8.generate_next_node_around_existing_moves()
+        potential_moves = my_node_8.generate_next_child_around_existing_moves()
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 

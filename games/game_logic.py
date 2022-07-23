@@ -179,7 +179,7 @@ def find_depth_recursive(node, depth):
     # Base case
     # If we're at a terminal node leave the recursion
     if node.is_leaf_node():
-        logger.debug(f"candidate_move_node {type(node)}")
+        logger.debug(f"child {type(node)}")
         logger.debug(
             f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}"
         )
@@ -189,7 +189,7 @@ def find_depth_recursive(node, depth):
     # recurse case
     for i, child in enumerate(node.children):
         logger.debug(
-            f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, candidate_move_node {type(child)}"
+            f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, child {type(child)}"
         )
         return find_depth_recursive(child, depth + 1)
 
@@ -249,17 +249,17 @@ def build_game_tree_recursive(node, depth, board_states):
         return
 
     # recurse case
-    for candidate_move_node in node.generate_next_node():
-        if str(candidate_move_node.board_state) in board_states:
+    for child in node.generate_next_child():
+        if str(child.board_state) in board_states:
             continue
         # use recursion to build tree vertically
 
         # TODO s/ with following line
         if node.children == None:
             node.children = []
-        if candidate_move_node.children == None:
-            candidate_move_node.children = []
-        if not build_game_tree_recursive(candidate_move_node, depth - 1, board_states):
+        if child.children == None:
+            child.children = []
+        if not build_game_tree_recursive(child, depth - 1, board_states):
 
             # not build_game_tree_recursive(..) will be True if we've reached the end of
             # depth count-down or if we've visited every potential child node horizontally,
@@ -268,8 +268,8 @@ def build_game_tree_recursive(node, depth, board_states):
 
             # build tree horizontally
             logger.debug(f"Appending nodes at depth of {depth}")
-            candidate_move_node.set_parent(node)
-            node.children.append(candidate_move_node)
+            child.set_parent(node)
+            node.children.append(child)
             logger.debug(f"number of children: {len(node.children)}")
 
     logger.debug("Returning at end of function")
@@ -302,8 +302,8 @@ def evaluate(node, depth, board_states, alpha, beta):
         - applies scores at leaves, and inheritance of those
             scores up the tree
     """
-    logger.debug(f"In evaluate, {short_id(node.move_id)} {depth}")
-    logger.debug(node.board_state)
+    logger.debug(f"In evaluate, node: {short_id(node.move_id)} depth: {depth}, board_state: {node.board_state}")
+    # logger.debug(node.board_state)
 
     board_states.add(str(node.board_state))
 
@@ -318,47 +318,91 @@ def evaluate(node, depth, board_states, alpha, beta):
             not node.children
         ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
         node.set_score(node.get_utility())
-        logger.debug(f"Returning at depth of {depth} with score of {node.get_score()}")
+        logger.debug(f"Returning at depth of {depth} with score of {node.get_score()} at node: {short_id(node.move_id)}")
         return node.get_score()
 
-    # recurse case
-    for candidate_move_node in node.generate_next_node():
-        if str(candidate_move_node.board_state) in board_states:
-            continue
+    # recurse case maximizer
+    if node.player == "maximizer":
+        optimal_value = MINUS_INF
+        for child in node.generate_next_child():
+            if str(child.board_state) in board_states:
+                continue
 
-        # TODO if candidate_move_node score is a winning score then don't build
-        # branches further
+            # TODO if child score is a winning score then don't build
+            # branches further
 
-        # use recursion to build tree vertically
+            # use recursion to build tree vertically
 
-        # TODO node.children and candidate_move_node.children should never be
-        # None, find out why this has been happening and fix. Raise error here
-        # instead of fixing in place
-        if node.children == None:
-            node.children = []
-        if candidate_move_node.children == None:
-            candidate_move_node.children = []
+            # TODO node.children and child.children should never be
+            # None, find out why this has been happening and fix. Raise error here
+            # instead of fixing in place
+            if node.children == None:
+                node.children = []
+            if child.children == None:
+                child.children = []
 
-        candidate_move_node.set_score(
-            evaluate(candidate_move_node, depth - 1, board_states, alpha, beta)
-        )
+            value = evaluate(child, depth - 1, board_states, alpha, beta)
+            node.set_score(value)
 
-        # not evaluate(..) will be True if we've reached the end of
-        # depth count-down or if we've visited every potential child node horizontally,
-        # so this means first we'll get to the point we want to stop building and add
-        # children, then work back up the tree and add child nodes
+            optimal_value = max(optimal_value, value)
+            alpha = max(alpha, optimal_value)
+            if beta <= alpha:
+                logger.debug(f"Breakpoint reached for maximizer alpha: {alpha}, beta: {beta}, node score: {value}, node id: {short_id(node.move_id)}")
+                break
 
-        # build tree horizontally
-        logger.debug(f"Appending nodes at depth of {depth}")
-        candidate_move_node.set_parent(node)
-        node.children.append(candidate_move_node)
-        logger.debug(f"number of children: {len(node.children)}")
 
-    try:
-        node.get_score()
-    except:
-        node.set_score(node.get_utility())
-    logger.debug(
-        f"Returning at end of function node: {short_id(node.move_id)} score: {node.get_score()}"
-    )
-    return node.get_score()
+            # build tree horizontally
+            logger.debug(f"Appending child node {short_id(child.move_id)} to parent node {short_id(node.move_id)} at depth of {depth}")
+            child.set_parent(node)
+            node.children.append(child)
+            logger.debug(f"Node {short_id(node.move_id)} now has {len(node.children)} children")
+
+            logger.debug(
+                f"Returning at end of maximizer recursion: {short_id(child.move_id)} score: {child.get_score()}"
+            )
+
+        return optimal_value
+
+    # recurse case minimizer
+    if node.player == "minimizer":
+        optimal_value = PLUS_INF
+        for child in node.generate_next_child():
+            if str(child.board_state) in board_states:
+                continue
+
+            # TODO if child score is a winning score then don't build
+            # branches further
+
+            # use recursion to build tree vertically
+
+            # TODO node.children and child.children should never be
+            # None, find out why this has been happening and fix. Raise error here
+            # instead of fixing in place
+            if node.children == None:
+                node.children = []
+            if child.children == None:
+                child.children = []
+
+            value = evaluate(child, depth - 1, board_states, alpha, beta)
+            node.set_score(value)
+
+            optimal_value = min(optimal_value, value)
+            beta = min(beta, optimal_value)
+            if beta <= alpha:
+                logger.debug(f"Breakpoint reached for minimizer alpha: {alpha}, beta: {beta}, node score: {value}, node id: {short_id(node.move_id)}")
+                break
+
+
+            # build tree horizontally
+            logger.debug(f"Appending child node {short_id(child.move_id)} to parent node {short_id(node.move_id)} at depth of {depth}")
+            child.set_parent(node)
+            node.children.append(child)
+            logger.debug(f"Node {short_id(node.move_id)} now has {len(node.children)} children")
+
+            logger.debug(
+                f"Returning at end of maximizer recursion: {short_id(child.move_id)} score: {child.get_score()}"
+            )
+
+        return optimal_value
+
+    raise Exception("Reached end of evaluate function without returning")

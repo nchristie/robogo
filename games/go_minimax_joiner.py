@@ -54,7 +54,7 @@ class GoNode(MinimaxNode):
             return "maximizer"
         return "minimizer"
 
-    def generate_next_node(self):
+    def generate_next_child(self):
         """
         Yields:
             GoNode: next possible move on the board
@@ -63,7 +63,7 @@ class GoNode(MinimaxNode):
         #   instead of the GoNode itself - this is so we can use the add_child
         #   method instead of doing an append to node.children
 
-        # logger.debug(f"In generate_next_node, own id = {short_id(self.move_id)}")
+        # logger.debug(f"In generate_next_child, own id = {short_id(self.move_id)}")
         player = self.alternate_player()
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
@@ -86,7 +86,7 @@ class GoNode(MinimaxNode):
                 # logger.debug(short_id(next_node.move_id))
                 yield next_node
 
-    def generate_next_node_around_existing_moves(self, player="minimizer"):
+    def generate_next_child_around_existing_moves(self, player="minimizer"):
         # I've returned this function to the code as I think I may want it later
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
@@ -131,7 +131,7 @@ class GoNode(MinimaxNode):
         Returns:
             int corresponding to black's score relative to white's
         """
-        logger.debug("In get_utility")
+        logger.debug(f"In get_utility for node: {short_id(self.move_id)}")
         score_dict = get_score_dict(self.board_state)
 
         score = score_dict["relative_black_score"]
