@@ -9,6 +9,11 @@ MAX_TREE_DEPTH = 5
 PLUS_INF = float("inf")
 MINUS_INF = -float("inf")
 
+INITIAL_OPTIMAL_VALUES = {
+    "maximizer": MINUS_INF,
+    "minimizer": PLUS_INF
+}
+
 
 def is_move_valid(board_state, move_coordinates):
     checks = [is_move_within_board_boudaries, is_move_in_free_position]
@@ -22,6 +27,7 @@ def is_move_within_board_boudaries(board_state, move_coordinates):
     board_size = len(board_state[0])
     for coordinate in move_coordinates:
         if (coordinate >= board_size) or (coordinate < 0):
+            logger.debug("Move outside of board boundaries")
             return False
     return True
 
@@ -30,6 +36,7 @@ def is_move_in_free_position(board_state, move_coordinates):
     x_coordinate = move_coordinates[0]
     y_coordinate = move_coordinates[1]
     if board_state[x_coordinate][y_coordinate] != EMPTY_POSITION:
+        logger.debug("There is already a stone in this position")
         return False
     return True
 
@@ -181,7 +188,7 @@ def find_depth_recursive(node, depth):
     if node.is_leaf_node():
         logger.debug(f"child {type(node)}")
         logger.debug(
-            f"depth: {depth}, move_id: {short_id(node.move_id)} is_leaf_node: {node.is_leaf_node()}"
+            f"depth: {depth}, move_id: {node.move_id} is_leaf_node: {node.is_leaf_node()}"
         )
         logger.debug(f"returning at depth of {depth} owing to terminal node")
         return depth
@@ -189,7 +196,7 @@ def find_depth_recursive(node, depth):
     # recurse case
     for i, child in enumerate(node.children):
         logger.debug(
-            f"depth: {depth}, child index: {i}, move_id: {short_id(child.move_id)} is_leaf_node: {child.is_leaf_node()}, child {type(child)}"
+            f"depth: {depth}, child index: {i}, move_id: {child.move_id} is_leaf_node: {child.is_leaf_node()}, child {type(child)}"
         )
         return find_depth_recursive(child, depth + 1)
 
@@ -217,10 +224,6 @@ def find_depth_iterative(node, max_depth):
     return node_depth
 
 
-def short_id(a_uuid):
-    return str(a_uuid)[:5]
-
-
 # TODO this function should be removable once alpha-beta
 # function works
 def build_game_tree_recursive(node, depth, board_states):
@@ -231,7 +234,7 @@ def build_game_tree_recursive(node, depth, board_states):
     Parameters:
         depth (int): how far down the tree we want to build
     """
-    logger.debug(f"In build_game_tree_recursive, {short_id(node.move_id)} {depth}")
+    logger.debug(f"In build_game_tree_recursive, {node.move_id} {depth}")
     logger.debug(node.board_state)
 
     board_states.add(str(node.board_state))
@@ -245,11 +248,11 @@ def build_game_tree_recursive(node, depth, board_states):
         logger.debug(f"Returning at depth of {depth}")
         assert (
             not node.children
-        ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
+        ), f"Node at depth 0 shouldn't have children move_id: {node.move_id}, board_state: {node.board_state}, number of children: {len(node.children)}"
         return
 
     # recurse case
-    for child in node.generate_next_child():
+    for child in node.generate_next_child(depth):
         if str(child.board_state) in board_states:
             continue
         # use recursion to build tree vertically
@@ -302,13 +305,14 @@ def evaluate(node, depth, board_states, alpha, beta):
         - applies scores at leaves, and inheritance of those
             scores up the tree
     """
-    logger.debug(f"In evaluate, node: {short_id(node.move_id)} depth: {depth}, board_state: {node.board_state}")
-    # logger.debug(node.board_state)
+    logger.debug(f"In evaluate, parent node: {node.move_id} depth: {depth}, board_state: {node.board_state}, player: {node.player}")
 
     board_states.add(str(node.board_state))
 
     if depth < 0:
-        raise Exception(f"Maximum tree depth exceeded")
+        e = f"Maximum tree depth exceeded at node: {node.move_id}"
+        logger.error(e)
+        raise Exception(e)
 
     # Base case
     # If we're at a terminal node leave the recursion
@@ -316,93 +320,58 @@ def evaluate(node, depth, board_states, alpha, beta):
         # TODO set score for leaf node using utility function
         assert (
             not node.children
-        ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
+        ), f"Node at depth 0 shouldn't have children move_id: {node.move_id}, board_state: {node.board_state}, number of children: {len(node.children)}"
         node.set_score(node.get_utility())
-        logger.debug(f"Returning at depth of {depth} with score of {node.get_score()} at node: {short_id(node.move_id)}")
+        logger.debug(f"Returning at depth of {depth} with score of {node.get_score()} at node: {node.move_id}")
         return node.get_score()
 
-    # recurse case maximizer
-    if node.player == "maximizer":
-        optimal_value = MINUS_INF
-        for child in node.generate_next_child():
-            if str(child.board_state) in board_states:
-                continue
+    # recurse case
+    optimal_value = INITIAL_OPTIMAL_VALUES[node.player]
+    for child in node.generate_next_child(depth):
+        if str(child.board_state) in board_states:
+            continue
 
-            # TODO if child score is a winning score then don't build
-            # branches further
+        # TODO if child score is a winning score then don't build
+        # branches further
 
-            # use recursion to build tree vertically
+        # use recursion to build tree vertically
 
-            # TODO node.children and child.children should never be
-            # None, find out why this has been happening and fix. Raise error here
-            # instead of fixing in place
-            if node.children == None:
-                node.children = []
-            if child.children == None:
-                child.children = []
+        # TODO node.children and child.children should never be
+        # None, find out why this has been happening and fix. Raise error here
+        # instead of fixing in place
+        if node.children == None:
+            node.children = []
+        if child.children == None:
+            child.children = []
 
-            value = evaluate(child, depth - 1, board_states, alpha, beta)
-            node.set_score(value)
+        value = evaluate(child, depth - 1, board_states, alpha, beta)
+        node.set_score(value)
 
-            optimal_value = max(optimal_value, value)
+        optimal_value = get_optimal_value(optimal_value, value, node.player)
+        if node.player == "maximizer":
             alpha = max(alpha, optimal_value)
-            if beta <= alpha:
-                logger.debug(f"Breakpoint reached for maximizer alpha: {alpha}, beta: {beta}, node score: {value}, node id: {short_id(node.move_id)}")
-                break
-
-
-            # build tree horizontally
-            logger.debug(f"Appending child node {short_id(child.move_id)} to parent node {short_id(node.move_id)} at depth of {depth}")
-            child.set_parent(node)
-            node.children.append(child)
-            logger.debug(f"Node {short_id(node.move_id)} now has {len(node.children)} children")
-
-            logger.debug(
-                f"Returning at end of maximizer recursion: {short_id(child.move_id)} score: {child.get_score()}"
-            )
-
-        return optimal_value
-
-    # recurse case minimizer
-    if node.player == "minimizer":
-        optimal_value = PLUS_INF
-        for child in node.generate_next_child():
-            if str(child.board_state) in board_states:
-                continue
-
-            # TODO if child score is a winning score then don't build
-            # branches further
-
-            # use recursion to build tree vertically
-
-            # TODO node.children and child.children should never be
-            # None, find out why this has been happening and fix. Raise error here
-            # instead of fixing in place
-            if node.children == None:
-                node.children = []
-            if child.children == None:
-                child.children = []
-
-            value = evaluate(child, depth - 1, board_states, alpha, beta)
-            node.set_score(value)
-
-            optimal_value = min(optimal_value, value)
+        if node.player == "minimizer":
             beta = min(beta, optimal_value)
-            if beta <= alpha:
-                logger.debug(f"Breakpoint reached for minimizer alpha: {alpha}, beta: {beta}, node score: {value}, node id: {short_id(node.move_id)}")
-                break
+        if beta <= alpha:
+            logger.debug(f"Breakpoint reached for maximizer alpha: {alpha}, beta: {beta}, node score: {value}, node id: {node.move_id}")
+            break
 
 
-            # build tree horizontally
-            logger.debug(f"Appending child node {short_id(child.move_id)} to parent node {short_id(node.move_id)} at depth of {depth}")
-            child.set_parent(node)
-            node.children.append(child)
-            logger.debug(f"Node {short_id(node.move_id)} now has {len(node.children)} children")
+        # build tree horizontally
+        logger.debug(f"Appending child node {child.move_id} to parent node {node.move_id} at depth of {depth}")
+        child.set_parent(node)
+        node.children.append(child)
+        logger.debug(f"Node {node.move_id} now has {len(node.children)} children")
 
-            logger.debug(
-                f"Returning at end of maximizer recursion: {short_id(child.move_id)} score: {child.get_score()}"
-            )
+        logger.debug(
+            f"Returning at end of maximizer recursion. All children appended to node: {node.move_id} final node score: {node.get_score()}"
+        )
 
         return optimal_value
-
     raise Exception("Reached end of evaluate function without returning")
+
+def get_optimal_value(old_optimal_value, new_value, player):
+    if player == "minimizer":
+        return min(old_optimal_value, new_value)
+    if player == "maximizer":
+        return max(old_optimal_value, new_value)

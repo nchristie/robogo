@@ -77,12 +77,13 @@ class GoNodeTestCase(TestCase):
             children=[],
             board_state=board_state,
         )
+        depth = 1
 
         # WHEN
 
         # THEN
         expected = GeneratorType
-        potential_moves = my_node_4.generate_next_child()
+        potential_moves = my_node_4.generate_next_child(depth)
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 

@@ -1,5 +1,4 @@
 import logging
-from .game_logic import short_id
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +19,14 @@ class MinimaxNode:
         )
 
     def set_score(self, score):
+        logger.debug(f"In set_score for node: {self.move_id}, score: {score}")
         self.score = score
 
     def get_score(self):
-        if not self.score:
-            raise Exception(f"Score has not been set for node {short_id(self.move_id)}")
+        if not self.score and self.score != 0:
+            e = f"Score has not been set for node {self.move_id}"
+            logger.error(e)
+            raise Exception(e)
         return self.score
 
     def get_move_id(self):
@@ -42,10 +44,6 @@ class MinimaxNode:
 
     def get_children(self):
         return self.children
-
-    def generate_next_child(self):
-        # implemented by inheritor
-        return
 
     def get_optimal_move(self):
         # input is Node, output is Node
@@ -74,108 +72,6 @@ class MinimaxNode:
         logger.debug("In minimax get_utility")
         # Implemented by class which inherits
         return
-
-    def evaluate_node(self, node, maximizer_choice_node, minimizer_choice_node, depth):
-        # input is node, output is node
-        # adapted from: https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
-        # and https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
-        depth -= 1
-
-        if depth <= 0:
-            return
-
-        if node.is_leaf_node():
-            logger.debug(f"terminal node found at depth of {depth}")
-            node.set_score(node.get_utility())
-            return node
-
-        if node.player == "minimizer":
-            for child in node.generate_next_child():
-                minimizer_choice_node = node.node_min(
-                    minimizer_choice_node,
-                    node.evaluate_node(
-                        child, maximizer_choice_node, minimizer_choice_node, depth
-                    ),
-                )
-                if (
-                    minimizer_choice_node.get_score()
-                    <= maximizer_choice_node.get_score()
-                ):
-                    return minimizer_choice_node
-                return minimizer_choice_node
-
-        if node.player == "maximizer":
-            for child in node.generate_next_child():
-                maximizer_choice_node = node.node_max(
-                    maximizer_choice_node,
-                    node.evaluate_node(
-                        child, maximizer_choice_node, minimizer_choice_node, depth
-                    ),
-                )
-                if (
-                    minimizer_choice_node.get_score()
-                    <= maximizer_choice_node.get_score()
-                ):
-                    return maximizer_choice_node
-                return maximizer_choice_node
-
-    def build_minimax_alpha_beta_game_tree(
-        self, node, maximizer_choice_node, minimizer_choice_node, depth
-    ):
-        # input is node, output is node
-        # TODO input is node, output is the best available value,
-        # TODO side effect is setting values on entire tree
-        # adapted from: https://www.hackerearth.com/blog/developers/minimax-algorithm-alpha-beta-pruning/
-        # and https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
-        depth -= 1
-
-        if depth < 0:
-            raise Exception("Error: depth is <0")
-
-        if depth == 0:
-            return
-
-        if node.is_leaf_node():
-            logger.debug(f"terminal node found at depth of {depth}")
-            node_score = node.get_utility()
-            node.set_score(node_score)
-            return node_score
-
-        if node.player == "minimizer":
-            for child in node.generate_next_child():
-                node.add_child(child)
-                minimizer_choice_node = node.node_min(
-                    minimizer_choice_node,
-                    node.evaluate_node(
-                        child, maximizer_choice_node, minimizer_choice_node, depth
-                    ),
-                )
-                if (
-                    minimizer_choice_node.get_score()
-                    <= maximizer_choice_node.get_score()
-                ):
-                    node.set_score(minimizer_choice_node.get_score())
-                    return minimizer_choice_node.get_score()
-                node.set_score(minimizer_choice_node.get_score())
-                return minimizer_choice_node.get_score()
-
-        if node.player == "maximizer":
-            for child in node.generate_next_child():
-                node.add_child(child)
-                maximizer_choice_node = node.node_max(
-                    maximizer_choice_node,
-                    node.evaluate_node(
-                        child, maximizer_choice_node, minimizer_choice_node, depth
-                    ),
-                )
-                if (
-                    minimizer_choice_node.get_score()
-                    <= maximizer_choice_node.get_score()
-                ):
-                    node.set_score(maximizer_choice_node.get_score())
-                    return maximizer_choice_node.get_score()
-                node.set_score(maximizer_choice_node.get_score())
-                return maximizer_choice_node.get_score()
 
     def node_min(self, first_node, second_node):
         if second_node.get_score() < first_node.get_score():
