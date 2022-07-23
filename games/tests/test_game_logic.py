@@ -264,6 +264,7 @@ def test_find_depth_recursive():
     expected = node_1_depth
     assert expected == actual
 
+
 @pytest.mark.skip("WIP")
 def test_evaluate_node():
     # GIVEN
@@ -307,6 +308,7 @@ def test_evaluate_node():
     expected = (0, 5)
     assert expected == actual
 
+
 def test_evaluate_assigns_scores():
     # GIVEN
     player = "maximizer"
@@ -329,7 +331,7 @@ def test_evaluate_assigns_scores():
     expected = 2
     assert expected == actual
 
-@pytest.mark.xfail # WIP
+
 def test_evaluate_assigns_scores_based_on_leaves():
     # GIVEN
     player = "maximizer"
@@ -351,4 +353,3 @@ def test_evaluate_assigns_scores_based_on_leaves():
     # THEN
     expected = 2
     assert expected == actual
-

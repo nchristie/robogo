@@ -313,13 +313,12 @@ def evaluate(node, depth, board_states, alpha, beta):
     # Base case
     # If we're at a terminal node leave the recursion
     if depth == 0:
-        logger.debug(f"Returning at depth of {depth}")
         # TODO set score for leaf node using utility function
         assert (
             not node.children
         ), f"Node at depth 0 shouldn't have children move_id: {short_id(node.move_id)}, board_state: {node.board_state}, number of children: {len(node.children)}"
-        # TODO return score (I think)
         node.set_score(node.get_utility())
+        logger.debug(f"Returning at depth of {depth} with score of {node.get_score()}")
         return node.get_score()
 
     # recurse case
@@ -340,7 +339,9 @@ def evaluate(node, depth, board_states, alpha, beta):
         if candidate_move_node.children == None:
             candidate_move_node.children = []
 
-        candidate_move_node.set_score(evaluate(candidate_move_node, depth - 1, board_states, alpha, beta))
+        candidate_move_node.set_score(
+            evaluate(candidate_move_node, depth - 1, board_states, alpha, beta)
+        )
 
         # not evaluate(..) will be True if we've reached the end of
         # depth count-down or if we've visited every potential child node horizontally,
@@ -353,5 +354,11 @@ def evaluate(node, depth, board_states, alpha, beta):
         node.children.append(candidate_move_node)
         logger.debug(f"number of children: {len(node.children)}")
 
-    logger.debug("Returning at end of function")
+    try:
+        node.get_score()
+    except:
+        node.set_score(node.get_utility())
+    logger.debug(
+        f"Returning at end of function node: {short_id(node.move_id)} score: {node.get_score()}"
+    )
     return node.get_score()

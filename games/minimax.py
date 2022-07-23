@@ -22,6 +22,8 @@ class MinimaxNode:
         self.score = score
 
     def get_score(self):
+        if not self.score:
+            raise Exception("Score has not been set")
         return self.score
 
     def get_move_id(self):
