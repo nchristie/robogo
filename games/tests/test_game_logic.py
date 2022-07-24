@@ -215,4 +215,3 @@ def test_list_all_moves_on_board():
     # THEN
     expected = 81
     assert expected == actual
-

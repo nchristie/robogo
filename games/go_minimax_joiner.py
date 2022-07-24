@@ -165,7 +165,6 @@ class GoTree(GoNode):
         logger.debug(f"Returning because end of function depth {depth}")
         return
 
-
     def find_depth_iterative(self, node, max_depth):
         # Source: https://stackoverflow.com/questions/71846315/depth-limited-dfs-general-non-binary-tree-search
         stack = [(node, 0)]
@@ -184,7 +183,6 @@ class GoTree(GoNode):
                 for child in reversed(node.children):
                     stack.append((child, node_depth + 1))
         return node_depth
-
 
     # TODO this function should be removable once alpha-beta
     # function works
@@ -309,7 +307,10 @@ class GoTree(GoNode):
             # TODO what value should the node have?
             # node.set_score(value)
             func, alpha_or_beta = self.apply_strategy(node.player, alpha, beta)
-            best_score = func(alpha_or_beta, self.evaluate(child, depth - 1, board_states, alpha, beta))
+            best_score = func(
+                alpha_or_beta,
+                self.evaluate(child, depth - 1, board_states, alpha, beta),
+            )
             if node.player == "maximizer":
                 alpha = best_score
                 logger.debug(f"alpha set to {alpha}")
@@ -337,28 +338,22 @@ class GoTree(GoNode):
             return best_score
         raise Exception("Reached end of evaluate function without returning")
 
-
     def get_optimal_value(self, old_optimal_value, new_value, player):
         if player == "minimizer":
             return min(old_optimal_value, new_value)
         if player == "maximizer":
             return max(old_optimal_value, new_value)
 
-
     def get_best_next_move(self, node, best_score):
         for child in node.children:
             if child.get_score() == best_score:
                 return child
-        raise Exception(f"Best score: {best_score} not found in children of node: {node.move_id} whose children are: {[child.get_score() for child in node.children]}")
+        raise Exception(
+            f"Best score: {best_score} not found in children of node: {node.move_id} whose children are: {[child.get_score() for child in node.children]}"
+        )
 
     def apply_strategy(self, player, alpha, beta):
-        strategy_dict = {
-            "maximizer": max,
-            "minimizer": min
-        }
-        player_dict = {
-            "maximizer": alpha,
-            "minimizer": beta
-        }
+        strategy_dict = {"maximizer": max, "minimizer": min}
+        player_dict = {"maximizer": alpha, "minimizer": beta}
 
         return (strategy_dict[player], player_dict[player])

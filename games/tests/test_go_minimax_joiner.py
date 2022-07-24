@@ -4,6 +4,7 @@ from types import GeneratorType
 from unittest import skip
 from games.game_logic import MINUS_INF, PLUS_INF
 
+
 class GoNodeTestCase(TestCase):
     def test_find_legal_move(self):
         # GIVEN
@@ -501,8 +502,8 @@ class GoNodeTestCase(TestCase):
         expected = (0, 5)
         self.assertEqual(expected, actual)
 
-class GoTreeTestCase(TestCase):
 
+class GoTreeTestCase(TestCase):
     def test_build_game_tree_recursive_depth(self):
         # GIVEN
         player = "maximizer"
@@ -524,7 +525,6 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = []
         self.assertEqual(expected, actual)
-
 
     def test_find_depth_recursive(self):
         # GIVEN
@@ -571,7 +571,6 @@ class GoTreeTestCase(TestCase):
         expected = 2
         self.assertEqual(expected, actual)
 
-
     def test_evaluate_assigns_scores_based_on_leaves(self):
         # GIVEN
         player = "maximizer"
@@ -596,7 +595,6 @@ class GoTreeTestCase(TestCase):
         expected = 1
         self.assertEqual(expected, actual)
 
-
     def test_evaluate_works_at_depth_of_2(self):
         # GIVEN
         player = "maximizer"
@@ -619,7 +617,6 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = 1
         self.assertEqual(expected, actual)
-
 
     def test_evaluate_works_at_depth_of_3(self):
         # GIVEN
@@ -644,7 +641,6 @@ class GoTreeTestCase(TestCase):
         expected = 0
         self.assertEqual(expected, actual)
 
-
     def test_evaluate_returns_correct_score(self):
         # GIVEN
         player = "maximizer"
@@ -668,7 +664,6 @@ class GoTreeTestCase(TestCase):
         expected = 1
         self.assertEqual(expected, actual)
 
-
     # @skip("WIP")
     def test_get_best_next_move(self):
         # GIVEN
@@ -690,7 +685,9 @@ class GoTreeTestCase(TestCase):
         # WHEN
         best_score = game_tree_node_7.get_score()
 
-        actual = tree_7.get_best_next_move(game_tree_node_7, best_score).move_coordinates
+        actual = tree_7.get_best_next_move(
+            game_tree_node_7, best_score
+        ).move_coordinates
 
         # THEN
         expected = (2, 1)

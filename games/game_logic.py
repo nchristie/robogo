@@ -172,4 +172,3 @@ def get_row_score(row, stone_colour):
         else:
             score_count += 1
     return max(row_score)
-
