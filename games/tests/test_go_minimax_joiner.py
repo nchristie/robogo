@@ -1,10 +1,8 @@
 from django.test import TestCase
-from games.go_minimax_joiner import GoNode
-from uuid import UUID
+from games.go_minimax_joiner import GoNode, GoTree
 from types import GeneratorType
-from unittest import skip, skipIf
-from games.game_logic import build_game_tree_recursive
-
+from unittest import skip
+from games.game_logic import MINUS_INF, PLUS_INF
 
 class GoNodeTestCase(TestCase):
     def test_find_legal_move(self):
@@ -501,4 +499,199 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = (0, 5)
+        self.assertEqual(expected, actual)
+
+class GoTreeTestCase(TestCase):
+
+    def test_build_game_tree_recursive_depth(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_3 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "+"], ["+", "+"]],
+        )
+
+        node_3_depth = 3
+        tree_3 = GoTree(game_tree_node_3)
+        # hack to get around suspected test pollution
+        game_tree_node_3.children = []
+        tree_3.build_game_tree_recursive(game_tree_node_3, node_3_depth, set())
+
+        # WHEN
+        actual = tree_3.root_node.children[0].children[0].children[0].children
+
+        # THEN
+        expected = []
+        self.assertEqual(expected, actual)
+
+
+    def test_find_depth_recursive(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_1 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]],
+        )
+
+        node_1_depth = 4
+        tree_1 = GoTree(game_tree_node_1)
+        # hack to get around suspected test pollution
+        game_tree_node_1.children = []
+        tree_1.build_game_tree_recursive(game_tree_node_1, node_1_depth, set())
+
+        # WHEN
+        actual = tree_1.find_depth_recursive(game_tree_node_1, 0)
+
+        # THEN
+        expected = node_1_depth
+        self.assertEqual(expected, actual)
+
+    def test_evaluate_assigns_scores(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_3 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "●"], ["+", "+"]],
+        )
+        tree_3 = GoTree(game_tree_node_3)
+
+        node_3_depth = 0
+        alpha, beta = MINUS_INF, PLUS_INF
+        # hack to get around suspected test pollution
+        game_tree_node_3.children = []
+        tree_3.evaluate(game_tree_node_3, node_3_depth, set(), alpha, beta)
+
+        # WHEN
+        actual = tree_3.root_node.get_score()
+
+        # THEN
+        expected = 2
+        self.assertEqual(expected, actual)
+
+
+    def test_evaluate_assigns_scores_based_on_leaves(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_3 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "●"], ["+", "+"]],
+        )
+
+        node_3_depth = 1
+        alpha, beta = MINUS_INF, PLUS_INF
+        # hack to get around suspected test pollution
+        game_tree_node_3.children = []
+        tree_3 = GoTree(game_tree_node_3)
+
+        tree_3.evaluate(game_tree_node_3, node_3_depth, set(), alpha, beta)
+
+        # WHEN
+        actual = game_tree_node_3.get_score()
+
+        # THEN
+        expected = 1
+        self.assertEqual(expected, actual)
+
+
+    def test_evaluate_works_at_depth_of_2(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_4 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "●"], ["+", "+"]],
+        )
+
+        node_4_depth = 2
+        alpha, beta = MINUS_INF, PLUS_INF
+        # hack to get around suspected test pollution
+        game_tree_node_4.children = []
+        tree_4 = GoTree(game_tree_node_4)
+        tree_4.evaluate(game_tree_node_4, node_4_depth, set(), alpha, beta)
+
+        # WHEN
+        actual = game_tree_node_4.get_score()
+
+        # THEN
+        expected = 1
+        self.assertEqual(expected, actual)
+
+
+    def test_evaluate_works_at_depth_of_3(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_5 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "+"], ["+", "+"]],
+        )
+
+        node_5_depth = 3
+        alpha, beta = MINUS_INF, PLUS_INF
+        # hack to get around suspected test pollution
+        game_tree_node_5.children = []
+        tree_5 = GoTree(game_tree_node_5)
+        tree_5.evaluate(game_tree_node_5, node_5_depth, set(), alpha, beta)
+
+        # WHEN
+        actual = tree_5.root_node.get_score()
+
+        # THEN
+        expected = 0
+        self.assertEqual(expected, actual)
+
+
+    def test_evaluate_returns_correct_score(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_6 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "○", "+"], ["+", "○", "+"], ["+", "+", "●"]],
+        )
+
+        node_6_depth = 4
+        alpha, beta = MINUS_INF, PLUS_INF
+        # hack to get around suspected test pollution
+        game_tree_node_6.children = []
+        tree_6 = GoTree(game_tree_node_6)
+        tree_6.evaluate(game_tree_node_6, node_6_depth, set(), alpha, beta)
+
+        # WHEN
+        actual = tree_6.root_node.get_score()
+
+        # THEN
+        expected = 1
+        self.assertEqual(expected, actual)
+
+
+    # @skip("WIP")
+    def test_get_best_next_move(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_7 = GoNode(
+            move_id="root_node",
+            player=player,
+            board_state=[["●", "○", "+"], ["+", "○", "+"], ["+", "+", "●"]],
+        )
+
+        tree_7 = GoTree(game_tree_node_7)
+
+        node_7_depth = 4
+        alpha, beta = MINUS_INF, PLUS_INF
+        # hack to get around suspected test pollution
+        game_tree_node_7.children = []
+        tree_7.evaluate(game_tree_node_7, node_7_depth, set(), alpha, beta)
+
+        # WHEN
+        best_score = game_tree_node_7.get_score()
+
+        actual = tree_7.get_best_next_move(game_tree_node_7, best_score).move_coordinates
+
+        # THEN
+        expected = (2, 1)
         self.assertEqual(expected, actual)

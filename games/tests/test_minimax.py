@@ -7,9 +7,8 @@ class MinimaxNodeTestCase(TestCase):
         """Get score"""
         # GIVEN
         my_node_1 = MinimaxNode(move_id=1, player="maximizer", score=None, children=[])
-        expected = None
-        actual = my_node_1.get_score()
-        self.assertEqual(expected, actual)
+        with self.assertRaises(Exception):
+            my_node_1.get_score()
 
     def test_set_score(self):
         """Set score"""

@@ -4,15 +4,7 @@ from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode
-from .game_logic import (
-    get_score_dict,
-    WINNING_SCORE,
-    transpose_board,
-    evaluate,
-    PLUS_INF,
-    MINUS_INF,
-    get_best_next_move,
-)
+from .game_logic import *
 import itertools
 
 import logging
