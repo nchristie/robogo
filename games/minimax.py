@@ -4,8 +4,7 @@ logger = logging.getLogger(__name__)
 
 
 class MinimaxNode:
-    def __init__(self, move_id=None, player=None, score=None, parent=None, children=[]):
-        self.parent = parent
+    def __init__(self, move_id=None, player=None, score=None, children=[]):
         self.children = children
         self.move_id = move_id
         self.player = player
@@ -38,9 +37,6 @@ class MinimaxNode:
         # node making method instead
         child = MinimaxNode(move_id, player, score)
         self.children.append(child)
-
-    def set_parent(self, parent):
-        self.parent = parent
 
     def get_children(self):
         return self.children

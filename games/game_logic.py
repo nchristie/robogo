@@ -24,7 +24,6 @@ def is_move_within_board_boudaries(board_state, move_coordinates):
     board_size = len(board_state[0])
     for coordinate in move_coordinates:
         if (coordinate >= board_size) or (coordinate < 0):
-            logger.debug("Move outside of board boundaries")
             return False
     return True
 
@@ -33,7 +32,6 @@ def is_move_in_free_position(board_state, move_coordinates):
     x_coordinate = move_coordinates[0]
     y_coordinate = move_coordinates[1]
     if board_state[x_coordinate][y_coordinate] != EMPTY_POSITION:
-        logger.debug("There is already a stone in this position")
         return False
     return True
 
@@ -268,17 +266,12 @@ def build_game_tree_recursive(node, depth, board_states):
 
             # build tree horizontally
             logger.debug(f"Appending nodes at depth of {depth}")
-            child.set_parent(node)
             node.children.append(child)
             logger.debug(f"number of children: {len(node.children)}")
 
     logger.debug("Returning at end of function")
     return
 
-
-# TODO use this function as a basis for an evaluate function which builds
-# game tree and then returns the best next move coordinates using minimax
-# and alpha-beta pruning
 def evaluate(node, depth, board_states, alpha, beta):
     """
     Starts from current node and builds game tree to a given
@@ -289,10 +282,10 @@ def evaluate(node, depth, board_states, alpha, beta):
         depth (int): how far down the tree we want to build
         board_states (set): all the board states which have been
             encountered so far
-        minimizer_score (int): best score from perspective of
-            minimizing player
-        maximizer_score (int): best score from perspective of
+        alpha (int): best score from perspective of
             maximizing player
+        beta (int): best score from perspective of
+            minimizing player
 
     Returns:
         best available score
@@ -303,7 +296,7 @@ def evaluate(node, depth, board_states, alpha, beta):
             scores up the tree
     """
     logger.debug(
-        f"In evaluate, parent node: {node.move_id} depth: {depth}, board_state: {node.board_state}, player: {node.player}"
+        f"In evaluate, node: {node.move_id} depth: {depth}, player: {node.player}"
     )
 
     board_states.add(str(node.board_state))
@@ -316,20 +309,29 @@ def evaluate(node, depth, board_states, alpha, beta):
     # Base case
     # If we're at a terminal node leave the recursion
     if depth == 0:
-        # TODO set score for leaf node using utility function
         assert (
             not node.children
-        ), f"Node at depth 0 shouldn't have children move_id: {node.move_id}, board_state: {node.board_state}, number of children: {len(node.children)}"
+        ), f"Node at depth 0 shouldn't have children move_id: {node.move_id}, number of children: {len(node.children)}"
+
         node.set_score(node.get_utility())
+
         logger.debug(
             f"Returning at depth of {depth} with score of {node.get_score()} at node: {node.move_id}"
         )
         return node.get_score()
 
     # recurse case
-    optimal_value = INITIAL_OPTIMAL_VALUES[node.player]
+
+    if node.children == None:
+        e = f"Node {node.move_id} children == None, all nodes should be initialised with children of []"
+        logger.error(e)
+        raise Exception(e)
+
+    # optimal_value = INITIAL_OPTIMAL_VALUES[node.player]
     for child in node.generate_next_child(depth):
+        # Don't add board states which have already been visited
         if str(child.board_state) in board_states:
+            logger.debug("Board state already seen, skipping this node")
             continue
 
         # TODO if child score is a winning score then don't build
@@ -337,41 +339,35 @@ def evaluate(node, depth, board_states, alpha, beta):
 
         # use recursion to build tree vertically
 
-        # TODO node.children and child.children should never be
-        # None, find out why this has been happening and fix. Raise error here
-        # instead of fixing in place
-        if node.children == None:
-            node.children = []
-        if child.children == None:
-            child.children = []
-
-        value = evaluate(child, depth - 1, board_states, alpha, beta)
-        node.set_score(value)
-
-        optimal_value = get_optimal_value(optimal_value, value, node.player)
+        # TODO what value should the node have?
+        # node.set_score(value)
+        func, alpha_or_beta = apply_strategy(node.player, alpha, beta)
+        best_score = func(alpha_or_beta, evaluate(child, depth - 1, board_states, alpha, beta))
         if node.player == "maximizer":
-            alpha = max(alpha, optimal_value)
+            alpha = best_score
+            logger.debug(f"alpha set to {alpha}")
         if node.player == "minimizer":
-            beta = min(beta, optimal_value)
+            beta = best_score
+            logger.debug(f"beta set to {beta}")
         if beta <= alpha:
             logger.debug(
-                f"Breakpoint reached for {node.player} alpha: {alpha}, beta: {beta}, node score: {value}, node id: {node.move_id}"
+                f"Breakpoint reached for {node.player} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.move_id}"
             )
-            break
+            # build tree horizontally
+            logger.debug(
+                f"Appending child node {child.move_id} with score of {child.get_score()} to parent node {node.move_id} at depth of {depth}"
+            )
+            node.children.append(child)
+            node.set_score(best_score)
+            return best_score
 
         # build tree horizontally
         logger.debug(
             f"Appending child node {child.move_id} to parent node {node.move_id} at depth of {depth}"
         )
-        child.set_parent(node)
         node.children.append(child)
-        logger.debug(f"Node {node.move_id} now has {len(node.children)} children")
-
-        logger.debug(
-            f"Returning at end of maximizer recursion. All children appended to node: {node.move_id} final node score: {node.get_score()}"
-        )
-
-        return optimal_value
+        node.set_score(best_score)
+        return best_score
     raise Exception("Reached end of evaluate function without returning")
 
 
@@ -386,4 +382,16 @@ def get_best_next_move(node, best_score):
     for child in node.children:
         if child.get_score() == best_score:
             return child
-    raise Exception(f"Best score not found in children of node: {node.move_id}")
+    raise Exception(f"Best score: {best_score} not found in children of node: {node.move_id} whose children are: {[child.get_score() for child in node.children]}")
+
+def apply_strategy(player, alpha, beta):
+    strategy_dict = {
+        "maximizer": max,
+        "minimizer": min
+    }
+    player_dict = {
+        "maximizer": alpha,
+        "minimizer": beta
+    }
+
+    return (strategy_dict[player], player_dict[player])

@@ -33,12 +33,11 @@ class GoNode(MinimaxNode):
         player=None,
         score=None,
         children=[],
-        parent=None,
         board_state=None,
         move_coordinates=(),
         optimal_move_coordinates=None,
     ):
-        super().__init__(move_id, player, score, children, parent)
+        super().__init__(move_id, player, score, children)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
@@ -70,14 +69,12 @@ class GoNode(MinimaxNode):
         for i, move_coordinates in enumerate(all_moves_on_board):
             move_id = self.make_move_id(depth, i)
             if not is_move_valid(self.board_state, move_coordinates):
-                logger.debug(f"Invalid move for: {move_id}")
                 continue
             new_board_state = deepcopy(self.board_state)
             x = move_coordinates[0]
             y = move_coordinates[1]
             new_board_state[x][y] = stone
 
-            # TODO add parent node
             next_node = GoNode(
                 move_id=move_id,
                 player=player,

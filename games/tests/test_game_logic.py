@@ -446,5 +446,5 @@ def test_get_best_next_move():
     actual = get_best_next_move(game_tree_node_7, best_score).move_coordinates
 
     # THEN
-    expected = [["●", "○", "+"], ["+", "○", "+"], ["+", "○", "●"]]
+    expected = (2, 1)
     assert expected == actual

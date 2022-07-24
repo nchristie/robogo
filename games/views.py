@@ -134,7 +134,7 @@ def find_game_by_ip(ip):
 
 def get_white_response(board_state):
     my_node = GoNode(
-        move_id=0,
+        move_id="root_node",
         player="maximizer",
         score=None,
         children=[],
@@ -142,15 +142,10 @@ def get_white_response(board_state):
     )
 
     best_score = evaluate(
-        node=my_node, depth=6, board_states=set(), alpha=MINUS_INF, beta=PLUS_INF
+        node=my_node, depth=14, board_states=set(), alpha=MINUS_INF, beta=PLUS_INF
     )
     white_move_node = get_best_next_move(my_node, best_score)
 
-    # TODO once evaluate_node is updated we should have a built a tree and be able to use that to assess
-    # the best move with the following lines of code:
-    # white_move_node = my_node.children[0]
-    # for node in my_node.children:
-    # white_move_node = node if node.get_score() > white_move_node.get_score()
     white_move = white_move_node.move_coordinates
-    logger.info(f"white_move: {white_move}")
+    logger.info(f"white_move: {white_move}, best_score: {best_score}")
     return white_move
