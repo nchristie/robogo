@@ -35,7 +35,8 @@ class MinimaxNodeTestCase(TestCase):
         score = 4
         move_id = 123
         player = "maximizer"
-        my_node_4.add_child(move_id, player, score)
+        child = MinimaxNode(move_id, player, score)
+        my_node_4.add_child(child)
         children = my_node_4.get_children()
         expected = (move_id, player, score)
         child = children[0]
@@ -57,9 +58,8 @@ class MinimaxNodeTestCase(TestCase):
 
         # WHEN
         for move in available_moves:
-            my_node_5.add_child(
-                move_id=move["move_id"], score=move["score"], player=player
-            )
+            child = MinimaxNode(move["move_id"], player=player, score=move["score"])
+            my_node_5.add_child(child)
 
         # THEN
         expected = 3
@@ -81,9 +81,8 @@ class MinimaxNodeTestCase(TestCase):
 
         # WHEN
         for move in available_moves:
-            my_node_6.add_child(
-                move_id=move["move_id"], score=move["score"], player=player
-            )
+            child = MinimaxNode(move_id=move["move_id"], player=player, score=move["score"])
+            my_node_6.add_child(child)
 
         # THEN
         expected = 4

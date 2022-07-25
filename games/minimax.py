@@ -33,11 +33,12 @@ class MinimaxNode:
     def get_move_id(self):
         return self.move_id
 
-    def add_child(self, move_id=None, player=None, score=None):
-        # TODO this is only used in the tests, probably worth
-        # rewriting to append a node, and have a separate
-        # node making method instead
-        child = MinimaxNode(move_id, player, score)
+    def add_child(self, child):
+        child_depth = get_depth_from_move_id(child.move_id)
+        parent_depth = get_depth_from_move_id(self.move_id)
+        if child_depth == parent_depth:
+            raise Exception(f"Attempt to append two nodes at same depth: child_depth: {child_depth}, parent_depth: {parent_depth}")
+        logger.debug(f"add_child {child.move_id} to parent {self.move_id}")
         self.children.append(child)
 
     def get_children(self):
@@ -114,7 +115,6 @@ class MinimaxNode:
             return "maximizer"
         return "minimizer"
 
-
 class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
@@ -127,9 +127,9 @@ class MinimaxTree:
         Parameters:
             depth (int): how far down the tree we want to build
         """
-        logger.debug(
-            f"In build_game_tree_recursive, move_id: {node.move_id} depth: {depth}"
-        )
+        # logger.debug(
+        #     f"In build_game_tree_recursive, move_id: {node.move_id} depth: {depth}"
+        # )
 
         move_ids.add(node.move_id)
 
@@ -141,9 +141,11 @@ class MinimaxTree:
         if depth == 0:
             logger.debug(f"Returning at depth of {depth}")
             # import pdb; pdb.set_trace()
-            assert (
-                not node.children
-            ), f"Leaf node at depth {depth} shouldn't have children move_id: {node.move_id}, number of children: {len(node.children)} first child id: {node.children[0].move_id}"
+            if node.children != []:
+                e = f"Leaf node at depth {depth} shouldn't have children move_id: {node.move_id}, number of children: {len(node.children)} first child id: {node.children[0].move_id}"
+                logger.error(e)
+                # raise Exception(e)
+                node.children = []
             return
 
         # recurse case
@@ -160,14 +162,14 @@ class MinimaxTree:
 
                 # build tree horizontally
                 message = f"child {child.move_id} to parent {node.move_id} at depth of {depth}"
-                if self.get_depth_from_move_id(
+                if get_depth_from_move_id(
                     child.move_id
-                ) == self.get_depth_from_move_id(node.move_id):
+                ) == get_depth_from_move_id(node.move_id):
                     raise Exception(
                         f"Shouldn't append nodes at same depth of tree: {message}"
                     )
                 logger.debug(f"Appending {message}")
-                node.children.append(child)
+                node.add_child(child)
                 logger.debug(f"number of children: {len(node.children)}")
 
         logger.debug("Returning at end of function")
@@ -197,5 +199,5 @@ class MinimaxTree:
         logger.debug(f"Returning because end of function depth {depth}")
         return
 
-    def get_depth_from_move_id(self, move_id):
-        return move_id.split("-")[0]
+def get_depth_from_move_id(move_id):
+    return str(move_id).split("-")[0]

@@ -213,7 +213,7 @@ class GoTree(MinimaxTree):
                 logger.debug(
                     f"Appending child node {child.move_id} with score of {child.get_score()} to parent node {node.move_id} at depth of {depth}"
                 )
-                node.children.append(child)
+                node.add_child(child)
                 node.set_score(best_score)
                 return best_score
 
@@ -221,7 +221,7 @@ class GoTree(MinimaxTree):
             logger.debug(
                 f"Appending child node {child.move_id} to parent node {node.move_id} at depth of {depth}"
             )
-            node.children.append(child)
+            node.add_child(child)
             node.set_score(best_score)
             return best_score
         raise Exception("Reached end of evaluate function without returning")
