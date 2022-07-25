@@ -81,7 +81,9 @@ class MinimaxNodeTestCase(TestCase):
 
         # WHEN
         for move in available_moves:
-            child = MinimaxNode(node_id=move["node_id"], player=player, score=move["score"])
+            child = MinimaxNode(
+                node_id=move["node_id"], player=player, score=move["score"]
+            )
             my_node_6.add_child(child)
 
         # THEN

@@ -37,7 +37,9 @@ class MinimaxNode:
         child_depth = get_depth_from_node_id(child.node_id)
         parent_depth = get_depth_from_node_id(self.node_id)
         if child_depth == parent_depth:
-            raise Exception(f"Attempt to append two nodes at same depth: child_depth: {child_depth}, parent_depth: {parent_depth}")
+            raise Exception(
+                f"Attempt to append two nodes at same depth: child_depth: {child_depth}, parent_depth: {parent_depth}"
+            )
         logger.debug(f"add_child {child.node_id} to parent {self.node_id}")
         self.children.append(child)
 
@@ -115,6 +117,7 @@ class MinimaxNode:
             return "maximizer"
         return "minimizer"
 
+
 class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
@@ -162,9 +165,9 @@ class MinimaxTree:
 
                 # build tree horizontally
                 message = f"child {child.node_id} to parent {node.node_id} at depth of {depth}"
-                if get_depth_from_node_id(
-                    child.node_id
-                ) == get_depth_from_node_id(node.node_id):
+                if get_depth_from_node_id(child.node_id) == get_depth_from_node_id(
+                    node.node_id
+                ):
                     raise Exception(
                         f"Shouldn't append nodes at same depth of tree: {message}"
                     )
@@ -198,6 +201,7 @@ class MinimaxTree:
 
         logger.debug(f"Returning because end of function depth {depth}")
         return
+
 
 def get_depth_from_node_id(node_id):
     return str(node_id).split("-")[0]
