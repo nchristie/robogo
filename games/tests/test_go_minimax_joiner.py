@@ -471,14 +471,14 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
-        root_node = GoNode(move_id="root_node", player="black", board_state=board_state)
+        root_node = GoNode(node_id="root_node", player="black", board_state=board_state)
 
         depth = 2
 
         build_game_tree_recursive(root_node, depth, set())
 
         maximizer_choice_node = GoNode(
-            move_id="dummy_node_maximizer",
+            node_id="dummy_node_maximizer",
             player="minimizer",
             score=-float("inf"),
             children=[],
@@ -486,7 +486,7 @@ class GoNodeTestCase(TestCase):
         )
 
         minimizer_choice_node = GoNode(
-            move_id="dummy_node_minimizer",
+            node_id="dummy_node_minimizer",
             player="minimizer",
             score=float("inf"),
             children=[],
@@ -514,7 +514,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_3 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "+"], ["+", "+"]],
         )
@@ -536,7 +536,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_1 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]],
         )
@@ -558,7 +558,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_3 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "●"], ["+", "+"]],
         )
@@ -581,7 +581,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_3 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "●"], ["+", "+"]],
         )
@@ -605,7 +605,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_4 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "●"], ["+", "+"]],
         )
@@ -628,7 +628,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_5 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "+"], ["+", "+"]],
         )
@@ -651,7 +651,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_6 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "○", "+"], ["+", "○", "+"], ["+", "+", "●"]],
         )
@@ -675,7 +675,7 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         player = "maximizer"
         game_tree_node_7 = GoNode(
-            move_id="root_node",
+            node_id="root_node",
             player=player,
             board_state=[["●", "○", "+"], ["+", "○", "+"], ["+", "+", "●"]],
         )

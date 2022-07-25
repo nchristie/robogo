@@ -126,7 +126,7 @@ def find_game_by_ip(ip):
 
 def get_white_response(board_state):
     my_node = GoNode(
-        move_id="root_node",
+        node_id="root_node",
         player="maximizer",
         score=None,
         children=[],

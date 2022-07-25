@@ -19,7 +19,7 @@ class GoNode(MinimaxNode):
 
     def __init__(
         self,
-        move_id=None,
+        node_id=None,
         player=None,
         score=None,
         children=[],
@@ -27,7 +27,7 @@ class GoNode(MinimaxNode):
         move_coordinates=(),
         optimal_move_coordinates=None,
     ):
-        super().__init__(move_id, player, score, children)
+        super().__init__(node_id, player, score, children)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
@@ -41,13 +41,13 @@ class GoNode(MinimaxNode):
         #   instead of the GoNode itself - this is so we can use the add_child
         #   method instead of doing an append to node.children
 
-        # logger.debug(f"In generate_next_child, own id = {self.move_id}")
+        # logger.debug(f"In generate_next_child, own id = {self.node_id}")
         player = self.alternate_player()
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
         all_moves_on_board = list_all_moves_on_board(board_size)
         for i, move_coordinates in enumerate(all_moves_on_board):
-            move_id = self.make_move_id(depth, i)
+            node_id = self.make_node_id(depth, i)
             if not is_move_valid(self.board_state, move_coordinates):
                 continue
             new_board_state = deepcopy(self.board_state)
@@ -56,7 +56,7 @@ class GoNode(MinimaxNode):
             new_board_state[x][y] = stone
 
             next_node = GoNode(
-                move_id=move_id,
+                node_id=node_id,
                 player=player,
                 board_state=new_board_state,
                 move_coordinates=move_coordinates,
@@ -79,7 +79,7 @@ class GoNode(MinimaxNode):
                             y = move_coordinates[1]
                             new_board_state[x][y] = BLACK_STONE
                             child = GoNode(
-                                move_id=self.make_move_id(depth, i),
+                                node_id=self.make_node_id(depth, i),
                                 player=player,
                                 board_state=new_board_state,
                                 move_coordinates=move_coordinates,
@@ -101,7 +101,7 @@ class GoNode(MinimaxNode):
         Returns:
             int corresponding to black's score relative to white's
         """
-        logger.debug(f"In get_utility for node: {self.move_id}")
+        logger.debug(f"In get_utility for node: {self.node_id}")
         score_dict = get_score_dict(self.board_state)
 
         score = score_dict["relative_black_score"]
@@ -112,7 +112,7 @@ class GoNode(MinimaxNode):
         if not score and score != 0:
             raise Exception(f"Score could not be set score_dict: {score_dict}")
         else:
-            logger.debug(f"Utility for node {self.move_id} = {score}")
+            logger.debug(f"Utility for node {self.node_id} = {score}")
         return score
 
     # TODO find_connecting_stones():
@@ -125,7 +125,7 @@ class GoTree(MinimaxTree):
     # TODO this function should be removable once alpha-beta
     # function works
 
-    def evaluate(self, node, depth, move_ids, alpha, beta):
+    def evaluate(self, node, depth, node_ids, alpha, beta):
         """
         Starts from current node and builds game tree to a given
         depth then returns the best next move using the information
@@ -133,7 +133,7 @@ class GoTree(MinimaxTree):
 
         Parameters:
             depth (int): how far down the tree we want to build
-            move_ids (set): all the move ids which have been
+            node_ids (set): all the move ids which have been
                 encountered so far
             alpha (int): best score from perspective of
                 maximizing player
@@ -149,13 +149,13 @@ class GoTree(MinimaxTree):
                 scores up the tree
         """
         logger.debug(
-            f"In evaluate, node: {node.move_id} depth: {depth}, player: {node.player}"
+            f"In evaluate, node: {node.node_id} depth: {depth}, player: {node.player}"
         )
 
-        move_ids.add(str(node.board_state))
+        node_ids.add(str(node.board_state))
 
         if depth < 0:
-            e = f"Maximum tree depth exceeded at node: {node.move_id}"
+            e = f"Maximum tree depth exceeded at node: {node.node_id}"
             logger.error(e)
             raise Exception(e)
 
@@ -164,26 +164,26 @@ class GoTree(MinimaxTree):
         if depth == 0:
             assert (
                 not node.children
-            ), f"Node at depth 0 shouldn't have children move_id: {node.move_id}, number of children: {len(node.children)}"
+            ), f"Node at depth 0 shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)}"
 
             node.set_score(node.get_utility())
 
             logger.debug(
-                f"Returning at depth of {depth} with score of {node.get_score()} at node: {node.move_id}"
+                f"Returning at depth of {depth} with score of {node.get_score()} at node: {node.node_id}"
             )
             return node.get_score()
 
         # recurse case
 
         if node.children == None:
-            e = f"Node {node.move_id} children == None, all nodes should be initialised with children of []"
+            e = f"Node {node.node_id} children == None, all nodes should be initialised with children of []"
             logger.error(e)
             raise Exception(e)
 
         # optimal_value = INITIAL_OPTIMAL_VALUES[node.player]
         for child in node.generate_next_child(depth):
             # Don't add board states which have already been visited
-            if str(child.move_id) in move_ids:
+            if str(child.node_id) in node_ids:
                 logger.debug("Board state already seen, skipping this node")
                 continue
 
@@ -197,7 +197,7 @@ class GoTree(MinimaxTree):
             func, alpha_or_beta = self.apply_strategy(node.player, alpha, beta)
             best_score = func(
                 alpha_or_beta,
-                self.evaluate(child, depth - 1, move_ids, alpha, beta),
+                self.evaluate(child, depth - 1, node_ids, alpha, beta),
             )
             if node.player == "maximizer":
                 alpha = best_score
@@ -207,11 +207,11 @@ class GoTree(MinimaxTree):
                 logger.debug(f"beta set to {beta}")
             if beta <= alpha:
                 logger.debug(
-                    f"Breakpoint reached for {node.player} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.move_id}"
+                    f"Breakpoint reached for {node.player} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.node_id}"
                 )
                 # build tree horizontally
                 logger.debug(
-                    f"Appending child node {child.move_id} with score of {child.get_score()} to parent node {node.move_id} at depth of {depth}"
+                    f"Appending child node {child.node_id} with score of {child.get_score()} to parent node {node.node_id} at depth of {depth}"
                 )
                 node.add_child(child)
                 node.set_score(best_score)
@@ -219,7 +219,7 @@ class GoTree(MinimaxTree):
 
             # build tree horizontally
             logger.debug(
-                f"Appending child node {child.move_id} to parent node {node.move_id} at depth of {depth}"
+                f"Appending child node {child.node_id} to parent node {node.node_id} at depth of {depth}"
             )
             node.add_child(child)
             node.set_score(best_score)
@@ -237,7 +237,7 @@ class GoTree(MinimaxTree):
             if child.get_score() == best_score:
                 return child
         raise Exception(
-            f"Best score: {best_score} not found in children of node: {node.move_id} whose children are: {[child.get_score() for child in node.children]}"
+            f"Best score: {best_score} not found in children of node: {node.node_id} whose children are: {[child.get_score() for child in node.children]}"
         )
 
     def apply_strategy(self, player, alpha, beta):
