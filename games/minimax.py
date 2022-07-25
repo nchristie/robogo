@@ -93,16 +93,6 @@ class MinimaxNode:
             ), f"Error in minimax.MinimaxNode.generate_next_child child node {next_node.get_node_id()} has children including {next_node.children[0].node_id}"
             yield next_node
 
-    def node_min(self, first_node, second_node):
-        if second_node.get_score() < first_node.get_score():
-            return second_node
-        return first_node
-
-    def node_max(self, first_node, second_node):
-        if second_node.get_score() > first_node.get_score():
-            return second_node
-        return first_node
-
     def is_leaf_node(self):
         # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, node_id = {self.node_id}")
         return not self.children
@@ -158,8 +148,8 @@ class MinimaxTree:
             return
 
         # recurse case
-        root_nod_id = self.root_node.get_node_id()
-        for child in node.generate_next_child(depth, root_nod_id):
+        root_node_id = self.root_node.get_node_id()
+        for child in node.generate_next_child(depth, root_node_id):
             assert (
                 child.children == []
             ), f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
@@ -174,17 +164,8 @@ class MinimaxTree:
                 # children, then work back up the tree and add child nodes
 
                 # build tree horizontally
-                message = f"child {child.node_id} to parent {node.node_id} at depth of {depth}"
-                if get_depth_from_node_id(child.node_id) == get_depth_from_node_id(
-                    node.node_id
-                ):
-                    raise Exception(
-                        f"Shouldn't append nodes at same depth of tree: {message}"
-                    )
-                logger.debug(f"Appending {message}")
                 node.add_child(child)
                 logger.debug(f"number of children: {len(node.children)}")
-
         logger.debug("Returning at end of function")
         return
 

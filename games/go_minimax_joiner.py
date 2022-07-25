@@ -46,10 +46,11 @@ class GoNode(MinimaxNode):
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
         all_moves_on_board = list_all_moves_on_board(board_size)
-        for i, move_coordinates in enumerate(all_moves_on_board):
-            node_id = self.make_node_id(depth, i, root_node_id)
+        i = 0
+        for move_coordinates in all_moves_on_board:
             if not is_move_valid(self.board_state, move_coordinates):
                 continue
+            node_id = self.make_node_id(depth, i, root_node_id)
             new_board_state = deepcopy(self.board_state)
             x = move_coordinates[0]
             y = move_coordinates[1]
@@ -62,6 +63,7 @@ class GoNode(MinimaxNode):
                 move_coordinates=move_coordinates,
                 children=[],
             )
+            i += 1
             yield next_node
 
     def generate_next_child_around_existing_moves(self, player="minimizer", depth=0):
@@ -149,11 +151,13 @@ class GoTree(MinimaxTree):
                 scores up the tree
         """
         logger.debug(
-            f"In evaluate, node: {node.node_id} depth: {depth}, player: {node.player}"
+            f"In evaluate, node: {node.node_id} depth: {depth}, player: {node.player}, alpha: {alpha}, beta: {beta}"
         )
 
-        node_ids.add(str(node.board_state))
+        # Make sure we don't use same node twice
+        node_ids.add(node.node_id)
 
+        # error handling
         if depth < 0:
             e = f"Maximum tree depth exceeded at node: {node.node_id}"
             logger.error(e)
@@ -162,47 +166,47 @@ class GoTree(MinimaxTree):
         # Base case
         # If we're at a terminal node leave the recursion
         if depth == 0:
+            # error handling
             assert (
                 not node.children
             ), f"Node at depth 0 shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)}"
 
-            node.set_score(node.get_utility())
+            node_score = node.get_utility()
+            node.set_score(node_score)
 
             logger.debug(
-                f"Returning at depth of {depth} with score of {node.get_score()} at node: {node.node_id}"
+                f"Returning at depth of {depth} with score of {node_score} at node: {node.node_id}"
             )
             return node.get_score()
 
         # recurse case
 
-        if node.children == None:
+        # error handling
+        if node.children != []:
             e = f"Node {node.node_id} children == None, all nodes should be initialised with children of []"
             logger.error(e)
             raise Exception(e)
 
-        # optimal_value = INITIAL_OPTIMAL_VALUES[node.player]
         for child in node.generate_next_child(depth, self.root_node.get_node_id()):
             # Don't add board states which have already been visited
             if str(child.node_id) in node_ids:
                 logger.debug("Board state already seen, skipping this node")
                 continue
 
-            # TODO if child score is a winning score then don't build
-            # branches further
+            # TODO if child score is a winning score then don't build branches further
 
             # use recursion to build tree vertically
-
-            # TODO what value should the node have?
-            # node.set_score(value)
-            func, alpha_or_beta = self.apply_strategy(node.player, alpha, beta)
-            best_score = func(
-                alpha_or_beta,
-                self.evaluate(child, depth - 1, node_ids, alpha, beta),
-            )
+            # set best score to the max or min of alpha vs recurse or beta vs recurse
             if node.player == "maximizer":
+                best_score = max(
+                    alpha, self.evaluate(child, depth - 1, node_ids, alpha, beta)
+                )
                 alpha = best_score
                 logger.debug(f"alpha set to {alpha}")
             if node.player == "minimizer":
+                best_score = min(
+                    beta, self.evaluate(child, depth - 1, node_ids, alpha, beta)
+                )
                 beta = best_score
                 logger.debug(f"beta set to {beta}")
             if beta <= alpha:
@@ -210,17 +214,11 @@ class GoTree(MinimaxTree):
                     f"Breakpoint reached for {node.player} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.node_id}"
                 )
                 # build tree horizontally
-                logger.debug(
-                    f"Appending child node {child.node_id} with score of {child.get_score()} to parent node {node.node_id} at depth of {depth}"
-                )
                 node.add_child(child)
                 node.set_score(best_score)
                 return best_score
 
             # build tree horizontally
-            logger.debug(
-                f"Appending child node {child.node_id} to parent node {node.node_id} at depth of {depth}"
-            )
             node.add_child(child)
             node.set_score(best_score)
             return best_score
@@ -239,9 +237,3 @@ class GoTree(MinimaxTree):
         raise Exception(
             f"Best score: {best_score} not found in children of node: {node.node_id} whose children are: {[child.get_score() for child in node.children]}"
         )
-
-    def apply_strategy(self, player, alpha, beta):
-        strategy_dict = {"maximizer": max, "minimizer": min}
-        player_dict = {"maximizer": alpha, "minimizer": beta}
-
-        return (strategy_dict[player], player_dict[player])

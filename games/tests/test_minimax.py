@@ -92,36 +92,6 @@ class MinimaxNodeTestCase(TestCase):
         actual = optimal_move.get_score()
         self.assertEqual(expected, actual)
 
-    def test_node_min(self):
-        # GIVEN
-        my_node_none = MinimaxNode(
-            node_id=1, player="maximizer", score=None, children=[]
-        )
-        my_node_low = MinimaxNode(node_id=1, player="maximizer", score=-5, children=[])
-        my_node_high = MinimaxNode(node_id=1, player="maximizer", score=5, children=[])
-
-        # WHEN
-        actual = my_node_none.node_min(my_node_low, my_node_high)
-
-        # THEN
-        expected = my_node_low
-        self.assertEqual(expected, actual)
-
-    def test_node_max(self):
-        # GIVEN
-        my_node_none = MinimaxNode(
-            node_id=1, player="maximizer", score=None, children=[]
-        )
-        my_node_low = MinimaxNode(node_id=1, player="maximizer", score=-5, children=[])
-        my_node_high = MinimaxNode(node_id=1, player="maximizer", score=5, children=[])
-
-        # WHEN
-        actual = my_node_none.node_max(my_node_low, my_node_high)
-
-        # THEN
-        expected = my_node_high
-        self.assertEqual(expected, actual)
-
 
 class MinimaxTreeTestCase(TestCase):
     @skip("Deliberate failing test available to check this part of the code is touched")
@@ -149,4 +119,25 @@ class MinimaxTreeTestCase(TestCase):
 
         # THEN
         expected = []
+        self.assertEqual(expected, actual)
+
+    def test_build_game_tree_recursive_breadth(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_072521 = MinimaxNode(
+            node_id="root_node_072521",
+            player=player,
+        )
+
+        node_072521_depth = 3
+        tree_072521 = MinimaxTree(game_tree_node_072521)
+
+        tree_072521.build_game_tree_recursive(
+            game_tree_node_072521, node_072521_depth, set()
+        )
+
+        # WHEN
+        actual = len(tree_072521.root_node.children)
+        # THEN
+        expected = 5
         self.assertEqual(expected, actual)

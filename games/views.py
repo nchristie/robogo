@@ -3,7 +3,7 @@ from django.views import View
 from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
-from .go_minimax_joiner import GoNode
+from .go_minimax_joiner import GoNode, GoTree
 from .game_logic import *
 import itertools
 
@@ -133,10 +133,11 @@ def get_white_response(board_state):
         board_state=board_state,
     )
 
-    best_score = evaluate(
-        node=my_node, depth=14, board_states=set(), alpha=MINUS_INF, beta=PLUS_INF
+    game_tree = GoTree(my_node)
+    best_score = game_tree.evaluate(
+        node=my_node, depth=3, node_ids=set(), alpha=MINUS_INF, beta=PLUS_INF
     )
-    white_move_node = get_best_next_move(my_node, best_score)
+    white_move_node = game_tree.get_best_next_move(my_node, best_score)
 
     white_move = white_move_node.move_coordinates
     logger.info(f"white_move: {white_move}, best_score: {best_score}")
