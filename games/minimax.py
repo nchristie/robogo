@@ -80,12 +80,17 @@ class MinimaxNode:
             f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth}"
         )
         child_node_depth = depth - 1
+        player = self.alternate_player()
         for i in range(5):
-            next_node =  MinimaxNode(
-                node_id=self.make_node_id(child_node_depth, i, root_node_id),
-                player=self.alternate_player(),
+            node_id = self.make_node_id(child_node_depth, i, root_node_id)
+            next_node = MinimaxNode(
+                node_id=node_id,
+                player=player,
+                children=[],  # TODO shouldn't need to explicitly set children to [] here, find out what's going wrong
             )
-            assert next_node.children == [], "Error in generate_next_child"
+            assert (
+                next_node.children == []
+            ), f"Error in minimax.MinimaxNode.generate_next_child child node {next_node.get_node_id()} has children including {next_node.children[0].node_id}"
             yield next_node
 
     def node_min(self, first_node, second_node):
@@ -153,8 +158,11 @@ class MinimaxTree:
             return
 
         # recurse case
-        for child in node.generate_next_child(depth, self.root_node.get_node_id()):
-            assert child.children == [], f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
+        root_nod_id = self.root_node.get_node_id()
+        for child in node.generate_next_child(depth, root_nod_id):
+            assert (
+                child.children == []
+            ), f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
             if child.node_id in node_ids:
                 continue
             # use recursion to build tree vertically

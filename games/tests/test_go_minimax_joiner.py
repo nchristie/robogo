@@ -592,7 +592,7 @@ class GoTreeTestCase(TestCase):
         game_tree_node_13.children = []
         tree_3 = GoTree(game_tree_node_13)
 
-        tree_3.evaluate(game_tree_node_13, node_3_depth, set(), alpha, beta)
+        tree_3.evaluate(game_tree_node_13, node_13_depth, set(), alpha, beta)
 
         # WHEN
         actual = game_tree_node_13.get_score()
