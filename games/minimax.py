@@ -75,16 +75,18 @@ class MinimaxNode:
         )
         return
 
-    def generate_next_child(self, depth):
+    def generate_next_child(self, depth, root_node_id="NA"):
         logger.error(
             f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth}"
         )
         child_node_depth = depth - 1
         for i in range(5):
-            yield MinimaxNode(
-                node_id=self.make_node_id(child_node_depth, i),
+            next_node =  MinimaxNode(
+                node_id=self.make_node_id(child_node_depth, i, root_node_id),
                 player=self.alternate_player(),
             )
+            assert next_node.children == [], "Error in generate_next_child"
+            yield next_node
 
     def node_min(self, first_node, second_node):
         if second_node.get_score() < first_node.get_score():
@@ -100,12 +102,12 @@ class MinimaxNode:
         # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, node_id = {self.node_id}")
         return not self.children
 
-    def make_node_id(self, depth, index):
+    def make_node_id(self, depth, index, root_node_id="NA"):
         """
         Creates a unique id for each move
         Returns (str):
         """
-        return f"d{depth}-i{index}"
+        return f"d{depth}-i{index}-r{root_node_id}"
 
     def alternate_player(self):
         """
@@ -147,12 +149,12 @@ class MinimaxTree:
             if node.children != []:
                 e = f"Leaf node at depth {depth} shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)} first child id: {node.children[0].node_id}"
                 logger.error(e)
-                # raise Exception(e)
-                node.children = []
+                raise Exception(e)
             return
 
         # recurse case
-        for child in node.generate_next_child(depth):
+        for child in node.generate_next_child(depth, self.root_node.get_node_id()):
+            assert child.children == [], f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
             if child.node_id in node_ids:
                 continue
             # use recursion to build tree vertically

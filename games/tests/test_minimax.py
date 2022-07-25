@@ -133,19 +133,19 @@ class MinimaxTreeTestCase(TestCase):
     def test_build_game_tree_recursive_depth(self):
         # GIVEN
         player = "maximizer"
-        game_tree_node_3 = MinimaxNode(
-            node_id="root_node",
+        game_tree_node_23 = MinimaxNode(
+            node_id="root_node_23",
             player=player,
         )
 
-        node_3_depth = 3
-        tree_3 = MinimaxTree(game_tree_node_3)
+        node_23_depth = 3
+        tree_23 = MinimaxTree(game_tree_node_23)
         # hack to get around suspected test pollution
-        game_tree_node_3.children = []
-        tree_3.build_game_tree_recursive(game_tree_node_3, node_3_depth, set())
+        game_tree_node_23.children = []
+        tree_23.build_game_tree_recursive(game_tree_node_23, node_23_depth, set())
 
         # WHEN
-        actual = tree_3.root_node.children[0].children[0].children[0].children
+        actual = tree_23.root_node.children[0].children[0].children[0].children
 
         # THEN
         expected = []

@@ -32,7 +32,7 @@ class GoNode(MinimaxNode):
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def generate_next_child(self, depth):
+    def generate_next_child(self, depth, root_node_id="NA"):
         """
         Yields:
             GoNode: next possible move on the board
@@ -47,7 +47,7 @@ class GoNode(MinimaxNode):
         board_size = len(self.board_state)
         all_moves_on_board = list_all_moves_on_board(board_size)
         for i, move_coordinates in enumerate(all_moves_on_board):
-            node_id = self.make_node_id(depth, i)
+            node_id = self.make_node_id(depth, i, root_node_id)
             if not is_move_valid(self.board_state, move_coordinates):
                 continue
             new_board_state = deepcopy(self.board_state)
@@ -181,7 +181,7 @@ class GoTree(MinimaxTree):
             raise Exception(e)
 
         # optimal_value = INITIAL_OPTIMAL_VALUES[node.player]
-        for child in node.generate_next_child(depth):
+        for child in node.generate_next_child(depth, self.root_node.get_node_id()):
             # Don't add board states which have already been visited
             if str(child.node_id) in node_ids:
                 logger.debug("Board state already seen, skipping this node")
