@@ -1,4 +1,4 @@
-from .minimax import MinimaxNode
+from .minimax import MinimaxNode, MinimaxTree
 from copy import deepcopy
 from .game_logic import *
 from .stones import *
@@ -9,8 +9,6 @@ logger = logging.getLogger(__name__)
 PLAYER_DICT = {"maximizer": BLACK_STONE, "minimizer": WHITE_STONE}
 
 STONE_DICT = {BLACK_STONE: "maximizer", WHITE_STONE: "minimizer"}
-
-MAX_TREE_DEPTH = 5
 
 
 class GoNode(MinimaxNode):
@@ -33,16 +31,6 @@ class GoNode(MinimaxNode):
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
-
-    def alternate_player(self):
-        """
-        Returns:
-            str: The opposite player to that of the current
-            node. Valid options: "minimizer", "maximizer".
-        """
-        if self.player == "minimizer":
-            return "maximizer"
-        return "minimizer"
 
     def generate_next_child(self, depth):
         """
@@ -107,13 +95,6 @@ class GoNode(MinimaxNode):
         down = (x_coordinate + 1, y_coordinate)
         return [up, left, right, down]
 
-    def make_move_id(self, depth, index):
-        """
-        Creates a unique id for each move
-        Returns (str):
-        """
-        return f"d{depth}-i{index}"
-
     def get_utility(self):
         """
         Finds value of node. To be used for terminal nodes only
@@ -137,107 +118,14 @@ class GoNode(MinimaxNode):
     # TODO find_connecting_stones():
 
 
-class GoTree(GoNode):
+class GoTree(MinimaxTree):
     def __init__(self, root_node):
         self.root_node = root_node
 
-    def find_depth_recursive(self, node, depth):
-        if depth > MAX_TREE_DEPTH:
-            raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
-
-        # Base case
-        # If we're at a terminal node leave the recursion
-        if node.is_leaf_node():
-            logger.debug(f"child {type(node)}")
-            logger.debug(
-                f"depth: {depth}, move_id: {node.move_id} is_leaf_node: {node.is_leaf_node()}"
-            )
-            logger.debug(f"returning at depth of {depth} owing to terminal node")
-            return depth
-
-        # recurse case
-        for i, child in enumerate(node.children):
-            logger.debug(
-                f"depth: {depth}, child index: {i}, move_id: {child.move_id} is_leaf_node: {child.is_leaf_node()}, child {type(child)}"
-            )
-            return self.find_depth_recursive(child, depth + 1)
-
-        logger.debug(f"Returning because end of function depth {depth}")
-        return
-
-    def find_depth_iterative(self, node, max_depth):
-        # Source: https://stackoverflow.com/questions/71846315/depth-limited-dfs-general-non-binary-tree-search
-        stack = [(node, 0)]
-        visited = set()
-        while stack:
-            node, node_depth = stack.pop()
-            if node in visited:
-                continue
-            visited.add(node)
-
-            # Any other processing for this node comes here
-            if node.is_leaf_node():
-                return node_depth
-
-            if node_depth < max_depth:
-                for child in reversed(node.children):
-                    stack.append((child, node_depth + 1))
-        return node_depth
-
     # TODO this function should be removable once alpha-beta
     # function works
-    def build_game_tree_recursive(self, node, depth, board_states):
-        """
-        Starts from current node and builds game tree to a given
-        depth
 
-        Parameters:
-            depth (int): how far down the tree we want to build
-        """
-        logger.debug(f"In build_game_tree_recursive, {node.move_id} {depth}")
-        logger.debug(node.board_state)
-
-        board_states.add(str(node.board_state))
-
-        if depth < 0:
-            raise Exception(f"Maximum tree depth exceeded")
-
-        # Base case
-        # If we're at a terminal node leave the recursion
-        if depth == 0:
-            logger.debug(f"Returning at depth of {depth}")
-            assert (
-                not node.children
-            ), f"Node at depth 0 shouldn't have children move_id: {node.move_id}, board_state: {node.board_state}, number of children: {len(node.children)}"
-            return
-
-        # recurse case
-        for child in node.generate_next_child(depth):
-            if str(child.board_state) in board_states:
-                continue
-            # use recursion to build tree vertically
-
-            # TODO s/ with following line
-            if node.children == None:
-                node.children = []
-            if child.children == None:
-                child.children = []
-            if not self.build_game_tree_recursive(child, depth - 1, board_states):
-
-                # not build_game_tree_recursive(..) will be True if we've reached the end of
-                # depth count-down or if we've visited every potential child node horizontally,
-                # so this means first we'll get to the point we want to stop building and add
-                # children, then work back up the tree and add child nodes
-
-                # build tree horizontally
-                logger.debug(f"Appending nodes at depth of {depth}")
-                node.children.append(child)
-                logger.debug(f"number of children: {len(node.children)}")
-
-        logger.debug("Returning at end of function")
-        return
-
-    def evaluate(self, node, depth, board_states, alpha, beta):
+    def evaluate(self, node, depth, move_ids, alpha, beta):
         """
         Starts from current node and builds game tree to a given
         depth then returns the best next move using the information
@@ -245,7 +133,7 @@ class GoTree(GoNode):
 
         Parameters:
             depth (int): how far down the tree we want to build
-            board_states (set): all the board states which have been
+            move_ids (set): all the move ids which have been
                 encountered so far
             alpha (int): best score from perspective of
                 maximizing player
@@ -264,7 +152,7 @@ class GoTree(GoNode):
             f"In evaluate, node: {node.move_id} depth: {depth}, player: {node.player}"
         )
 
-        board_states.add(str(node.board_state))
+        move_ids.add(str(node.board_state))
 
         if depth < 0:
             e = f"Maximum tree depth exceeded at node: {node.move_id}"
@@ -295,7 +183,7 @@ class GoTree(GoNode):
         # optimal_value = INITIAL_OPTIMAL_VALUES[node.player]
         for child in node.generate_next_child(depth):
             # Don't add board states which have already been visited
-            if str(child.board_state) in board_states:
+            if str(child.move_id) in move_ids:
                 logger.debug("Board state already seen, skipping this node")
                 continue
 
@@ -309,7 +197,7 @@ class GoTree(GoNode):
             func, alpha_or_beta = self.apply_strategy(node.player, alpha, beta)
             best_score = func(
                 alpha_or_beta,
-                self.evaluate(child, depth - 1, board_states, alpha, beta),
+                self.evaluate(child, depth - 1, move_ids, alpha, beta),
             )
             if node.player == "maximizer":
                 alpha = best_score

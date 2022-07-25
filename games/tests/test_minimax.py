@@ -1,5 +1,6 @@
 from django.test import TestCase
-from games.minimax import MinimaxNode
+from games.minimax import MinimaxNode, MinimaxTree
+from unittest import skip
 
 
 class MinimaxNodeTestCase(TestCase):
@@ -118,4 +119,33 @@ class MinimaxNodeTestCase(TestCase):
 
         # THEN
         expected = my_node_high
+        self.assertEqual(expected, actual)
+
+
+class MinimaxTreeTestCase(TestCase):
+    @skip("Deliberate failing test available to check this part of the code is touched")
+    def test_failing_test(self):
+        expected = True
+        actual = False
+        self.assertEqual(expected, actual)
+
+    def test_build_game_tree_recursive_depth(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_3 = MinimaxNode(
+            move_id="root_node",
+            player=player,
+        )
+
+        node_3_depth = 3
+        tree_3 = MinimaxTree(game_tree_node_3)
+        # hack to get around suspected test pollution
+        game_tree_node_3.children = []
+        tree_3.build_game_tree_recursive(game_tree_node_3, node_3_depth, set())
+
+        # WHEN
+        actual = tree_3.root_node.children[0].children[0].children[0].children
+
+        # THEN
+        expected = []
         self.assertEqual(expected, actual)

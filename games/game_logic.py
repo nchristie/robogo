@@ -4,7 +4,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 WINNING_SCORE = 5
-MAX_TREE_DEPTH = 5
 
 PLUS_INF = float("inf")
 MINUS_INF = -float("inf")

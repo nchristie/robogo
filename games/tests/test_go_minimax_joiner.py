@@ -504,6 +504,12 @@ class GoNodeTestCase(TestCase):
 
 
 class GoTreeTestCase(TestCase):
+    @skip("Deliberate failing test available to check this part of the code is touched")
+    def test_failing_test(self):
+        expected = True
+        actual = False
+        self.assertEqual(expected, actual)
+
     def test_build_game_tree_recursive_depth(self):
         # GIVEN
         player = "maximizer"
@@ -664,7 +670,7 @@ class GoTreeTestCase(TestCase):
         expected = 1
         self.assertEqual(expected, actual)
 
-    # @skip("WIP")
+    @skip("WIP")
     def test_get_best_next_move(self):
         # GIVEN
         player = "maximizer"
