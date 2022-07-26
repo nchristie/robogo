@@ -41,7 +41,6 @@ class GoNode(MinimaxNode):
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
         all_moves_on_board = list_all_moves_on_board(board_size)
-        children = [] # converting to list
         i = 0
         for move_coordinates in all_moves_on_board:
             if not is_move_valid(self.board_state, move_coordinates):
@@ -60,9 +59,7 @@ class GoNode(MinimaxNode):
                 children=[],
             )
             i += 1
-            children.append(next_node) # converting to list
-            # yield next_node
-        return children
+            yield next_node
 
     def generate_next_child_around_existing_moves(self, player="minimizer", depth=0):
         # I've returned this function to the code as I think I may want it later

@@ -145,8 +145,7 @@ class MinimaxTree:
 
         # recurse case
         parent_node_id = node.get_node_id()
-        all_possible_moves = node.generate_next_child(depth, parent_node_id)
-        for child in all_possible_moves:
+        for child in node.generate_next_child(depth, parent_node_id):
             assert (
                 child.children == []
             ), f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
