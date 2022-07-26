@@ -50,6 +50,7 @@ class MinimaxNode:
         # input is Node, output is Node
         best_move = self.children[0]
         player = best_move.player
+        logger.debug(f"get_optimal_move player = {player}")
         best_score = best_move.get_score()
 
         strategy = self.maximizer_strategy
@@ -75,14 +76,14 @@ class MinimaxNode:
         )
         return
 
-    def generate_next_child(self, depth, root_node_id="NA"):
+    def generate_next_child(self, depth, parent_node_id="NA"):
         logger.error(
             f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth}"
         )
         child_node_depth = depth - 1
         player = self.alternate_player()
         for i in range(5):
-            node_id = self.make_node_id(child_node_depth, i, root_node_id)
+            node_id = self.make_node_id(child_node_depth, i, parent_node_id)
             next_node = MinimaxNode(
                 node_id=node_id,
                 player=player,
@@ -97,12 +98,12 @@ class MinimaxNode:
         # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, node_id = {self.node_id}")
         return not self.children
 
-    def make_node_id(self, depth, index, root_node_id="NA"):
+    def make_node_id(self, depth, index, parent_node_id="NA"):
         """
         Creates a unique id for each move
         Returns (str):
         """
-        return f"d{depth}-i{index}-r{root_node_id}"
+        return f"d{depth}-i{index}-p{parent_node_id}"
 
     def alternate_player(self):
         """
@@ -127,10 +128,6 @@ class MinimaxTree:
         Parameters:
             depth (int): how far down the tree we want to build
         """
-        # logger.debug(
-        #     f"In build_game_tree_recursive, node_id: {node.node_id} depth: {depth}"
-        # )
-
         node_ids.add(node.node_id)
 
         if depth < 0:
@@ -140,7 +137,6 @@ class MinimaxTree:
         # If we're at a leaf node leave the recursion
         if depth == 0:
             logger.debug(f"Returning at depth of {depth}")
-            # import pdb; pdb.set_trace()
             if node.children != []:
                 e = f"Leaf node at depth {depth} shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)} first child id: {node.children[0].node_id}"
                 logger.error(e)
@@ -148,12 +144,14 @@ class MinimaxTree:
             return
 
         # recurse case
-        root_node_id = self.root_node.get_node_id()
-        for child in node.generate_next_child(depth, root_node_id):
+        parent_node_id = node.get_node_id()
+        all_possible_moves = node.generate_next_child(depth, parent_node_id)
+        for child in all_possible_moves:
             assert (
                 child.children == []
             ), f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
             if child.node_id in node_ids:
+                logger.debug(f"node_id: {child.node_id} already visited, skipping")
                 continue
             # use recursion to build tree vertically
             if not self.build_game_tree_recursive(child, depth - 1, node_ids):
@@ -165,7 +163,6 @@ class MinimaxTree:
 
                 # build tree horizontally
                 node.add_child(child)
-                logger.debug(f"number of children: {len(node.children)}")
         logger.debug("Returning at end of function")
         return
 
@@ -193,6 +190,6 @@ class MinimaxTree:
         logger.debug(f"Returning because end of function depth {depth}")
         return
 
-
+# Helpers
 def get_depth_from_node_id(node_id):
     return str(node_id).split("-")[0]

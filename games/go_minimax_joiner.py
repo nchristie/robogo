@@ -37,15 +37,11 @@ class GoNode(MinimaxNode):
         Yields:
             GoNode: next possible move on the board
         """
-        # TODO return a dictionary with the parameters to go into the GoNode
-        #   instead of the GoNode itself - this is so we can use the add_child
-        #   method instead of doing an append to node.children
-
-        # logger.debug(f"In generate_next_child, own id = {self.node_id}")
         player = self.alternate_player()
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
         all_moves_on_board = list_all_moves_on_board(board_size)
+        children = [] # converting to list
         i = 0
         for move_coordinates in all_moves_on_board:
             if not is_move_valid(self.board_state, move_coordinates):
@@ -64,7 +60,9 @@ class GoNode(MinimaxNode):
                 children=[],
             )
             i += 1
-            yield next_node
+            children.append(next_node) # converting to list
+            # yield next_node
+        return children
 
     def generate_next_child_around_existing_moves(self, player="minimizer", depth=0):
         # I've returned this function to the code as I think I may want it later
@@ -103,7 +101,6 @@ class GoNode(MinimaxNode):
         Returns:
             int corresponding to black's score relative to white's
         """
-        logger.debug(f"In get_utility for node: {self.node_id}")
         score_dict = get_score_dict(self.board_state)
 
         score = score_dict["relative_black_score"]
@@ -114,7 +111,7 @@ class GoNode(MinimaxNode):
         if not score and score != 0:
             raise Exception(f"Score could not be set score_dict: {score_dict}")
         else:
-            logger.debug(f"Utility for node {self.node_id} = {score}")
+            logger.debug(f"Utility for node {self.node_id} with coordinates {self.move_coordinates} = {score}")
         return score
 
     # TODO find_connecting_stones():

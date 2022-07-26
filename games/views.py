@@ -125,7 +125,7 @@ def find_game_by_ip(ip):
 
 
 def get_white_response(board_state):
-    my_node = GoNode(
+    root_node = GoNode(
         node_id="root_node",
         player="maximizer",
         score=None,
@@ -133,12 +133,24 @@ def get_white_response(board_state):
         board_state=board_state,
     )
 
-    game_tree = GoTree(my_node)
-    best_score = game_tree.evaluate(
-        node=my_node, depth=3, node_ids=set(), alpha=MINUS_INF, beta=PLUS_INF
-    )
-    white_move_node = game_tree.get_best_next_move(my_node, best_score)
+    game_tree = GoTree(root_node)
+    game_tree.build_game_tree_recursive(root_node, 2, set())
+
+    root_node = game_tree.root_node
+
+    root_node_children = root_node.get_children()
+    logger.debug(f"root node has {len(root_node_children)} children")
+    for child in root_node_children:
+        child_node_children = child.get_children()
+        logger.debug(f"child node has {len(child_node_children)} children")
+        for child2 in child_node_children:
+            child2.set_score(child2.get_utility())
+
+        white_move_node2 = child.get_optimal_move()
+        child.set_score(white_move_node2.get_score())
+
+    white_move_node = root_node.get_optimal_move()
 
     white_move = white_move_node.move_coordinates
-    logger.info(f"white_move: {white_move}, best_score: {best_score}")
+    logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move

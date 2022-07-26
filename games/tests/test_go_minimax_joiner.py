@@ -488,6 +488,28 @@ class GoTreeTestCase(TestCase):
         expected = []
         self.assertEqual(expected, actual)
 
+    def test_build_game_tree_recursive_breadth(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_072604 = GoNode(
+            node_id="072604",
+            player=player,
+            board_state=[["●", "+"], ["+", "+"]],
+        )
+
+        node_072604_depth = 3
+        tree_072604 = GoTree(game_tree_node_072604)
+        # hack to get around suspected test pollution
+        game_tree_node_072604.children = []
+        tree_072604.build_game_tree_recursive(game_tree_node_072604, node_072604_depth, set())
+
+        # WHEN
+        actual = len(tree_072604.root_node.children[1].children)
+
+        # THEN
+        expected = 2
+        self.assertEqual(expected, actual)
+
     def test_find_depth_recursive(self):
         # GIVEN
         player = "maximizer"
