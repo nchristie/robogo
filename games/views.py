@@ -133,24 +133,73 @@ def get_white_response(board_state):
         board_state=board_state,
     )
 
-    game_tree = GoTree(root_node)
-    game_tree.build_game_tree_recursive(root_node, 2, set())
-
-    root_node = game_tree.root_node
-
-    root_node_children = root_node.get_children()
-    logger.debug(f"root node has {len(root_node_children)} children")
-    for child in root_node_children:
-        child_node_children = child.get_children()
-        logger.debug(f"child node has {len(child_node_children)} children")
-        for child2 in child_node_children:
-            child2.set_score(child2.get_utility())
-
-        white_move_node2 = child.get_optimal_move()
-        child.set_score(white_move_node2.get_score())
-
-    white_move_node = root_node.get_optimal_move()
+    white_move_node = minimax_depth_of_2(root_node)
 
     white_move = white_move_node.move_coordinates
     logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move
+
+def minimax_depth_of_2(root_node):
+    depth = 2
+    game_tree = GoTree(root_node)
+    game_tree.build_game_tree_recursive(root_node, depth, set())
+
+    current_node = game_tree.root_node
+
+    for child in current_node.get_children():
+        for child2 in child.get_children():
+            child2.set_score(child2.get_utility())
+        child2_optimal_move = child.get_optimal_move()
+        child.set_score(child2_optimal_move.get_score())
+
+    return game_tree.root_node.get_optimal_move()
+
+def minimax_depth_of_3(root_node):
+    depth = 3
+    game_tree = GoTree(root_node)
+
+    # at depth of 3 it times out when trying to build the tree
+    game_tree.build_game_tree_recursive(root_node, depth, set())
+
+    current_node = game_tree.root_node
+    alpha = -float("inf")
+    beta = float("inf")
+
+    for child2 in current_node.generate_next_child(depth=2, parent_node_id=current_node.node_id):
+        for child1 in child2.generate_next_child(depth=1, parent_node_id=child2.node_id):
+            for child0 in child1.generate_next_child(depth=0, parent_node_id=child1.node_id):
+                child0.set_score(child0.get_utility())
+            child0_optimal_move = child1.get_optimal_move()
+            child1.set_score(child0_optimal_move.get_score())
+            if child1.player == "maximizer":
+                if child1.get_score() > alpha:
+                    alpha = child1.get_score()
+            if child1.player == "minimizer":
+                if child1.get_score() < beta:
+                    beta = child1.get_score()
+            if beta >= alpha:
+                break
+        child1_optimal_move = child2.get_optimal_move()
+        child2.set_score(child1_optimal_move.get_score())
+        if child2.player == "maximizer":
+            if child2.get_score() > alpha:
+                alpha = child2.get_score()
+        if child2.player == "minimizer":
+            if child2.get_score() < beta:
+                beta = child2.get_score()
+        if beta >= alpha:
+            break
+    return game_tree.root_node.get_optimal_move()
+
+def find_optimal_move(root_node, current_node, depth):
+    if depth == 0:
+        child.set_score(child.get_utility())
+
+    for child in current_node.get_children():
+        recurse_to_find_optimal_move(root_node, child, depth - 1)
+        current_node.set_score(current_node.get_optimal_move().get_score())
+
+    return root_node.get_optimal_move()
+
+
+

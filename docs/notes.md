@@ -26,13 +26,7 @@ docker-compose run --rm web python manage.py test
 shell:
 docker-compose run --rm web python manage.py shell
 
-from games.models import Game, Move
-
-games = Game.objects.order_by('-id')
-games = Game.objects.order_by('-id'); [game.delete() for game in games] # deletes all games
-
-game = Game.objects.order_by('-id')[0]
-game.move_set.all()  # queryset of related Moves
+from games.models import Game, Move; games = Game.objects.order_by('-id'); [game.delete() for game in games] # deletes all games
 
 My IP:
 172.24.0.1
