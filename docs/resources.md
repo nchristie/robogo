@@ -4,6 +4,11 @@
 - https://en.wikipedia.org/wiki/Minimax Non-leaf nodes inherit their value from a descendant leaf node
 - https://www.javatpoint.com/ai-alpha-beta-pruning#:~:text=Pseudo%2Dcode%20for%20Alpha%2Dbeta%20Pruning%3A&text=if%20MaximizingPlayer%20then%20%2F%2F%20for,%2C%20alpha%2C%20beta%2C%20False)
 - https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
+- https://www.linkedin.com/learning/ai-algorithms-for-gaming
+ - https://www.linkedin.com/learning/ai-algorithms-for-gaming/alpha-beta-pruning
+ - https://www.linkedin.com/learning/ai-algorithms-for-gaming/the-alpha-beta-search-algorithm
+- https://www.youtube.com/watch?v=l-hh51ncgDI
+- https://www.youtube.com/watch?v=_i-lZcbWkps
 
 # Minimax and Alpha-Beta Search with Python
 - https://levelup.gitconnected.com/mastering-tic-tac-toe-with-minimax-algorithm-3394d65fa88f

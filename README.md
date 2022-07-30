@@ -31,6 +31,14 @@ See logs while running tests:
 Run all tests:
 `docker-compose run --rm web python3 -m pytest games/tests/test_game_logic.py && docker-compose run --rm web python manage.py test`
 
+# Manually testing
+
+To clear the database of prior games get into the shell:
+`docker-compose run --rm web python manage.py shell`
+
+Then run:
+`from games.models import Game, Move; games = Game.objects.order_by('-id'); [game.delete() for game in games]`
+
 ## Troubleshooting
 If you get this error:
 `django.db.utils.OperationalError: FATAL:  the database system is starting up`
