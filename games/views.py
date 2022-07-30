@@ -4,6 +4,7 @@ from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode, GoTree
+from .minimax import are_break_conditions_met
 from .game_logic import *
 import itertools
 
@@ -12,6 +13,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 DEPTH = 100000
+
+INF = float("inf")
 
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
@@ -132,12 +135,17 @@ def get_white_response(board_state):
         children=[],
         board_state=board_state,
     )
+    try:
+        white_move_node = minimax_depth_of_3(root_node)
+        assert (
+            type(white_move_node) == GoNode
+        ), f"White move node isn't of type GoNode for node: {white_move_node.node_id}"
+        white_move = white_move_node.move_coordinates
+        # logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
+        return white_move
+    except Exception as e:
+        logger.error(f"minimax_depth_of_X failed with error: {e}")
 
-    white_move_node = minimax_depth_of_2(root_node)
-
-    white_move = white_move_node.move_coordinates
-    logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
-    return white_move
 
 def minimax_depth_of_2(root_node):
     depth = 2
@@ -154,52 +162,71 @@ def minimax_depth_of_2(root_node):
 
     return game_tree.root_node.get_optimal_move()
 
+
 def minimax_depth_of_3(root_node):
-    depth = 3
+    logger.info("In minimax_depth_of_3")
+
     game_tree = GoTree(root_node)
 
-    # at depth of 3 it times out when trying to build the tree
-    game_tree.build_game_tree_recursive(root_node, depth, set())
-
     current_node = game_tree.root_node
-    alpha = -float("inf")
-    beta = float("inf")
+    alpha = -INF
+    beta = INF
 
-    for child2 in current_node.generate_next_child(depth=2, parent_node_id=current_node.node_id):
-        for child1 in child2.generate_next_child(depth=1, parent_node_id=child2.node_id):
-            for child0 in child1.generate_next_child(depth=0, parent_node_id=child1.node_id):
+    for child2 in current_node.generate_next_child(
+        depth=2, parent_node_id=current_node.node_id
+    ):
+        if abs(child2.get_utility()) == INF:
+            child2.set_score(child2.get_utility())
+            continue
+        for child1 in child2.generate_next_child(
+            depth=1, parent_node_id=child2.node_id
+        ):
+            if abs(child1.get_utility()) == INF:
+                child1.set_score(child1.get_utility())
+                continue
+            for child0 in child1.generate_next_child(
+                depth=0, parent_node_id=child1.node_id
+            ):
+                # get utility for each leaf node
                 child0.set_score(child0.get_utility())
-            child0_optimal_move = child1.get_optimal_move()
-            child1.set_score(child0_optimal_move.get_score())
-            if child1.player == "maximizer":
-                if child1.get_score() > alpha:
-                    alpha = child1.get_score()
-            if child1.player == "minimizer":
-                if child1.get_score() < beta:
-                    beta = child1.get_score()
-            if beta >= alpha:
+
+                # use that utility to update the value of alpha or beta
+                alpha, beta = game_tree.set_alpha_and_beta(child0, alpha, beta)
+
+                child1.add_child(child0)
+                child1.set_score(child1.get_optimal_move().get_score())
+                if are_break_conditions_met(alpha, beta):
+                    logger.info(f"Pruning at {child0.node_id}")
+                    break
+
+            # use the inherited value of child1 to update alpha or beta
+            alpha, beta = game_tree.set_alpha_and_beta(child1, alpha, beta)
+            child2.add_child(child1)
+            child2.set_score(child2.get_optimal_move().get_score())
+            if are_break_conditions_met(alpha, beta):
+                logger.info(f"Pruning at {child1.node_id}")
                 break
-        child1_optimal_move = child2.get_optimal_move()
-        child2.set_score(child1_optimal_move.get_score())
-        if child2.player == "maximizer":
-            if child2.get_score() > alpha:
-                alpha = child2.get_score()
-        if child2.player == "minimizer":
-            if child2.get_score() < beta:
-                beta = child2.get_score()
-        if beta >= alpha:
-            break
-    return game_tree.root_node.get_optimal_move()
 
-def find_optimal_move(root_node, current_node, depth):
-    if depth == 0:
-        child.set_score(child.get_utility())
-
-    for child in current_node.get_children():
-        recurse_to_find_optimal_move(root_node, child, depth - 1)
+        # use the inherited value of child2 to update alpha or beta
+        alpha, beta = game_tree.set_alpha_and_beta(child2, alpha, beta)
+        child2.set_score(child2.get_optimal_move().get_score())
+        current_node.add_child(child2)
         current_node.set_score(current_node.get_optimal_move().get_score())
+        if are_break_conditions_met(alpha, beta):
+            logger.info(f"Pruning at {child2.node_id}")
+            break
 
-    return root_node.get_optimal_move()
+    logger.info("*** printing move_coordinates based on best path ***")
+    logger.info("best child at depth 2:")
+    move = current_node.get_optimal_move()
+    logger.info(f"{move.player}, {move.move_coordinates}, {move.get_score()}")
 
+    logger.info("best child at depth 1:")
+    move = current_node.get_optimal_move().get_optimal_move()
+    logger.info(f"{move.player}, {move.move_coordinates}, {move.get_score()}")
 
+    logger.info("best child at depth 0:")
+    move = current_node.get_optimal_move().get_optimal_move().get_optimal_move()
+    logger.info(f"{move.player}, {move.move_coordinates}, {move.get_score()}")
 
+    return current_node.get_optimal_move()

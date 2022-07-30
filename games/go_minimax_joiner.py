@@ -32,7 +32,7 @@ class GoNode(MinimaxNode):
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
 
-    def generate_next_child(self, depth, root_node_id="NA"):
+    def generate_next_child(self, depth, parent_node_id="NA"):
         """
         Yields:
             GoNode: next possible move on the board
@@ -45,7 +45,7 @@ class GoNode(MinimaxNode):
         for move_coordinates in all_moves_on_board:
             if not is_move_valid(self.board_state, move_coordinates):
                 continue
-            node_id = self.make_node_id(depth, i, root_node_id)
+            node_id = self.make_node_id(depth, i, parent_node_id)
             new_board_state = deepcopy(self.board_state)
             x = move_coordinates[0]
             y = move_coordinates[1]
@@ -103,12 +103,16 @@ class GoNode(MinimaxNode):
         score = score_dict["relative_black_score"]
         if score_dict[BLACK_STONE] >= WINNING_SCORE:
             score = PLUS_INF
+            logger.info(f"Winning score found for {self.node_id}, {self.board_state}")
         if score_dict[WHITE_STONE] >= WINNING_SCORE:
             score = MINUS_INF
+            logger.info(f"Losing score found for {self.node_id}, {self.board_state}")
         if not score and score != 0:
             raise Exception(f"Score could not be set score_dict: {score_dict}")
         else:
-            logger.debug(f"Utility for node {self.node_id} with coordinates {self.move_coordinates} = {score}")
+            logger.debug(
+                f"Utility for node {self.node_id} with coordinates {self.move_coordinates} = {score}"
+            )
         return score
 
     # TODO find_connecting_stones():

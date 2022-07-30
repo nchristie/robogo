@@ -21,6 +21,10 @@ class MinimaxNode:
 
     def set_score(self, score):
         logger.debug(f"In set_score for node: {self.node_id}, score: {score}")
+        if type(score) not in [int, float]:
+            raise Exception(
+                f"set_score error: score must be int or float got {type(score)} for node: {self.node_id}"
+            )
         self.score = score
 
     def get_score(self):
@@ -48,9 +52,12 @@ class MinimaxNode:
 
     def get_optimal_move(self):
         # input is Node, output is Node
+        if not self.children:
+            raise Exception(
+                f"get_optimal_move error for {self.node_id}: node has no children"
+            )
         best_move = self.children[0]
         player = best_move.player
-        logger.debug(f"get_optimal_move player = {player}")
         best_score = best_move.get_score()
 
         strategy = self.maximizer_strategy
@@ -62,6 +69,7 @@ class MinimaxNode:
             if strategy(child_score, best_score):
                 best_move = child
                 best_score = best_move.get_score()
+        logger.debug(f"get_optimal_move player = {player}, best_score: {best_score}")
         return best_move
 
     def maximizer_strategy(self, child_score, best_score):
@@ -103,7 +111,8 @@ class MinimaxNode:
         Creates a unique id for each move
         Returns (str):
         """
-        return f"d{depth}-i{index}-p{parent_node_id}"
+        parent_node_id = parent_node_id.split("_")[0]
+        return f"d{depth}-i{index}_p{parent_node_id}"
 
     def alternate_player(self):
         """
@@ -189,6 +198,32 @@ class MinimaxTree:
         logger.debug(f"Returning because end of function depth {depth}")
         return
 
+    def set_alpha_and_beta(self, node, alpha, beta):
+        # TODO setting parent node player with alternate_player here could backfire - try to find a better way to handle this
+        parent_node_player = node.alternate_player()
+        if node.score == None:
+            logger.debug(
+                f"set_alpha_and_beta >> Node: {node.node_id} hasn't got a score, returning without update"
+            )
+            return alpha, beta
+        if parent_node_player == "minimizer":
+            beta = min(beta, node.get_score())
+        if parent_node_player == "maximizer":
+            alpha = max(alpha, node.get_score())
+        return alpha, beta
+
+
 # Helpers
 def get_depth_from_node_id(node_id):
     return str(node_id).split("-")[0]
+
+
+def are_break_conditions_met(alpha, beta):
+    prune_tree = alpha > beta
+    black_win = alpha == float("inf")
+    white_win = beta == -float("inf")
+    return prune_tree or black_win or white_win
+
+
+def is_winning_score(score):
+    return

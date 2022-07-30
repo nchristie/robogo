@@ -501,7 +501,9 @@ class GoTreeTestCase(TestCase):
         tree_072604 = GoTree(game_tree_node_072604)
         # hack to get around suspected test pollution
         game_tree_node_072604.children = []
-        tree_072604.build_game_tree_recursive(game_tree_node_072604, node_072604_depth, set())
+        tree_072604.build_game_tree_recursive(
+            game_tree_node_072604, node_072604_depth, set()
+        )
 
         # WHEN
         actual = len(tree_072604.root_node.children[1].children)
