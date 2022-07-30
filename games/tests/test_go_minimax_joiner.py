@@ -427,45 +427,8 @@ class GoNodeTestCase(TestCase):
         expected = 1
         self.assertEqual(expected, actual)
 
-    @skip("This functionality was removed, might return later")
-    def test_build_game_sets_terminal_for_black_winning_nodes(self):
-        # GIVEN
-        player = "minimizer"
-        board_state = [
-            ["●", "+", "+", "+", "+"],
-            ["●", "+", "+", "+", "+"],
-            ["●", "+", "+", "+", "+"],
-            ["●", "+", "+", "+", "+"],
-            ["+", "+", "+", "+", "+"],
-        ]
-        game_tree_node_6 = GoNode(
-            player=player,
-            board_state=board_state,
-        )
-
-        # hack to get around suspected test pollution
-        game_tree_node_6.children = []
-
-        depth = 2
-
-        # WHEN
-        game_tree_node_6.build_game_tree_recursive(depth)
-        children = game_tree_node_6.get_children()
-        terminality = [child.is_leaf_node() for child in children]
-        actual = sum(item == True for item in terminality)
-
-        # THEN
-        expected = 1
-        self.assertEqual(expected, actual)
-
 
 class GoTreeTestCase(TestCase):
-    @skip("Deliberate failing test available to check this part of the code is touched")
-    def test_failing_test(self):
-        expected = True
-        actual = False
-        self.assertEqual(expected, actual)
-
     def test_build_game_tree_recursive_depth(self):
         # GIVEN
         player = "maximizer"

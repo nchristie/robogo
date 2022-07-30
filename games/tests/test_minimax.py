@@ -96,12 +96,6 @@ class MinimaxNodeTestCase(TestCase):
 
 
 class MinimaxTreeTestCase(TestCase):
-    @skip("Deliberate failing test available to check this part of the code is touched")
-    def test_failing_test(self):
-        expected = True
-        actual = False
-        self.assertEqual(expected, actual)
-
     def test_build_game_tree_recursive_depth(self):
         # GIVEN
         player = "maximizer"
