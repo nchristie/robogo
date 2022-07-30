@@ -5,10 +5,9 @@ logger = logging.getLogger(__name__)
 
 WINNING_SCORE = 5
 
-PLUS_INF = float("inf")
-MINUS_INF = -float("inf")
+INFINITY = float("inf")
 
-INITIAL_OPTIMAL_VALUES = {"maximizer": MINUS_INF, "minimizer": PLUS_INF}
+INITIAL_OPTIMAL_VALUES = {"maximizer": -INFINITY, "minimizer": INFINITY}
 
 
 def is_move_valid(board_state, move_coordinates):

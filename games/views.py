@@ -14,8 +14,6 @@ logger = logging.getLogger(__name__)
 
 DEPTH = 100000
 
-INF = float("inf")
-
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
 
@@ -146,5 +144,3 @@ def get_white_response(board_state):
         return white_move
     except Exception as e:
         logger.error(f"minimax_depth_of_X failed with error: {e}")
-
-

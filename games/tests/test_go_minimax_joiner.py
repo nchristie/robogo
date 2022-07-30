@@ -2,7 +2,7 @@ from django.test import TestCase
 from games.go_minimax_joiner import GoNode, GoTree
 from types import GeneratorType
 from unittest import skip
-from games.game_logic import MINUS_INF, PLUS_INF
+from games.game_logic import INFINITY
 
 
 class GoNodeTestCase(TestCase):
@@ -311,7 +311,7 @@ class GoNodeTestCase(TestCase):
         actual = my_node_15.get_utility()
 
         # THEN
-        expected = float("inf")
+        expected = INFINITY
         self.assertEqual(expected, actual)
 
     def test_get_scores_winner_white(self):
@@ -338,7 +338,7 @@ class GoNodeTestCase(TestCase):
         actual = my_node_15.get_utility()
 
         # THEN
-        expected = -float("inf")
+        expected = -INFINITY
         self.assertEqual(expected, actual)
 
     # TODO test_find_connecting_stones
@@ -545,7 +545,7 @@ class GoTreeTestCase(TestCase):
         tree_3 = GoTree(game_tree_node_3)
 
         node_3_depth = 0
-        alpha, beta = MINUS_INF, PLUS_INF
+        alpha, beta = -INFINITY, INFINITY
         # hack to get around suspected test pollution
         game_tree_node_3.children = []
         tree_3.evaluate(game_tree_node_3, node_3_depth, set(), alpha, beta)
@@ -567,7 +567,7 @@ class GoTreeTestCase(TestCase):
         )
 
         node_13_depth = 1
-        alpha, beta = MINUS_INF, PLUS_INF
+        alpha, beta = -INFINITY, INFINITY
         # hack to get around suspected test pollution
         game_tree_node_13.children = []
         tree_3 = GoTree(game_tree_node_13)
@@ -591,7 +591,7 @@ class GoTreeTestCase(TestCase):
         )
 
         node_4_depth = 2
-        alpha, beta = MINUS_INF, PLUS_INF
+        alpha, beta = -INFINITY, INFINITY
         # hack to get around suspected test pollution
         game_tree_node_4.children = []
         tree_4 = GoTree(game_tree_node_4)
@@ -614,7 +614,7 @@ class GoTreeTestCase(TestCase):
         )
 
         node_5_depth = 3
-        alpha, beta = MINUS_INF, PLUS_INF
+        alpha, beta = -INFINITY, INFINITY
         # hack to get around suspected test pollution
         game_tree_node_5.children = []
         tree_5 = GoTree(game_tree_node_5)
@@ -637,7 +637,7 @@ class GoTreeTestCase(TestCase):
         )
 
         node_6_depth = 4
-        alpha, beta = MINUS_INF, PLUS_INF
+        alpha, beta = -INFINITY, INFINITY
         # hack to get around suspected test pollution
         game_tree_node_6.children = []
         tree_6 = GoTree(game_tree_node_6)

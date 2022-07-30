@@ -2,6 +2,7 @@ from cmath import inf
 from django.test import TestCase
 from games.minimax import *
 from unittest import skip
+from games.game_logic import INFINITY
 
 
 class MinimaxNodeTestCase(TestCase):
@@ -157,8 +158,8 @@ class MinimaxTreeTestCase(TestCase):
         )
 
         tree_072922 = MinimaxTree(game_tree_node_072915)
-        alpha = -float("inf")
-        beta = float("inf")
+        alpha = -INFINITY
+        beta = INFINITY
 
         # WHEN
         actual = tree_072922.set_alpha_and_beta(game_tree_node_072915_1, alpha, beta)
@@ -182,8 +183,8 @@ class MinimaxTreeTestCase(TestCase):
             node_id="root_node_1629_0729", player=player_1629_0730, score=node_score
         )
 
-        alpha = -float("inf")
-        beta = float("inf")
+        alpha = -INFINITY
+        beta = INFINITY
 
         # WHEN
         actual = tree_1629_0729.set_alpha_and_beta(node_1630_0729, alpha, beta)
@@ -207,8 +208,8 @@ class MinimaxTreeTestCase(TestCase):
             node_id="root_node_1655_0729", player=player_1654_0730, score=node_score
         )
 
-        alpha = -float("inf")
-        beta = float("inf")
+        alpha = -INFINITY
+        beta = INFINITY
 
         # WHEN
         actual = tree_1654_0729.set_alpha_and_beta(node_1655_0729, alpha, beta)
@@ -271,8 +272,8 @@ class MinimaxTreeTestCase(TestCase):
 class HelpersTestCase(TestCase):
     def test_are_break_conditions_met(self):
         # GIVEN
-        alpha = -float("inf")
-        beta = float("inf")
+        alpha = -INFINITY
+        beta = INFINITY
 
         # WHEN
         actual = are_break_conditions_met(alpha, beta)
@@ -295,8 +296,8 @@ class HelpersTestCase(TestCase):
 
     def test_are_break_conditions_met_black_win(self):
         # GIVEN
-        alpha = float("inf")
-        beta = float("inf")
+        alpha = INFINITY
+        beta = INFINITY
 
         # WHEN
         actual = are_break_conditions_met(alpha, beta)
@@ -307,8 +308,8 @@ class HelpersTestCase(TestCase):
 
     def test_are_break_conditions_met_white_win(self):
         # GIVEN
-        alpha = -float("inf")
-        beta = -float("inf")
+        alpha = -INFINITY
+        beta = -INFINITY
 
         # WHEN
         actual = are_break_conditions_met(alpha, beta)

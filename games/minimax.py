@@ -1,4 +1,5 @@
 import logging
+from .game_logic import INFINITY
 
 logger = logging.getLogger(__name__)
 
@@ -212,6 +213,7 @@ class MinimaxTree:
             alpha = max(alpha, node.get_score())
         return alpha, beta
 
+
 # Helpers
 def get_depth_from_node_id(node_id):
     return str(node_id).split("-")[0]
@@ -219,7 +221,6 @@ def get_depth_from_node_id(node_id):
 
 def are_break_conditions_met(alpha, beta):
     prune_tree = alpha > beta
-    black_win = alpha == float("inf")
-    white_win = beta == -float("inf")
+    black_win = alpha == INFINITY
+    white_win = beta == -INFINITY
     return prune_tree or black_win or white_win
-
