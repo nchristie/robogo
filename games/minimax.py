@@ -199,20 +199,6 @@ class MinimaxTree:
         logger.debug(f"Returning because end of function depth {depth}")
         return
 
-    def set_alpha_and_beta(self, node, alpha, beta):
-        # TODO setting parent node player with alternate_player here could backfire - try to find a better way to handle this
-        parent_node_player = node.alternate_player()
-        if node.score == None:
-            logger.debug(
-                f"set_alpha_and_beta >> Node: {node.node_id} hasn't got a score, returning without update"
-            )
-            return alpha, beta
-        if parent_node_player == "minimizer":
-            beta = min(beta, node.get_score())
-        if parent_node_player == "maximizer":
-            alpha = max(alpha, node.get_score())
-        return alpha, beta
-
 
 # Helpers
 def get_depth_from_node_id(node_id):
@@ -224,3 +210,18 @@ def are_break_conditions_met(alpha, beta):
     black_win = alpha == INFINITY
     white_win = beta == -INFINITY
     return prune_tree or black_win or white_win
+
+
+def set_alpha_and_beta(node, alpha, beta):
+    # TODO setting parent node player with alternate_player here could backfire - try to find a better way to handle this
+    parent_node_player = node.alternate_player()
+    if node.score == None:
+        logger.debug(
+            f"set_alpha_and_beta >> Node: {node.node_id} hasn't got a score, returning without update"
+        )
+        return alpha, beta
+    if parent_node_player == "minimizer":
+        beta = min(beta, node.get_score())
+    if parent_node_player == "maximizer":
+        alpha = max(alpha, node.get_score())
+    return alpha, beta

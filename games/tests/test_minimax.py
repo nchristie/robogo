@@ -144,130 +144,6 @@ class MinimaxTreeTestCase(TestCase):
         expected = 5
         self.assertEqual(expected, actual)
 
-    def test_set_alpha_and_beta_no_update(self):
-        # GIVEN
-        player = "maximizer"
-        game_tree_node_072915 = MinimaxNode(
-            node_id="root_node_072915",
-            player=player,
-        )
-
-        game_tree_node_072915_1 = MinimaxNode(
-            node_id="root_node_072915",
-            player=player,
-        )
-
-        tree_072922 = MinimaxTree(game_tree_node_072915)
-        alpha = -INFINITY
-        beta = INFINITY
-
-        # WHEN
-        actual = tree_072922.set_alpha_and_beta(game_tree_node_072915_1, alpha, beta)
-
-        # THEN
-        expected = alpha, beta
-        self.assertEqual(expected, actual)
-
-    def test_set_alpha_and_beta_update_alpha(self):
-        # GIVEN
-        player_1629_0729 = "maximizer"
-        node_1629_0729 = MinimaxNode(
-            node_id="root_node_1629_0729",
-            player=player_1629_0729,
-        )
-        tree_1629_0729 = MinimaxTree(node_1629_0729)
-
-        node_score = 0
-        player_1629_0730 = "minimizer"
-        node_1630_0729 = MinimaxNode(
-            node_id="root_node_1629_0729", player=player_1629_0730, score=node_score
-        )
-
-        alpha = -INFINITY
-        beta = INFINITY
-
-        # WHEN
-        actual = tree_1629_0729.set_alpha_and_beta(node_1630_0729, alpha, beta)
-
-        # THEN
-        expected = node_score, beta
-        self.assertEqual(expected, actual)
-
-    def test_set_alpha_and_beta_update_beta(self):
-        # GIVEN
-        player_1654_0729 = "maximizer"
-        node_1654_0729 = MinimaxNode(
-            node_id="root_node_1629_0729",
-            player=player_1654_0729,
-        )
-        tree_1654_0729 = MinimaxTree(node_1654_0729)
-
-        node_score = 0
-        player_1654_0730 = "maximizer"
-        node_1655_0729 = MinimaxNode(
-            node_id="root_node_1655_0729", player=player_1654_0730, score=node_score
-        )
-
-        alpha = -INFINITY
-        beta = INFINITY
-
-        # WHEN
-        actual = tree_1654_0729.set_alpha_and_beta(node_1655_0729, alpha, beta)
-
-        # THEN
-        expected = alpha, node_score
-        self.assertEqual(expected, actual)
-
-    def test_set_alpha_and_beta_update_alpha_scores_not_inf(self):
-        # GIVEN
-        player_1659_0729 = "maximizer"
-        node_1659_0729 = MinimaxNode(
-            node_id="root_node_1629_0729",
-            player=player_1659_0729,
-        )
-        tree_1659_0729 = MinimaxTree(node_1659_0729)
-
-        node_score = 1
-        player_1700_0730 = "minimizer"
-        node_1700_0729 = MinimaxNode(
-            node_id="root_node_1700_0729", player=player_1700_0730, score=node_score
-        )
-
-        alpha = 0
-        beta = 0
-
-        # WHEN
-        actual = tree_1659_0729.set_alpha_and_beta(node_1700_0729, alpha, beta)
-
-        # THEN
-        expected = node_score, beta
-        self.assertEqual(expected, actual)
-
-    def test_set_alpha_and_beta_update_alpha_scores_not_inf_and_score_higher(self):
-        # GIVEN
-        player_1701_0729 = "maximizer"
-        node_1701_0729 = MinimaxNode(
-            node_id="root_node_1701_0729",
-            player=player_1701_0729,
-        )
-        tree_1701_0729 = MinimaxTree(node_1701_0729)
-
-        node_score = 1
-        player_1702_0730 = "maximizer"
-        node_1702_0729 = MinimaxNode(
-            node_id="root_node_1702_0729", player=player_1702_0730, score=node_score
-        )
-
-        alpha = 0
-        beta = 0
-
-        # WHEN
-        actual = tree_1701_0729.set_alpha_and_beta(node_1702_0729, alpha, beta)
-
-        # THEN
-        expected = alpha, beta
-        self.assertEqual(expected, actual)
-
 
 class HelpersTestCase(TestCase):
     def test_are_break_conditions_met(self):
@@ -316,4 +192,98 @@ class HelpersTestCase(TestCase):
 
         # THEN
         expected = True
+        self.assertEqual(expected, actual)
+
+    def test_set_alpha_and_beta_no_update(self):
+        # GIVEN
+        player = "maximizer"
+
+        game_tree_node_072915_1 = MinimaxNode(
+            node_id="root_node_072915",
+            player=player,
+        )
+
+        alpha = -INFINITY
+        beta = INFINITY
+
+        # WHEN
+        actual = set_alpha_and_beta(game_tree_node_072915_1, alpha, beta)
+
+        # THEN
+        expected = alpha, beta
+        self.assertEqual(expected, actual)
+
+    def test_set_alpha_and_beta_update_alpha(self):
+        # GIVEN
+        player_1629_0729 = "maximizer"
+
+        node_score = 0
+        player_1629_0730 = "minimizer"
+        node_1630_0729 = MinimaxNode(
+            node_id="root_node_1629_0729", player=player_1629_0730, score=node_score
+        )
+
+        alpha = -INFINITY
+        beta = INFINITY
+
+        # WHEN
+        actual = set_alpha_and_beta(node_1630_0729, alpha, beta)
+
+        # THEN
+        expected = node_score, beta
+        self.assertEqual(expected, actual)
+
+    def test_set_alpha_and_beta_update_beta(self):
+        # GIVEN
+
+        node_score = 0
+        player_1654_0730 = "maximizer"
+        node_1655_0729 = MinimaxNode(
+            node_id="root_node_1655_0729", player=player_1654_0730, score=node_score
+        )
+
+        alpha = -INFINITY
+        beta = INFINITY
+
+        # WHEN
+        actual = set_alpha_and_beta(node_1655_0729, alpha, beta)
+
+        # THEN
+        expected = alpha, node_score
+        self.assertEqual(expected, actual)
+
+    def test_set_alpha_and_beta_update_alpha_scores_not_inf(self):
+        # GIVEN
+        node_score = 1
+        player_1700_0730 = "minimizer"
+        node_1700_0729 = MinimaxNode(
+            node_id="root_node_1700_0729", player=player_1700_0730, score=node_score
+        )
+
+        alpha = 0
+        beta = 0
+
+        # WHEN
+        actual = set_alpha_and_beta(node_1700_0729, alpha, beta)
+
+        # THEN
+        expected = node_score, beta
+        self.assertEqual(expected, actual)
+
+    def test_set_alpha_and_beta_update_alpha_scores_not_inf_and_score_higher(self):
+        # GIVEN
+        node_score = 1
+        player_1702_0730 = "maximizer"
+        node_1702_0729 = MinimaxNode(
+            node_id="root_node_1702_0729", player=player_1702_0730, score=node_score
+        )
+
+        alpha = 0
+        beta = 0
+
+        # WHEN
+        actual = set_alpha_and_beta(node_1702_0729, alpha, beta)
+
+        # THEN
+        expected = alpha, beta
         self.assertEqual(expected, actual)
