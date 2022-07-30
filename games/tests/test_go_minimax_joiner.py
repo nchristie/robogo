@@ -395,7 +395,6 @@ class GoNodeTestCase(TestCase):
         expected = False
         self.assertEqual(expected, actual)
 
-    @skip("Logic to stop building at winning node isn't implemented")
     def test_build_game_sets_terminal_for_winning_white_nodes(self):
         # GIVEN
         game_tree_node_5 = GoNode(
@@ -407,6 +406,7 @@ class GoNodeTestCase(TestCase):
                 ["○", "+", "+", "+", "+"],
                 ["+", "+", "+", "+", "+"],
             ],
+            node_id="root_node",
         )
 
         # hack to get around suspected test pollution
@@ -420,6 +420,38 @@ class GoNodeTestCase(TestCase):
             game_tree_node_5, depth=depth, node_ids=set()
         )
         children = game_tree_node_5.get_children()
+        terminality = [child.is_leaf_node() for child in children]
+        actual = sum(item == True for item in terminality)
+
+        # THEN
+        expected = 1
+        self.assertEqual(expected, actual)
+
+    def test_build_game_sets_terminal_for_winning_black_nodes(self):
+        # GIVEN
+        game_tree_node_1733_0730 = GoNode(
+            player="minimizer",
+            board_state=[
+                ["●", "+", "+", "+", "+"],
+                ["●", "+", "+", "+", "+"],
+                ["●", "+", "+", "+", "+"],
+                ["●", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+            ],
+            node_id="root_node",
+        )
+
+        # hack to get around suspected test pollution
+        game_tree_node_1733_0730.children = []
+
+        depth = 2
+
+        # WHEN
+        game_tree_5 = GoTree(game_tree_node_1733_0730)
+        game_tree_5.build_game_tree_recursive(
+            game_tree_node_1733_0730, depth=depth, node_ids=set()
+        )
+        children = game_tree_node_1733_0730.get_children()
         terminality = [child.is_leaf_node() for child in children]
         actual = sum(item == True for item in terminality)
 
@@ -611,4 +643,54 @@ class GoTreeTestCase(TestCase):
 
         # THEN
         expected = 1
+        self.assertEqual(expected, actual)
+
+    def test_build_game_tree_recursive_depth(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_23 = GoNode(
+            node_id="root_node_23",
+            player=player,
+            board_state=[
+                ["+", "+"],
+                ["+", "+"],
+            ],
+        )
+
+        node_23_depth = 3
+        tree_23 = GoTree(game_tree_node_23)
+        # hack to get around suspected test pollution
+        game_tree_node_23.children = []
+        tree_23.build_game_tree_recursive(game_tree_node_23, node_23_depth, set())
+
+        # WHEN
+        actual = tree_23.root_node.children[0].children[0].children[0].children
+
+        # THEN
+        expected = []
+        self.assertEqual(expected, actual)
+
+    def test_build_game_tree_recursive_breadth(self):
+        # GIVEN
+        player = "maximizer"
+        game_tree_node_072521 = GoNode(
+            node_id="root_node_072521",
+            player=player,
+            board_state=[
+                ["+", "+"],
+                ["+", "+"],
+            ],
+        )
+
+        node_072521_depth = 3
+        tree_072521 = GoTree(game_tree_node_072521)
+
+        tree_072521.build_game_tree_recursive(
+            game_tree_node_072521, node_072521_depth, set()
+        )
+
+        # WHEN
+        actual = len(tree_072521.root_node.children)
+        # THEN
+        expected = 4
         self.assertEqual(expected, actual)

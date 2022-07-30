@@ -80,28 +80,14 @@ class MinimaxNode:
         return child_score < best_score
 
     def get_utility(self):
-        logger.error(
+        raise Exception(
             "In minimax get_utility, this should be implemented by class which inherits"
         )
-        return
 
     def generate_next_child(self, depth, parent_node_id="NA"):
-        logger.error(
+        raise Exception(
             f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth}"
         )
-        child_node_depth = depth - 1
-        player = self.alternate_player()
-        for i in range(5):
-            node_id = self.make_node_id(child_node_depth, i, parent_node_id)
-            next_node = MinimaxNode(
-                node_id=node_id,
-                player=player,
-                children=[],  # TODO shouldn't need to explicitly set children to [] here, find out what's going wrong
-            )
-            assert (
-                next_node.children == []
-            ), f"Error in minimax.MinimaxNode.generate_next_child child node {next_node.get_node_id()} has children including {next_node.children[0].node_id}"
-            yield next_node
 
     def is_leaf_node(self):
         # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, node_id = {self.node_id}")
@@ -151,6 +137,14 @@ class MinimaxTree:
                 e = f"Leaf node at depth {depth} shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)} first child id: {node.children[0].node_id}"
                 logger.error(e)
                 raise Exception(e)
+            return
+
+        if node.get_utility() == -INFINITY:
+            logger.debug(f"White win found at: {node.node_id}")
+            return
+
+        if node.get_utility() == INFINITY:
+            logger.debug(f"Black win found at: {node.node_id}")
             return
 
         # recurse case
