@@ -103,10 +103,10 @@ class GoNode(MinimaxNode):
         score = score_dict["relative_black_score"]
         if score_dict[BLACK_STONE] >= WINNING_SCORE:
             score = PLUS_INF
-            logger.info(f"Winning score found for {self.node_id}, {self.board_state}")
+            logger.info(f"Black win found for {self.node_id}, {self.move_coordinates}")
         if score_dict[WHITE_STONE] >= WINNING_SCORE:
             score = MINUS_INF
-            logger.info(f"Losing score found for {self.node_id}, {self.board_state}")
+            logger.info(f"White win found for {self.node_id}, {self.move_coordinates}")
         if not score and score != 0:
             raise Exception(f"Score could not be set score_dict: {score_dict}")
         else:
@@ -235,3 +235,17 @@ class GoTree(MinimaxTree):
         raise Exception(
             f"Best score: {best_score} not found in children of node: {node.node_id} whose children are: {[child.get_score() for child in node.children]}"
         )
+
+    def minimax_depth_of_2(self):
+        depth = 2
+        self.build_game_tree_recursive(self.root_node, depth, set())
+
+        current_node = self.root_node
+
+        for child in current_node.get_children():
+            for child2 in child.get_children():
+                child2.set_score(child2.get_utility())
+            child2_optimal_move = child.get_optimal_move()
+            child.set_score(child2_optimal_move.get_score())
+
+        return self.root_node.get_optimal_move()

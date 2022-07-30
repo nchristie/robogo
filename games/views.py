@@ -135,8 +135,9 @@ def get_white_response(board_state):
         children=[],
         board_state=board_state,
     )
+    game_tree = GoTree(root_node)
     try:
-        white_move_node = minimax_depth_of_3(root_node)
+        white_move_node = game_tree.minimax_depth_of_2()
         assert (
             type(white_move_node) == GoNode
         ), f"White move node isn't of type GoNode for node: {white_move_node.node_id}"
@@ -147,86 +148,3 @@ def get_white_response(board_state):
         logger.error(f"minimax_depth_of_X failed with error: {e}")
 
 
-def minimax_depth_of_2(root_node):
-    depth = 2
-    game_tree = GoTree(root_node)
-    game_tree.build_game_tree_recursive(root_node, depth, set())
-
-    current_node = game_tree.root_node
-
-    for child in current_node.get_children():
-        for child2 in child.get_children():
-            child2.set_score(child2.get_utility())
-        child2_optimal_move = child.get_optimal_move()
-        child.set_score(child2_optimal_move.get_score())
-
-    return game_tree.root_node.get_optimal_move()
-
-
-def minimax_depth_of_3(root_node):
-    logger.info("In minimax_depth_of_3")
-
-    game_tree = GoTree(root_node)
-
-    current_node = game_tree.root_node
-    alpha = -INF
-    beta = INF
-
-    for child2 in current_node.generate_next_child(
-        depth=2, parent_node_id=current_node.node_id
-    ):
-        if abs(child2.get_utility()) == INF:
-            child2.set_score(child2.get_utility())
-            continue
-        for child1 in child2.generate_next_child(
-            depth=1, parent_node_id=child2.node_id
-        ):
-            if abs(child1.get_utility()) == INF:
-                child1.set_score(child1.get_utility())
-                continue
-            for child0 in child1.generate_next_child(
-                depth=0, parent_node_id=child1.node_id
-            ):
-                # get utility for each leaf node
-                child0.set_score(child0.get_utility())
-
-                # use that utility to update the value of alpha or beta
-                alpha, beta = game_tree.set_alpha_and_beta(child0, alpha, beta)
-
-                child1.add_child(child0)
-                child1.set_score(child1.get_optimal_move().get_score())
-                if are_break_conditions_met(alpha, beta):
-                    logger.info(f"Pruning at {child0.node_id}")
-                    break
-
-            # use the inherited value of child1 to update alpha or beta
-            alpha, beta = game_tree.set_alpha_and_beta(child1, alpha, beta)
-            child2.add_child(child1)
-            child2.set_score(child2.get_optimal_move().get_score())
-            if are_break_conditions_met(alpha, beta):
-                logger.info(f"Pruning at {child1.node_id}")
-                break
-
-        # use the inherited value of child2 to update alpha or beta
-        alpha, beta = game_tree.set_alpha_and_beta(child2, alpha, beta)
-        child2.set_score(child2.get_optimal_move().get_score())
-        current_node.add_child(child2)
-        current_node.set_score(current_node.get_optimal_move().get_score())
-        if are_break_conditions_met(alpha, beta):
-            logger.info(f"Pruning at {child2.node_id}")
-            break
-
-    logger.info("*** printing move_coordinates based on best path ***")
-    logger.info("best child at depth 2:")
-    move = current_node.get_optimal_move()
-    logger.info(f"{move.player}, {move.move_coordinates}, {move.get_score()}")
-
-    logger.info("best child at depth 1:")
-    move = current_node.get_optimal_move().get_optimal_move()
-    logger.info(f"{move.player}, {move.move_coordinates}, {move.get_score()}")
-
-    logger.info("best child at depth 0:")
-    move = current_node.get_optimal_move().get_optimal_move().get_optimal_move()
-    logger.info(f"{move.player}, {move.move_coordinates}, {move.get_score()}")
-
-    return current_node.get_optimal_move()
