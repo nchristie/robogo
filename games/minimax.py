@@ -116,16 +116,26 @@ class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
 
-    def build_game_tree_recursive(self, node, depth, node_ids):
+    def build_and_prune_game_tree_recursive(self, node, depth, node_ids):
         """
-        Starts from current node and builds game tree to a given
-        depth
+        Builds game tree to a given depth
 
         Parameters:
+            node (MinimaxNode): the node from which we build down
             depth (int): how far down the tree we want to build
+            node_ids (set): all the move ids which have been
+                encountered so far
+
+        Returns:
+            None
+
+        Side effects:
+            builds tree from node
         """
+        # Make sure we don't use same node twice
         node_ids.add(node.node_id)
 
+        # error handling
         if depth < 0:
             raise Exception(f"Maximum tree depth exceeded")
 
@@ -133,36 +143,44 @@ class MinimaxTree:
         # If we're at a leaf node leave the recursion
         if depth == 0:
             logger.debug(f"Returning at depth of {depth}")
+
+            # error handling
             if node.children != []:
                 e = f"Leaf node at depth {depth} shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)} first child id: {node.children[0].node_id}"
                 logger.error(e)
                 raise Exception(e)
             return
 
+        # don't build past the end of the game
         if node.get_utility() == -INFINITY:
-            logger.debug(f"White win found at: {node.node_id}")
+            logger.debug(f"Minimizer win found at: {node.node_id}")
             return
-
         if node.get_utility() == INFINITY:
-            logger.debug(f"Black win found at: {node.node_id}")
+            logger.debug(f"Maximizer win found at: {node.node_id}")
             return
 
         # recurse case
         parent_node_id = node.get_node_id()
         for child in node.generate_next_child(depth, parent_node_id):
+            # error handling
             assert (
                 child.children == []
             ), f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
+
+            # Make sure we don't use same node twice
             if child.node_id in node_ids:
                 logger.debug(f"node_id: {child.node_id} already visited, skipping")
                 continue
-            # use recursion to build tree vertically
-            if not self.build_game_tree_recursive(child, depth - 1, node_ids):
 
-                # not build_game_tree_recursive(..) will be True if we've reached the end of
-                # depth count-down or if we've visited every potential child node horizontally,
-                # so this means first we'll get to the point we want to stop building and add
-                # children, then work back up the tree and add child nodes
+            # use recursion to build tree vertically
+            if not self.build_and_prune_game_tree_recursive(child, depth - 1, node_ids):
+
+                # not self.build_and_prune_game_tree_recursive(..) will be True if:
+                # 1. we've reached the end of depth count-down,
+                # 2. there are no more child nodes to create at this depth
+                # This means first we'll get to the point we want to stop building vertically
+                # and then add children at this level. Once all children are added we will work
+                # back up the tree and add child nodes at higher levels
 
                 # build tree horizontally
                 node.add_child(child)

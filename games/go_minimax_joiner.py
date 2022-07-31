@@ -124,14 +124,11 @@ class GoTree(MinimaxTree):
     def __init__(self, root_node):
         self.root_node = root_node
 
-    # TODO this function should be removable once alpha-beta
-    # function works
-
     def evaluate(self, node, depth, node_ids, alpha, beta):
         """
-        Starts from current node and builds game tree to a given
-        depth then returns the best next move using the information
-        gathered. Only builds branches which have optimal game moves
+        Builds game tree to a given depth then returns the best next
+        move using the information gathered. Only builds branches
+        which have optimal game moves
 
         Parameters:
             depth (int): how far down the tree we want to build
@@ -188,12 +185,24 @@ class GoTree(MinimaxTree):
             raise Exception(e)
 
         for child in node.generate_next_child(depth, self.root_node.get_node_id()):
-            # Don't add board states which have already been visited
+            # Don't add nodes which have already been visited
             if str(child.node_id) in node_ids:
                 logger.debug("Board state already seen, skipping this node")
                 continue
 
             # TODO if child score is a winning score then don't build branches further
+            utility = child.get_utility()
+            if utility == -INFINITY:
+                logger.debug(f"White win found at: {node.node_id}")
+                child.set_score(utility)
+                node.add_child(child)
+                continue
+
+            if utility == INFINITY:
+                logger.debug(f"Black win found at: {node.node_id}")
+                child.set_score(utility)
+                node.add_child(child)
+                continue
 
             # use recursion to build tree vertically
             # set best score to the max or min of alpha vs recurse or beta vs recurse
@@ -240,7 +249,7 @@ class GoTree(MinimaxTree):
 
     def minimax_depth_of_2(self):
         depth = 2
-        self.build_game_tree_recursive(self.root_node, depth, set())
+        self.build_and_prune_game_tree_recursive(self.root_node, depth, set())
 
         current_node = self.root_node
 
