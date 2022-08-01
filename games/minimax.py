@@ -194,8 +194,6 @@ class MinimaxTree:
 
             node_score = node.get_utility()
             node.set_score(node_score)
-            alpha, beta = node.calculate_alpha_and_beta()
-            node.set_alpha_beta(alpha, beta)
 
             logger.debug(
                 f"Returning at depth of {depth} with score of {node_score} at node: {node.node_id}"
@@ -207,15 +205,11 @@ class MinimaxTree:
             logger.debug(f"Minimizer win found at: {node.node_id}")
             node_score = node.get_utility()
             node.set_score(node_score)
-            alpha, beta = node.calculate_alpha_and_beta()
-            node.set_alpha_beta(alpha, beta)
             return
         if node.get_utility() == INFINITY:
             logger.debug(f"Maximizer win found at: {node.node_id}")
             node_score = node.get_utility()
             node.set_score(node_score)
-            alpha, beta = node.calculate_alpha_and_beta()
-            node.set_alpha_beta(alpha, beta)
             return
 
         # recurse case
@@ -243,29 +237,23 @@ class MinimaxTree:
                 # and then add children at this level. Once all children are added we will work
                 # back up the tree and add child nodes at higher levels
 
-                # set score, alpha and beta for child
+                # set child score
                 child.set_score(child.get_utility())
-                alpha, beta = child.calculate_alpha_and_beta()
-                child.set_alpha_beta(alpha, beta)
 
                 # build tree horizontally
                 node.add_child(child)
                 best_child = node.get_optimal_move()
+                best_score = best_child.get_score()
+
+                # TODO set alpha and beta
 
                 # set node score
-                node.set_score(best_child.get_score())
+                node.set_score(best_score)
 
-                # set alpha and beta values
-                alpha, beta = best_child.get_alpha_beta()
-                alpha, beta = node.calculate_alpha_and_beta()
-                node.set_alpha_beta(alpha, beta)
+                # TODO set alpha and beta values
 
-                # break loop if alpha >= beta
-                if alpha >= beta:
-                    logger.info("Break condition met: alpha >= beta")
-                    # TODO following line should be deleted once I'm convinced this breakpoint can get hit
-                    return "BREAK CONDITION MET"
-                    break
+                # TODO break loop if alpha >= beta
+
 
         logger.debug("Returning at end of function")
         return

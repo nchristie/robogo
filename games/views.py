@@ -135,11 +135,13 @@ def get_white_response(board_state):
     )
     game_tree = GoTree(root_node)
     try:
-        depth = 2
+        # depth = 7
 
         # game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth)
-        white_move_node = game_tree.minimax_depth_of_2()
         # white_move_node = game_tree.root_node.get_optimal_move()
+
+        white_move_node = game_tree.minimax_depth_of_2()
+
     except Exception as e:
         logger.error(f"get_white_response failed with error: {e}")
         return

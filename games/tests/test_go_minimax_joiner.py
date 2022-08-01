@@ -716,6 +716,7 @@ class GoTreeTestCase(TestCase):
         expected = 2
         self.assertEqual(expected, actual)
 
+    @skip("WIP")
     def test_build_and_prune_game_tree_recursive_sets_alpha(self):
         # GIVEN
         node_0801_1253 = GoNode(
@@ -797,6 +798,7 @@ class GoTreeTestCase(TestCase):
         expected = 3, 21
         self.assertEqual(expected, actual)
 
+    @skip("WIP")
     def test_build_and_prune_game_tree_recursive_sets_alpha_and_beta_values(self):
         # GIVEN
         node_0801_1435 = GoNode(
