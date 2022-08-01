@@ -34,7 +34,7 @@ class MinimaxNode:
         return self.player
 
     def set_score(self, score):
-        logger.debug(f"In set_score for node: {self.node_id}, score: {score}")
+        # logger.debug(f"In set_score for node: {self.node_id}, score: {score}")
         if type(score) not in [int, float]:
             raise Exception(
                 f"set_score error: score must be int or float got {type(score)} for node: {self.node_id}"
@@ -68,7 +68,7 @@ class MinimaxNode:
         # input is Node, output is Node
         if not self.children:
             raise Exception(
-                f"get_optimal_move error for {self.node_id}: node has no children"
+                f"get_optimal_move error for {self.node_id}: node has no children {[child for child in self.children]}"
             )
         best_move = self.children[0]
         player = best_move.player
@@ -83,7 +83,7 @@ class MinimaxNode:
             if strategy(child_score, best_score):
                 best_move = child
                 best_score = best_move.get_score()
-        logger.debug(f"get_optimal_move player = {player}, best_score: {best_score}")
+        # logger.debug(f"get_optimal_move player = {player}, best_score: {best_score}")
         return best_move
 
     def maximizer_strategy(self, child_score, best_score):
@@ -145,23 +145,28 @@ class MinimaxNode:
         Returns:
             alpha, beta: as above
         """
-        if self.score == None:
-            logger.debug(
-                f"calculate_alpha_and_beta >> Node: {self.node_id} hasn't got a score, returning without update"
-            )
+        try:
+            if self.score == None:
+                logger.debug(
+                    f"calculate_alpha_and_beta >> Node: {self.node_id} hasn't got a score, returning without update"
+                )
+                return alpha, beta
+            if self.get_player() == "minimizer":
+                beta = min(beta, self.get_score())
+            if self.get_player() == "maximizer":
+                alpha = max(alpha, self.get_score())
             return alpha, beta
-        if self.get_player() == "minimizer":
-            beta = min(beta, self.get_score())
-        if self.get_player() == "maximizer":
-            alpha = max(alpha, self.get_score())
-        return alpha, beta
+        except Exception as e:
+            raise Exception(f"calculate_alpha_and_beta failed with excepetion: {e}")
 
 
 class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
 
-    def build_and_prune_game_tree_recursive(self, node, depth, node_ids):
+    def build_and_prune_game_tree_recursive(
+        self, node, depth, node_ids=set(), alpha=INFINITY, beta=INFINITY
+    ):
         """
         Builds game tree to a given depth
 
@@ -187,21 +192,36 @@ class MinimaxTree:
         # Base case
         # If we're at a leaf node leave the recursion
         if depth == 0:
-            logger.debug(f"Returning at depth of {depth}")
-
             # error handling
             if node.children != []:
                 e = f"Leaf node at depth {depth} shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)} first child id: {node.children[0].node_id}"
                 logger.error(e)
                 raise Exception(e)
+
+            node_score = node.get_utility()
+            node.set_score(node_score)
+            alpha, beta = node.calculate_alpha_and_beta()
+            node.set_alpha_beta(alpha, beta)
+
+            logger.debug(
+                f"Returning at depth of {depth} with score of {node_score} at node: {node.node_id}"
+            )
             return
 
         # don't build past the end of the game
         if node.get_utility() == -INFINITY:
             logger.debug(f"Minimizer win found at: {node.node_id}")
+            node_score = node.get_utility()
+            node.set_score(node_score)
+            alpha, beta = node.calculate_alpha_and_beta()
+            node.set_alpha_beta(alpha, beta)
             return
         if node.get_utility() == INFINITY:
             logger.debug(f"Maximizer win found at: {node.node_id}")
+            node_score = node.get_utility()
+            node.set_score(node_score)
+            alpha, beta = node.calculate_alpha_and_beta()
+            node.set_alpha_beta(alpha, beta)
             return
 
         # recurse case
@@ -218,7 +238,9 @@ class MinimaxTree:
                 continue
 
             # use recursion to build tree vertically
-            if not self.build_and_prune_game_tree_recursive(child, depth - 1, node_ids):
+            if not self.build_and_prune_game_tree_recursive(
+                child, depth - 1, node_ids, alpha, beta
+            ):
 
                 # not self.build_and_prune_game_tree_recursive(..) will be True if:
                 # 1. we've reached the end of depth count-down,
@@ -227,8 +249,30 @@ class MinimaxTree:
                 # and then add children at this level. Once all children are added we will work
                 # back up the tree and add child nodes at higher levels
 
+                # set score, alpha and beta for child
+                child.set_score(child.get_utility())
+                alpha, beta = child.calculate_alpha_and_beta()
+                child.set_alpha_beta(alpha, beta)
+
                 # build tree horizontally
                 node.add_child(child)
+                best_child = node.get_optimal_move()
+
+                # set node score
+                node.set_score(best_child.get_score())
+
+                # set alpha and beta values
+                alpha, beta = best_child.get_alpha_beta()
+                alpha, beta = node.calculate_alpha_and_beta()
+                node.set_alpha_beta(alpha, beta)
+
+                # break loop if alpha >= beta
+                if alpha >= beta:
+                    logger.info("Break condition met: alpha >= beta")
+                    # TODO following line should be deleted once I'm convinced this breakpoint can get hit
+                    return "BREAK CONDITION MET"
+                    break
+
         logger.debug("Returning at end of function")
         return
 

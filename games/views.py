@@ -135,12 +135,21 @@ def get_white_response(board_state):
     )
     game_tree = GoTree(root_node)
     try:
+        depth = 2
+
+        # game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth)
         white_move_node = game_tree.minimax_depth_of_2()
-        assert (
-            type(white_move_node) == GoNode
-        ), f"White move node isn't of type GoNode for node: {white_move_node.node_id}"
-        white_move = white_move_node.move_coordinates
-        # logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
-        return white_move
+        # white_move_node = game_tree.root_node.get_optimal_move()
     except Exception as e:
-        logger.error(f"minimax_depth_of_X failed with error: {e}")
+        logger.error(f"get_white_response failed with error: {e}")
+        return
+
+    assert (
+        type(white_move_node) == GoNode
+    ), f"White move node isn't of type GoNode for node: {white_move_node.node_id}"
+    white_move = white_move_node.move_coordinates
+    logger.info(
+        f"white_move: {white_move}, best_score: {white_move_node.get_score()}"
+    )
+    return white_move
+

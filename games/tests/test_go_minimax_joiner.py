@@ -706,3 +706,195 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = 1
         self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_recursive_assigns_scores(self):
+        # GIVEN
+        player = "maximizer"
+        node_0801_1308 = GoNode(
+            node_id="root_0801_1308",
+            player=player,
+            board_state=[["●", "●"], ["+", "+"]],
+        )
+        tree_0801_1308 = GoTree(node_0801_1308)
+
+        depth = 0
+        # hack to get around suspected test pollution
+        node_0801_1308.children = []
+        tree_0801_1308.build_and_prune_game_tree_recursive(node_0801_1308, depth, set())
+
+        # WHEN
+        actual = tree_0801_1308.root_node.get_score()
+
+        # THEN
+        expected = 2
+        self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_recursive_sets_alpha(self):
+        # GIVEN
+        player = "maximizer"
+        node_0801_1253 = GoNode(
+            node_id="root_node_0801_1253",
+            player=player,
+            board_state=[["●", "●"], ["+", "+"]],
+        )
+
+        depth = 0
+        tree_0801_1253 = GoTree(node_0801_1253)
+        # hack to get around suspected test pollution
+        node_0801_1253.children = []
+        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set())
+
+        # WHEN
+        actual, x = tree_0801_1253.root_node.get_alpha_beta()
+
+        # THEN
+        expected = 2
+        self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_recursive_sets_score_winning_node(self):
+        # GIVEN
+        player = "maximizer"
+        node_0801_1253 = GoNode(
+            node_id="root_node_0801_1253",
+            player=player,
+            board_state=[
+                ["●", "●", "●", "●", "●"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+            ],
+        )
+        # hack to get around suspected test pollution
+        node_0801_1253.children = []
+
+        depth = 0
+        tree_0801_1253 = GoTree(node_0801_1253)
+        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set())
+
+        # WHEN
+        actual = (
+            tree_0801_1253.root_node.get_score(),
+            tree_0801_1253.root_node.get_children(),
+        )
+
+        # THEN
+        expected = INFINITY, []
+        self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_recursive_sets_score_based_on_children(self):
+        # GIVEN
+        node_0801_1411 = GoNode(
+            node_id="root_node_0801_1411",
+            player="maximizer",
+            board_state=[
+                ["●", "●", "●", "●", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+            ],
+        )
+        # hack to get around suspected test pollution
+        node_0801_1411.children = []
+
+        depth = 2
+        tree_0801_1411 = GoTree(node_0801_1411)
+
+        tree_0801_1411.build_and_prune_game_tree_recursive(node_0801_1411, depth, set())
+
+        # WHEN
+        actual = tree_0801_1411.root_node.get_score(), len(
+            tree_0801_1411.root_node.get_children()
+        )
+
+        # THEN
+        expected = 3, 21
+        self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_recursive_sets_alpha_and_beta_values(self):
+        # GIVEN
+        node_0801_1435 = GoNode(
+            node_id="root_node_0801_1435",
+            player="maximizer",
+            board_state=[
+                ["●", "●", "●", "●", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+"],
+            ],
+        )
+        # hack to get around suspected test pollution
+        node_0801_1435.children = []
+
+        depth = 2
+        tree_0801_1435 = GoTree(node_0801_1435)
+
+        tree_0801_1435.build_and_prune_game_tree_recursive(node_0801_1435, depth, set())
+
+        # WHEN
+        actual, x = tree_0801_1435.root_node.get_alpha_beta()
+
+        # THEN
+        expected = 3
+        self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_loop_breaks_when_alpha_greater_than_beta(self):
+        # GIVEN
+        node_0801_1445 = GoNode(
+            node_id="root_node_0801_1445",
+            player="maximizer",
+            board_state=[
+                ["●", "●", "+"],
+                ["+", "+", "+"],
+                ["+", "+", "+"],
+            ],
+        )
+        # hack to get around suspected test pollution
+        node_0801_1445.children = []
+
+        depth = 4
+        tree_0801_1445 = GoTree(node_0801_1445)
+
+        # WHEN
+        actual = tree_0801_1445.build_and_prune_game_tree_recursive(node_0801_1445, depth, set())
+
+        # THEN
+        expected = "BREAK CONDITION MET"  # TODO
+        self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_recursive_nine_by_nine(self):
+        # GIVEN
+        node_0801_1547 = GoNode(
+            node_id="root_node_0801_1547",
+            player="maximizer",
+            score=None,
+            children=[],
+            board_state=[
+                ["●", "●", "●", "●", "+", "+", "+", "+", "+"],
+                ["○", "+", "+", "+", "+", "+", "+", "+", "+"],
+                ["○", "+", "+", "+", "+", "+", "+", "+", "+"],
+                ["○", "+", "+", "+", "+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+                ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
+            ],
+        )
+        # hack to get around suspected test pollution
+        node_0801_1547.children = []
+
+        tree_0801_1547 = GoTree(node_0801_1547)
+        depth = 2
+
+        tree_0801_1547.build_and_prune_game_tree_recursive(tree_0801_1547.root_node, depth)
+        white_move_node = tree_0801_1547.root_node.get_optimal_move()
+
+        # WHEN
+        actual = white_move_node.move_coordinates
+
+        # THEN
+        expected = (0, 4)
+        self.assertEqual(expected, actual)
