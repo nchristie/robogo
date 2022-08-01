@@ -148,8 +148,5 @@ def get_white_response(board_state):
         type(white_move_node) == GoNode
     ), f"White move node isn't of type GoNode for node: {white_move_node.node_id}"
     white_move = white_move_node.move_coordinates
-    logger.info(
-        f"white_move: {white_move}, best_score: {white_move_node.get_score()}"
-    )
+    logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move
-

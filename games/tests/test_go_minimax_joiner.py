@@ -858,7 +858,9 @@ class GoTreeTestCase(TestCase):
         tree_0801_1445 = GoTree(node_0801_1445)
 
         # WHEN
-        actual = tree_0801_1445.build_and_prune_game_tree_recursive(node_0801_1445, depth, set())
+        actual = tree_0801_1445.build_and_prune_game_tree_recursive(
+            node_0801_1445, depth, set()
+        )
 
         # THEN
         expected = "BREAK CONDITION MET"  # TODO
@@ -889,7 +891,9 @@ class GoTreeTestCase(TestCase):
         tree_0801_1547 = GoTree(node_0801_1547)
         depth = 2
 
-        tree_0801_1547.build_and_prune_game_tree_recursive(tree_0801_1547.root_node, depth)
+        tree_0801_1547.build_and_prune_game_tree_recursive(
+            tree_0801_1547.root_node, depth
+        )
         white_move_node = tree_0801_1547.root_node.get_optimal_move()
 
         # WHEN
