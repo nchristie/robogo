@@ -14,14 +14,14 @@ class MinimaxNode:
         children=[],
         alpha=-INFINITY,
         beta=INFINITY,
-        player_to_move=None
+        player_to_move=None,
     ):
         self.children = children
         self.node_id = node_id
         self.score = score
         self.alpha = alpha
         self.beta = beta
-        self.player_to_move=player_to_move
+        self.player_to_move = player_to_move
 
     def __str__(self):
         return (
@@ -154,6 +154,7 @@ class MinimaxNode:
         except Exception as e:
             raise Exception(f"calculate_alpha_and_beta failed with excepetion: {e}")
 
+
 class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
@@ -253,7 +254,6 @@ class MinimaxTree:
                 # TODO set alpha and beta values
 
                 # TODO break loop if alpha >= beta
-
 
         logger.debug("Returning at end of function")
         return

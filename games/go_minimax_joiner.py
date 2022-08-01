@@ -27,7 +27,7 @@ class GoNode(MinimaxNode):
         board_state=None,
         move_coordinates=(),
         optimal_move_coordinates=None,
-        player_to_move=None
+        player_to_move=None,
     ):
         super().__init__(node_id, score, children, alpha, beta, player_to_move)
         self.board_state = board_state
@@ -58,12 +58,14 @@ class GoNode(MinimaxNode):
                 board_state=new_board_state,
                 move_coordinates=move_coordinates,
                 children=[],
-                player_to_move=player_to_move
+                player_to_move=player_to_move,
             )
             i += 1
             yield next_node
 
-    def generate_next_child_around_existing_moves(self, depth=0, player_to_move="maximizer"):
+    def generate_next_child_around_existing_moves(
+        self, depth=0, player_to_move="maximizer"
+    ):
         # I've returned this function to the code as I think I may want it later
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
@@ -81,7 +83,7 @@ class GoNode(MinimaxNode):
                                 node_id=self.make_node_id(depth, i),
                                 board_state=new_board_state,
                                 move_coordinates=move_coordinates,
-                                player_to_move=player_to_move
+                                player_to_move=player_to_move,
                             )
                             # child.set_score(child.get_utility())
                             yield child
