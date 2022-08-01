@@ -15,6 +15,7 @@ class MinimaxNode:
         children=[],
         alpha=-INFINITY,
         beta=INFINITY,
+        player_to_move=None
     ):
         self.children = children
         self.node_id = node_id
@@ -22,6 +23,7 @@ class MinimaxNode:
         self.score = score
         self.alpha = alpha
         self.beta = beta
+        self.player_to_move=player_to_move
 
     def __str__(self):
         return (
@@ -122,6 +124,16 @@ class MinimaxNode:
             node. Valid options: "minimizer", "maximizer".
         """
         if self.player == "minimizer":
+            return "maximizer"
+        return "minimizer"
+
+    def alternate_player_to_move(self):
+        """
+        Returns:
+            str: The opposite player_to_move to that of the current
+            node. Valid options: "minimizer", "maximizer".
+        """
+        if self.player_to_move == "minimizer":
             return "maximizer"
         return "minimizer"
 

@@ -28,8 +28,9 @@ class GoNode(MinimaxNode):
         board_state=None,
         move_coordinates=(),
         optimal_move_coordinates=None,
+        player_to_move=None
     ):
-        super().__init__(node_id, player, score, children, alpha, beta)
+        super().__init__(node_id, player, score, children, alpha, beta, player_to_move)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
@@ -40,6 +41,7 @@ class GoNode(MinimaxNode):
             GoNode: next possible move on the board
         """
         player = self.alternate_player()
+        player_to_move = self.alternate_player_to_move()
         stone = PLAYER_DICT[player]
         board_size = len(self.board_state)
         all_moves_on_board = list_all_moves_on_board(board_size)
@@ -59,11 +61,12 @@ class GoNode(MinimaxNode):
                 board_state=new_board_state,
                 move_coordinates=move_coordinates,
                 children=[],
+                player_to_move=player_to_move
             )
             i += 1
             yield next_node
 
-    def generate_next_child_around_existing_moves(self, player="minimizer", depth=0):
+    def generate_next_child_around_existing_moves(self, player="minimizer", depth=0, player_to_move="maximizer"):
         # I've returned this function to the code as I think I may want it later
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
@@ -82,6 +85,7 @@ class GoNode(MinimaxNode):
                                 player=player,
                                 board_state=new_board_state,
                                 move_coordinates=move_coordinates,
+                                player_to_move=player_to_move
                             )
                             # child.set_score(child.get_utility())
                             yield child
@@ -150,7 +154,7 @@ class GoTree(MinimaxTree):
                 scores up the tree
         """
         logger.debug(
-            f"In evaluate, node: {node.node_id} depth: {depth}, player: {node.player}, alpha: {alpha}, beta: {beta}"
+            f"In evaluate, node: {node.node_id} depth: {depth}, {node.player_to_move} to move, alpha: {alpha}, beta: {beta}"
         )
 
         # Make sure we don't use same node twice
@@ -208,13 +212,13 @@ class GoTree(MinimaxTree):
 
             # use recursion to build tree vertically
             # set best score to the max or min of alpha vs recurse or beta vs recurse
-            if node.player == "maximizer":
+            if node.player_to_move == "maximizer":
                 best_score = max(
                     alpha, self.evaluate(child, depth - 1, node_ids, alpha, beta)
                 )
                 alpha = best_score
                 logger.debug(f"alpha set to {alpha}")
-            if node.player == "minimizer":
+            if node.player_to_move == "minimizer":
                 best_score = min(
                     beta, self.evaluate(child, depth - 1, node_ids, alpha, beta)
                 )
@@ -222,7 +226,7 @@ class GoTree(MinimaxTree):
                 logger.debug(f"beta set to {beta}")
             if beta <= alpha:
                 logger.debug(
-                    f"Breakpoint reached for {node.player} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.node_id}"
+                    f"Breakpoint reached for {node.player_to_move} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.node_id}"
                 )
                 # build tree horizontally
                 node.add_child(child)
@@ -234,20 +238,6 @@ class GoTree(MinimaxTree):
             node.set_score(best_score)
             return best_score
         raise Exception("Reached end of evaluate function without returning")
-
-    def get_optimal_value(self, old_optimal_value, new_value, player):
-        if player == "minimizer":
-            return min(old_optimal_value, new_value)
-        if player == "maximizer":
-            return max(old_optimal_value, new_value)
-
-    def get_best_next_move(self, node, best_score):
-        for child in node.children:
-            if child.get_score() == best_score:
-                return child
-        raise Exception(
-            f"Best score: {best_score} not found in children of node: {node.node_id} whose children are: {[child.get_score() for child in node.children]}"
-        )
 
     def minimax_depth_of_2(self):
         depth = 2

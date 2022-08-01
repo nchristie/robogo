@@ -132,6 +132,7 @@ def get_white_response(board_state):
         score=None,
         children=[],
         board_state=board_state,
+        player_to_move="minimizer"
     )
     game_tree = GoTree(root_node)
     try:
