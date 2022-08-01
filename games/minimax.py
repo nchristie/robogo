@@ -10,7 +10,6 @@ class MinimaxNode:
     def __init__(
         self,
         node_id=None,
-        player=None,
         score=None,
         children=[],
         alpha=-INFINITY,
@@ -19,7 +18,6 @@ class MinimaxNode:
     ):
         self.children = children
         self.node_id = node_id
-        self.player = player
         self.score = score
         self.alpha = alpha
         self.beta = beta
@@ -31,9 +29,6 @@ class MinimaxNode:
             f"score: {self.get_score()}, "
             f"number of children: {len(self.get_children())}"
         )
-
-    def get_player(self):
-        return self.player
 
     def set_score(self, score):
         # logger.debug(f"In set_score for node: {self.node_id}, score: {score}")
@@ -73,11 +68,11 @@ class MinimaxNode:
                 f"get_optimal_move error for {self.node_id}: node has no children {[child for child in self.children]}"
             )
         best_move = self.children[0]
-        player = best_move.player
+        player_to_move = self.player_to_move
         best_score = best_move.get_score()
 
         strategy = self.maximizer_strategy
-        if player == "minimizer":
+        if player_to_move == "minimizer":
             strategy = self.minimizer_strategy
 
         for child in self.children:
@@ -85,7 +80,6 @@ class MinimaxNode:
             if strategy(child_score, best_score):
                 best_move = child
                 best_score = best_move.get_score()
-        # logger.debug(f"get_optimal_move player = {player}, best_score: {best_score}")
         return best_move
 
     def maximizer_strategy(self, child_score, best_score):
@@ -117,16 +111,6 @@ class MinimaxNode:
         parent_node_id = parent_node_id.split("_")[0]
         return f"d{depth}-i{index}_p{parent_node_id}"
 
-    def alternate_player(self):
-        """
-        Returns:
-            str: The opposite player to that of the current
-            node. Valid options: "minimizer", "maximizer".
-        """
-        if self.player == "minimizer":
-            return "maximizer"
-        return "minimizer"
-
     def alternate_player_to_move(self):
         """
         Returns:
@@ -148,29 +132,27 @@ class MinimaxNode:
         """
         Takes the highest and lowest scores seen so far, and compares with the current node score
         and updates alpha or beta depending on whether this node is a maximizer or minimizer
-
         Parameters:
             node (MinimaxNode): a node to check against running scores
             alpha (int or float): highest score seen so far
             beta (int or float): lowest score seen so far
-
         Returns:
             alpha, beta: as above
         """
+        this_node_player = self.alternate_player_to_move()
         try:
             if self.score == None:
                 logger.debug(
                     f"calculate_alpha_and_beta >> Node: {self.node_id} hasn't got a score, returning without update"
                 )
                 return alpha, beta
-            if self.get_player() == "minimizer":
+            if this_node_player == "minimizer":
                 beta = min(beta, self.get_score())
-            if self.get_player() == "maximizer":
+            if this_node_player == "maximizer":
                 alpha = max(alpha, self.get_score())
             return alpha, beta
         except Exception as e:
             raise Exception(f"calculate_alpha_and_beta failed with excepetion: {e}")
-
 
 class MinimaxTree:
     def __init__(self, root_node):

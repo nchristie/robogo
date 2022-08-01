@@ -10,7 +10,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["+", "+", "+"], ["+", "●", "+"], ["+", "+", "+"]]
         my_node_1 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -29,7 +28,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["+", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
         my_node_2 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -53,7 +51,6 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+"],
         ]
         my_node_3 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -74,7 +71,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_4 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -94,7 +90,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_5 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -113,7 +108,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
         my_node_6 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -132,7 +126,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["○", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
         my_node_7 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -151,7 +144,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
         my_node_8 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -170,7 +162,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_9 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -188,7 +179,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "●"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_10 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -206,7 +196,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "●", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_11 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -224,7 +213,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["+", "+", "+"], ["●", "●", "+"], ["+", "+", "+"]]
         my_node_12 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -242,7 +230,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["+", "+", "+"], ["○", "○", "+"], ["+", "+", "+"]]
         my_node_13 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -260,7 +247,6 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
         my_node_14 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -288,7 +274,6 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
         my_node_15 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -316,7 +301,6 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
         my_node_15 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -344,7 +328,6 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
         my_node_15 = GoNode(
-            player="maximizer",
             score=0,
             children=[],
             board_state=board_state,
@@ -368,10 +351,8 @@ class GoNodeTestCase(TestCase):
 class GoTreeTestCase(TestCase):
     def test_find_depth_recursive(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_1 = GoNode(
             node_id="root_node_1",
-            player=player,
             board_state=[["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]],
             player_to_move="minimizer"
         )
@@ -393,10 +374,8 @@ class GoTreeTestCase(TestCase):
 
     def test_evaluate_assigns_scores(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_3 = GoNode(
             node_id="root_node_3",
-            player=player,
             board_state=[["●", "●"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -417,10 +396,8 @@ class GoTreeTestCase(TestCase):
 
     def test_evaluate_assigns_scores_based_on_leaves(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_13 = GoNode(
             node_id="root_node_13",
-            player=player,
             board_state=[["●", "●"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -442,10 +419,8 @@ class GoTreeTestCase(TestCase):
 
     def test_evaluate_works_at_depth_of_2(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_4 = GoNode(
             node_id="root_node_4",
-            player=player,
             board_state=[["●", "●"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -466,10 +441,8 @@ class GoTreeTestCase(TestCase):
 
     def test_evaluate_works_at_depth_of_3(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_5 = GoNode(
             node_id="root_node_5",
-            player=player,
             board_state=[["●", "+"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -490,10 +463,8 @@ class GoTreeTestCase(TestCase):
 
     def test_evaluate_returns_correct_score(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_6 = GoNode(
             node_id="root_node_6",
-            player=player,
             board_state=[["●", "○", "+"], ["+", "○", "+"], ["+", "+", "●"]],
             player_to_move="minimizer"
         )
@@ -514,10 +485,8 @@ class GoTreeTestCase(TestCase):
 
     def test_build_and_prune_game_tree_recursive_depth(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_3 = GoNode(
             node_id="root_node_3",
-            player=player,
             board_state=[["●", "+"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -539,10 +508,8 @@ class GoTreeTestCase(TestCase):
 
     def test_build_and_prune_game_tree_recursive_breadth(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_072604 = GoNode(
             node_id="072604",
-            player=player,
             board_state=[["●", "+"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -564,10 +531,8 @@ class GoTreeTestCase(TestCase):
 
     def test_build_and_prune_game_tree_recursive_depth_1(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_23 = GoNode(
             node_id="root_node_23",
-            player=player,
             board_state=[
                 ["+", "+"],
                 ["+", "+"],
@@ -592,10 +557,8 @@ class GoTreeTestCase(TestCase):
 
     def test_build_and_prune_game_tree_recursive_breadth_1(self):
         # GIVEN
-        player = "maximizer"
         game_tree_node_072521 = GoNode(
             node_id="root_node_072521",
-            player=player,
             board_state=[
                 ["+", "+"],
                 ["+", "+"],
@@ -619,10 +582,9 @@ class GoTreeTestCase(TestCase):
     def test_build_and_prune_game_tree_recursive_sets_nodes_as_terminal(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
-        player = "maximizer"
 
         game_tree_node_3 = GoNode(
-            player=player, board_state=board_state, node_id="game_tree_node_3", player_to_move="minimizer"
+            board_state=board_state, node_id="game_tree_node_3", player_to_move="minimizer"
         )
 
         depth = 1
@@ -645,10 +607,9 @@ class GoTreeTestCase(TestCase):
     ):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
-        player = "maximizer"
 
         game_tree_node_4 = GoNode(
-            player=player, board_state=board_state, node_id="game_tree_node_4", player_to_move="minimizer"
+            board_state=board_state, node_id="game_tree_node_4", player_to_move="minimizer"
         )
 
         depth = 2
@@ -671,7 +632,6 @@ class GoTreeTestCase(TestCase):
     ):
         # GIVEN
         game_tree_node_5 = GoNode(
-            player="maximizer",
             board_state=[
                 ["○", "+", "+", "+", "+"],
                 ["○", "+", "+", "+", "+"],
@@ -706,7 +666,6 @@ class GoTreeTestCase(TestCase):
     ):
         # GIVEN
         game_tree_node_1733_0730 = GoNode(
-            player="minimizer",
             board_state=[
                 ["●", "+", "+", "+", "+"],
                 ["●", "+", "+", "+", "+"],
@@ -738,10 +697,8 @@ class GoTreeTestCase(TestCase):
 
     def test_build_and_prune_game_tree_recursive_assigns_scores(self):
         # GIVEN
-        player = "maximizer"
         node_0801_1308 = GoNode(
             node_id="root_0801_1308",
-            player=player,
             board_state=[["●", "●"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -761,10 +718,8 @@ class GoTreeTestCase(TestCase):
 
     def test_build_and_prune_game_tree_recursive_sets_alpha(self):
         # GIVEN
-        player = "maximizer"
         node_0801_1253 = GoNode(
             node_id="root_node_0801_1253",
-            player=player,
             board_state=[["●", "●"], ["+", "+"]],
             player_to_move="minimizer"
         )
@@ -784,10 +739,8 @@ class GoTreeTestCase(TestCase):
 
     def test_build_and_prune_game_tree_recursive_sets_score_winning_node(self):
         # GIVEN
-        player = "maximizer"
         node_0801_1253 = GoNode(
             node_id="root_node_0801_1253",
-            player=player,
             board_state=[
                 ["●", "●", "●", "●", "●"],
                 ["+", "+", "+", "+", "+"],
@@ -818,7 +771,6 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         node_0801_1411 = GoNode(
             node_id="root_node_0801_1411",
-            player="maximizer",
             board_state=[
                 ["●", "●", "●", "●", "+"],
                 ["+", "+", "+", "+", "+"],
@@ -849,7 +801,6 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         node_0801_1435 = GoNode(
             node_id="root_node_0801_1435",
-            player="maximizer",
             board_state=[
                 ["●", "●", "●", "●", "+"],
                 ["+", "+", "+", "+", "+"],
@@ -879,7 +830,6 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         node_0801_1445 = GoNode(
             node_id="root_node_0801_1445",
-            player="maximizer",
             board_state=[
                 ["●", "●", "+"],
                 ["+", "+", "+"],
@@ -907,7 +857,6 @@ class GoTreeTestCase(TestCase):
         # GIVEN
         node_0801_1547 = GoNode(
             node_id="root_node_0801_1547",
-            player="maximizer",
             score=None,
             children=[],
             board_state=[

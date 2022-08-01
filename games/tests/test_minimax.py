@@ -9,14 +9,14 @@ class MinimaxNodeTestCase(TestCase):
     def test_get_score(self):
         """Get score"""
         # GIVEN
-        my_node_1 = MinimaxNode(node_id=1, player="maximizer", score=None, children=[], player_to_move="minimizer")
+        my_node_1 = MinimaxNode(node_id=1, score=None, children=[], player_to_move="minimizer")
         with self.assertRaises(Exception):
             my_node_1.get_score()
 
     def test_set_score(self):
         """Set score"""
         # GIVEN
-        my_node_2 = MinimaxNode(node_id=2, player="maximizer", score=None, children=[], player_to_move="minimizer")
+        my_node_2 = MinimaxNode(node_id=2, score=None, children=[], player_to_move="minimizer")
         my_node_2.set_score(5)
         expected = 5
         actual = my_node_2.get_score()
@@ -25,7 +25,7 @@ class MinimaxNodeTestCase(TestCase):
     def test_get_children(self):
         """"""
         # GIVEN
-        my_node_3 = MinimaxNode(node_id=3, player="maximizer", score=None, children=[], player_to_move="minimizer")
+        my_node_3 = MinimaxNode(node_id=3, score=None, children=[], player_to_move="minimizer")
         expected = []
         actual = my_node_3.get_children()
         self.assertEqual(expected, actual)
@@ -33,26 +33,25 @@ class MinimaxNodeTestCase(TestCase):
     def test_add_child(self):
         """"""
         # GIVEN
-        my_node_4 = MinimaxNode(node_id=4, player="maximizer", score=None, children=[], player_to_move="minimizer")
+        my_node_4 = MinimaxNode(node_id=4, score=None, children=[], player_to_move="minimizer")
 
         score = 4
         node_id = 123
-        player = "maximizer"
         player_to_move="minimizer"
-        child = MinimaxNode(node_id=node_id, player=player, score=score, player_to_move=player_to_move)
+        child = MinimaxNode(node_id=node_id, score=score, player_to_move=player_to_move)
 
         # WHEN
         my_node_4.add_child(child)
         child_0 = my_node_4.get_children()[0]
-        actual = (child_0.node_id, child.player, child.score, child.player_to_move)
+        actual = (child_0.node_id, child.score, child.player_to_move)
 
         # THEN
-        expected = (node_id, player, score, player_to_move)
+        expected = (node_id, score, player_to_move)
         self.assertEqual(expected, actual)
 
     def test_returns_max_for_maximizer(self):
         # GIVEN
-        my_node_5 = MinimaxNode(node_id=5, player="maximizer", score=None, children=[], player_to_move="minimizer")
+        my_node_5 = MinimaxNode(node_id=5, score=None, children=[], player_to_move="maximizer")
         available_moves = [
             {
                 "node_id": 14,
@@ -61,11 +60,10 @@ class MinimaxNodeTestCase(TestCase):
             {"node_id": 15, "score": 2},
             {"node_id": 16, "score": 3},
         ]
-        player = "maximizer"
 
         # WHEN
         for move in available_moves:
-            child = MinimaxNode(move["node_id"], player=player, score=move["score"], player_to_move="minimizer")
+            child = MinimaxNode(move["node_id"], score=move["score"], player_to_move="minimizer")
             my_node_5.add_child(child)
 
         # THEN
@@ -75,7 +73,7 @@ class MinimaxNodeTestCase(TestCase):
 
     def test_returns_min_for_minimizer(self):
         # GIVEN
-        my_node_6 = MinimaxNode(node_id=6, player="maximizer", score=None, children=[], player_to_move="minimizer")
+        my_node_6 = MinimaxNode(node_id=6, score=None, children=[], player_to_move="minimizer")
         available_moves = [
             {
                 "node_id": 17,
@@ -84,12 +82,11 @@ class MinimaxNodeTestCase(TestCase):
             {"node_id": 18, "score": 5},
             {"node_id": 19, "score": 6},
         ]
-        player = "minimizer"
 
         # WHEN
         for move in available_moves:
             child = MinimaxNode(
-                node_id=move["node_id"], player=player, score=move["score"], player_to_move="maximizer"
+                node_id=move["node_id"], score=move["score"], player_to_move="maximizer"
             )
             my_node_6.add_child(child)
 
@@ -149,11 +146,11 @@ class MinimaxNodeTestCase(TestCase):
 
     def test_set_alpha_when_next_player_is_maximizer(self):
         # GIVEN
-        node_0955_0108 = MinimaxNode(player="minimizer", score=0, player_to_move="maximizer")
+        node_0955_0108 = MinimaxNode(score=0, player_to_move="maximizer")
         child_scores = [0, 1, -2, 5, -5, 4, 3]
         for i, child_score in enumerate(child_scores):
             new_node = MinimaxNode(
-                node_id=f"child_0955_{i}_0108", player="maximizer", score=child_score, player_to_move="minimizer"
+                node_id=f"child_0955_{i}_0108", score=child_score, player_to_move="minimizer"
             )
             a, b = new_node.calculate_alpha_and_beta()
             new_node.set_alpha_beta(a, b)
@@ -168,11 +165,8 @@ class MinimaxNodeTestCase(TestCase):
 
     def test_calculate_alpha_and_beta_no_update(self):
         # GIVEN
-        player = "maximizer"
-
         game_tree_node_072915_1 = MinimaxNode(
             node_id="root_node_072915",
-            player=player,
             player_to_move="minimizer"
         )
 
@@ -189,9 +183,8 @@ class MinimaxNodeTestCase(TestCase):
     def test_calculate_alpha_and_beta_update_alpha(self):
         # GIVEN
         node_score = 0
-        player = "maximizer"
         node_1630_0729 = MinimaxNode(
-            node_id="root_node_1629_0729", player=player, score=node_score, player_to_move="minimizer"
+            node_id="root_node_1629_0729", score=node_score, player_to_move="minimizer"
         )
 
         alpha = -INFINITY
@@ -209,7 +202,7 @@ class MinimaxNodeTestCase(TestCase):
 
         node_score = 0
         node_1655_0729 = MinimaxNode(
-            node_id="root_node_1655_0729", player="minimizer", score=node_score, player_to_move="maximizer"
+            node_id="root_node_1655_0729", score=node_score, player_to_move="maximizer"
         )
 
         alpha = -INFINITY
@@ -226,7 +219,7 @@ class MinimaxNodeTestCase(TestCase):
         # GIVEN
         node_score = 1
         node_1700_0729 = MinimaxNode(
-            node_id="root_node_1700_0729", player="maximizer", score=node_score, player_to_move="minimizer"
+            node_id="root_node_1700_0729", score=node_score, player_to_move="minimizer"
         )
 
         alpha = 0
@@ -243,7 +236,7 @@ class MinimaxNodeTestCase(TestCase):
         # GIVEN
         node_score = 1
         node_1702_0729 = MinimaxNode(
-            node_id="root_node_1702_0729", player="minimizer", score=node_score, player_to_move="maximizer"
+            node_id="root_node_1702_0729", score=node_score, player_to_move="maximizer"
         )
 
         alpha = 0

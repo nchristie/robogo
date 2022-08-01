@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-PLAYER_DICT = {"maximizer": BLACK_STONE, "minimizer": WHITE_STONE}
+PLAYER_DICT = {"maximizer": WHITE_STONE, "minimizer": BLACK_STONE}
 
 STONE_DICT = {BLACK_STONE: "maximizer", WHITE_STONE: "minimizer"}
 
@@ -20,7 +20,6 @@ class GoNode(MinimaxNode):
     def __init__(
         self,
         node_id=None,
-        player=None,
         score=None,
         children=[],
         alpha=-INFINITY,
@@ -30,7 +29,7 @@ class GoNode(MinimaxNode):
         optimal_move_coordinates=None,
         player_to_move=None
     ):
-        super().__init__(node_id, player, score, children, alpha, beta, player_to_move)
+        super().__init__(node_id, score, children, alpha, beta, player_to_move)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
@@ -40,9 +39,8 @@ class GoNode(MinimaxNode):
         Yields:
             GoNode: next possible move on the board
         """
-        player = self.alternate_player()
         player_to_move = self.alternate_player_to_move()
-        stone = PLAYER_DICT[player]
+        stone = PLAYER_DICT[player_to_move]
         board_size = len(self.board_state)
         all_moves_on_board = list_all_moves_on_board(board_size)
         i = 0
@@ -57,7 +55,6 @@ class GoNode(MinimaxNode):
 
             next_node = GoNode(
                 node_id=node_id,
-                player=player,
                 board_state=new_board_state,
                 move_coordinates=move_coordinates,
                 children=[],
@@ -66,7 +63,7 @@ class GoNode(MinimaxNode):
             i += 1
             yield next_node
 
-    def generate_next_child_around_existing_moves(self, player="minimizer", depth=0, player_to_move="maximizer"):
+    def generate_next_child_around_existing_moves(self, depth=0, player_to_move="maximizer"):
         # I've returned this function to the code as I think I may want it later
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
@@ -82,7 +79,6 @@ class GoNode(MinimaxNode):
                             new_board_state[x][y] = BLACK_STONE
                             child = GoNode(
                                 node_id=self.make_node_id(depth, i),
-                                player=player,
                                 board_state=new_board_state,
                                 move_coordinates=move_coordinates,
                                 player_to_move=player_to_move
