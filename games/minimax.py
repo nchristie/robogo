@@ -23,6 +23,9 @@ class MinimaxNode:
             f"number of children: {len(self.get_children())}"
         )
 
+    def get_player(self):
+        return self.player
+
     def set_score(self, score):
         logger.debug(f"In set_score for node: {self.node_id}, score: {score}")
         if type(score) not in [int, float]:
@@ -121,6 +124,30 @@ class MinimaxNode:
 
     def get_alpha_beta(self):
         return self.alpha, self.beta
+
+    def calculate_alpha_and_beta(self, alpha=-INFINITY, beta=INFINITY):
+        """
+        Takes the highest and lowest scores seen so far, and compares with the current node score
+        and updates alpha or beta depending on whether this node is a maximizer or minimizer
+
+        Parameters:
+            node (MinimaxNode): a node to check against running scores
+            alpha (int or float): highest score seen so far
+            beta (int or float): lowest score seen so far
+
+        Returns:
+            alpha, beta: as above
+        """
+        if self.score == None:
+            logger.debug(
+                f"calculate_alpha_and_beta >> Node: {self.node_id} hasn't got a score, returning without update"
+            )
+            return alpha, beta
+        if self.get_player() == "minimizer":
+            beta = min(beta, self.get_score())
+        if self.get_player() == "maximizer":
+            alpha = max(alpha, self.get_score())
+        return alpha, beta
 
 
 class MinimaxTree:
@@ -235,16 +262,4 @@ def are_break_conditions_met(alpha, beta):
     return prune_tree or black_win or white_win
 
 
-def set_alpha_and_beta(node, alpha, beta):
-    # TODO setting parent node player with alternate_player here could backfire - try to find a better way to handle this
-    parent_node_player = node.alternate_player()
-    if node.score == None:
-        logger.debug(
-            f"set_alpha_and_beta >> Node: {node.node_id} hasn't got a score, returning without update"
-        )
-        return alpha, beta
-    if parent_node_player == "minimizer":
-        beta = min(beta, node.get_score())
-    if parent_node_player == "maximizer":
-        alpha = max(alpha, node.get_score())
-    return alpha, beta
+

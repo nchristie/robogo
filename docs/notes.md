@@ -77,3 +77,5 @@ def count_down(start):
 
 NEXT PLAYER:
 Whether the node is a maximizing node or a minimizing node depends on whose turn it is next to play. In our game, white (the computer) wants the lowest possible score for black (the human). So if the node was a white player's turn (i.e. the move coordinates represent a white move on the board) then that node is not a minimizer node, as the next player to move is black, i.e. the maximizer. I'm pretty sure I've had this backwards for the whole time I've been working on the algorithm so need to make some big changes.
+
+Looking at the function: get_optimal_move, it seems originally the way I was handling this was to use the player from the child node. One option is to continue doing this as it will mean fewer changes required to the unit tests. Another option is to flip maximizer and minimizer in all the unit tests and get the value from the parent node.
