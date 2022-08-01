@@ -23,11 +23,13 @@ class GoNode(MinimaxNode):
         player=None,
         score=None,
         children=[],
+        alpha=-INFINITY,
+        beta=INFINITY,
         board_state=None,
         move_coordinates=(),
         optimal_move_coordinates=None,
     ):
-        super().__init__(node_id, player, score, children)
+        super().__init__(node_id, player, score, children, alpha, beta)
         self.board_state = board_state
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates

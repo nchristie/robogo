@@ -7,11 +7,14 @@ MAX_TREE_DEPTH = 5
 
 
 class MinimaxNode:
-    def __init__(self, node_id=None, player=None, score=None, children=[]):
+    def __init__(self, node_id=None, player=None, score=None, children=[], alpha=-INFINITY, beta=INFINITY):
         self.children = children
         self.node_id = node_id
         self.player = player
         self.score = score
+        self.alpha = alpha
+        self.beta = beta
+
 
     def __str__(self):
         return (
@@ -98,6 +101,7 @@ class MinimaxNode:
         Creates a unique id for each move
         Returns (str):
         """
+        # Can comment out the following line if we want to debug where a node came from
         parent_node_id = parent_node_id.split("_")[0]
         return f"d{depth}-i{index}_p{parent_node_id}"
 
@@ -110,6 +114,13 @@ class MinimaxNode:
         if self.player == "minimizer":
             return "maximizer"
         return "minimizer"
+
+    def set_alpha_beta(self, alpha=-INFINITY, beta=INFINITY):
+        self.alpha = alpha
+        self.beta = beta
+
+    def get_alpha_beta(self):
+        return self.alpha, self.beta
 
 
 class MinimaxTree:
@@ -165,7 +176,7 @@ class MinimaxTree:
             # error handling
             assert (
                 child.children == []
-            ), f"Error: child node {child.get_node_id()} initialized with children {child.children[0].get_node_id()}"
+            ), f"Error: Nodes should initialise without children. Node {child.get_node_id()} initialized with children including: {child.children[0].get_node_id()}"
 
             # Make sure we don't use same node twice
             if child.node_id in node_ids:

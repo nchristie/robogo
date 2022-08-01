@@ -34,15 +34,19 @@ class MinimaxNodeTestCase(TestCase):
         """"""
         # GIVEN
         my_node_4 = MinimaxNode(node_id=4, player="maximizer", score=None, children=[])
+
         score = 4
         node_id = 123
         player = "maximizer"
-        child = MinimaxNode(node_id, player, score)
+        child = MinimaxNode(node_id=node_id, player=player, score=score)
+
+        # WHEN
         my_node_4.add_child(child)
-        children = my_node_4.get_children()
+        child_0 = my_node_4.get_children()[0]
+        actual = (child_0.node_id, child.player, child.score)
+
+        # THEN
         expected = (node_id, player, score)
-        child = children[0]
-        actual = (child.node_id, child.player, child.score)
         self.assertEqual(expected, actual)
 
     def test_returns_max_for_maximizer(self):
@@ -93,6 +97,72 @@ class MinimaxNodeTestCase(TestCase):
         optimal_move = my_node_6.get_optimal_move()
         actual = optimal_move.get_score()
         self.assertEqual(expected, actual)
+
+    def test_alpha_initialises_to_neg_inf(self):
+        # GIVEN
+        node_0908_0108 = MinimaxNode()
+
+        # WHEN
+        actual = node_0908_0108.alpha
+
+        # THEN
+        expected = -INFINITY
+        self.assertEqual(expected, actual)
+
+    def test_beta_initialises_to_inf(self):
+        # GIVEN
+        node_1022_0108 = MinimaxNode()
+
+        # WHEN
+        actual = node_1022_0108.beta
+
+        # THEN
+        expected = INFINITY
+        self.assertEqual(expected, actual)
+
+    def test_set_alpha_beta(self):
+        # GIVEN
+        node_1026_0108 = MinimaxNode()
+        score = 5
+
+        # WHEN
+        node_1026_0108.set_alpha_beta(alpha=score)
+        actual = node_1026_0108.alpha
+
+        # THEN
+        expected = score
+        self.assertEqual(expected, actual)
+
+    def test_get_alpha_beta(self):
+        # GIVEN
+        node_1028_0108 = MinimaxNode()
+        score = 5
+
+        # WHEN
+        node_1028_0108.set_alpha_beta(alpha=score)
+        actual = node_1028_0108.get_alpha_beta()
+
+        # THEN
+        expected = score, INFINITY
+        self.assertEqual(expected, actual)
+
+    # def test_set_alpha_when_maximizer(self):
+    #     # GIVEN
+    #     node_0955_0108 = MinimaxNode(player="maximizer")
+    #     child_scores = [0, 1, -2, 5, -5, 4, 3]
+    #     for i, child_score in child_scores:
+    #         node_0955_0108.add_child(GoNode(
+    #             node_id=f"child_0955_{i}_0108",
+    #             player="minimizer",
+    #             score=child_score
+    #         ))
+
+    #     # WHEN
+    #     actual = node_0955_0108.alpha
+
+    #     # THEN
+    #     expected = 5
+    #     self.assertEqual(expected, actual)
 
 
 class HelpersTestCase(TestCase):
