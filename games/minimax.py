@@ -7,14 +7,21 @@ MAX_TREE_DEPTH = 5
 
 
 class MinimaxNode:
-    def __init__(self, node_id=None, player=None, score=None, children=[], alpha=-INFINITY, beta=INFINITY):
+    def __init__(
+        self,
+        node_id=None,
+        player=None,
+        score=None,
+        children=[],
+        alpha=-INFINITY,
+        beta=INFINITY,
+    ):
         self.children = children
         self.node_id = node_id
         self.player = player
         self.score = score
         self.alpha = alpha
         self.beta = beta
-
 
     def __str__(self):
         return (
@@ -260,6 +267,3 @@ def are_break_conditions_met(alpha, beta):
     black_win = alpha == INFINITY
     white_win = beta == -INFINITY
     return prune_tree or black_win or white_win
-
-
-

@@ -362,7 +362,9 @@ class GoTreeTestCase(TestCase):
         tree_1 = GoTree(game_tree_node_1)
         # hack to get around suspected test pollution
         game_tree_node_1.children = []
-        tree_1.build_and_prune_game_tree_recursive(game_tree_node_1, node_1_depth, set())
+        tree_1.build_and_prune_game_tree_recursive(
+            game_tree_node_1, node_1_depth, set()
+        )
 
         # WHEN
         actual = tree_1.find_depth_recursive(game_tree_node_1, 0)
@@ -500,7 +502,9 @@ class GoTreeTestCase(TestCase):
         tree_3 = GoTree(game_tree_node_3)
         # hack to get around suspected test pollution
         game_tree_node_3.children = []
-        tree_3.build_and_prune_game_tree_recursive(game_tree_node_3, node_3_depth, set())
+        tree_3.build_and_prune_game_tree_recursive(
+            game_tree_node_3, node_3_depth, set()
+        )
 
         # WHEN
         actual = tree_3.root_node.children[0].children[0].children[0].children
@@ -549,7 +553,9 @@ class GoTreeTestCase(TestCase):
         tree_23 = GoTree(game_tree_node_23)
         # hack to get around suspected test pollution
         game_tree_node_23.children = []
-        tree_23.build_and_prune_game_tree_recursive(game_tree_node_23, node_23_depth, set())
+        tree_23.build_and_prune_game_tree_recursive(
+            game_tree_node_23, node_23_depth, set()
+        )
 
         # WHEN
         actual = tree_23.root_node.children[0].children[0].children[0].children
@@ -607,7 +613,9 @@ class GoTreeTestCase(TestCase):
         expected = True
         self.assertEqual(expected, actual)
 
-    def test_build_and_prune_game_tree_recursive_doesnt_set_terminal_for_intermediary_nodes(self):
+    def test_build_and_prune_game_tree_recursive_doesnt_set_terminal_for_intermediary_nodes(
+        self,
+    ):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
         player = "maximizer"
@@ -631,7 +639,9 @@ class GoTreeTestCase(TestCase):
         expected = False
         self.assertEqual(expected, actual)
 
-    def test_build_and_prune_game_tree_recursive_sets_terminal_for_winning_white_nodes(self):
+    def test_build_and_prune_game_tree_recursive_sets_terminal_for_winning_white_nodes(
+        self,
+    ):
         # GIVEN
         game_tree_node_5 = GoNode(
             player="maximizer",
@@ -663,7 +673,9 @@ class GoTreeTestCase(TestCase):
         expected = 1
         self.assertEqual(expected, actual)
 
-    def test_build_and_prune_game_tree_recursive_sets_terminal_for_winning_black_nodes(self):
+    def test_build_and_prune_game_tree_recursive_sets_terminal_for_winning_black_nodes(
+        self,
+    ):
         # GIVEN
         game_tree_node_1733_0730 = GoNode(
             player="minimizer",
@@ -694,4 +706,3 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = 1
         self.assertEqual(expected, actual)
-

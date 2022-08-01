@@ -152,14 +152,11 @@ class MinimaxNodeTestCase(TestCase):
         child_scores = [0, 1, -2, 5, -5, 4, 3]
         for i, child_score in enumerate(child_scores):
             new_node = MinimaxNode(
-                node_id=f"child_0955_{i}_0108",
-                player="maximizer",
-                score=child_score
+                node_id=f"child_0955_{i}_0108", player="maximizer", score=child_score
             )
-            a, b  = new_node.calculate_alpha_and_beta()
+            a, b = new_node.calculate_alpha_and_beta()
             new_node.set_alpha_beta(a, b)
             node_0955_0108.add_child(new_node)
-
 
         # WHEN
         actual, x = node_0955_0108.get_optimal_move().get_alpha_beta()
@@ -258,7 +255,6 @@ class MinimaxNodeTestCase(TestCase):
         self.assertEqual(expected, actual)
 
 
-
 class HelpersTestCase(TestCase):
     def test_are_break_conditions_met(self):
         # GIVEN
@@ -307,4 +303,3 @@ class HelpersTestCase(TestCase):
         # THEN
         expected = True
         self.assertEqual(expected, actual)
-
