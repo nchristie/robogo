@@ -140,6 +140,10 @@ def get_white_response(board_state):
         # game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth)
         # white_move_node = game_tree.root_node.get_optimal_move()
 
+        # # using evaluate function
+        # best_score = game_tree.evaluate(root_node, 2, set(), INFINITY, -INFINITY)
+        # logger.info(f"evaluate function found a best score of: {best_score}")
+
         white_move_node = game_tree.minimax_depth_of_2()
 
     except Exception as e:
