@@ -252,14 +252,21 @@ class MinimaxTree:
                 best_child = node.get_optimal_move()
                 best_score = best_child.get_score()
 
-                # TODO set alpha and beta
-
                 # set node score
                 node.set_score(best_score)
 
-                # TODO set alpha and beta values
+                # TODO set alpha and beta
+                if node.get_player_to_move() == "maximizer":
+                    node.set_alpha_beta(alpha=best_score, beta=beta)
+                else:
+                    node.set_alpha_beta(alpha=alpha, beta=best_score)
+
+                alpha, beta = node.get_alpha_beta()
 
                 # TODO break loop if alpha >= beta
+                if beta <= alpha and alpha:
+                    logger.info(f"Returning as beta of {beta} <= alpha of {alpha}")
+                    return
 
         logger.debug("Returning at end of function")
         return

@@ -135,16 +135,26 @@ def get_white_response(board_state):
     )
     game_tree = GoTree(root_node)
     try:
-        # depth = 7
-
-        # game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth)
-        # white_move_node = game_tree.root_node.get_optimal_move()
+        # using build_and_prune
+        depth = 4
+        game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth)
+        white_move_node = game_tree.root_node.get_optimal_move()
+        print_node = white_move_node
+        try:
+            for i in range(depth):
+                logger.info(f"Move {i}")
+                for row in transpose_board(print_node.board_state):
+                    logger.info(row)
+                print_node = print_node.get_optimal_move()
+        except Exception as e:
+            logger.info(f"Error printing board: {e}")
 
         # # using evaluate function
         # best_score = game_tree.evaluate(root_node, 2, set(), INFINITY, -INFINITY)
         # logger.info(f"evaluate function found a best score of: {best_score}")
 
-        white_move_node = game_tree.minimax_depth_of_2()
+        # # using minimax_depth_of_2
+        # white_move_node = game_tree.minimax_depth_of_2()
 
     except Exception as e:
         logger.error(f"get_white_response failed with error: {e}")
