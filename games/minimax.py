@@ -166,13 +166,13 @@ class MinimaxTree:
         self.root_node = root_node
 
     def build_and_prune_game_tree_recursive(
-        self, node, depth, node_ids=set(), alpha=INFINITY, beta=INFINITY
+        self, parent, depth, node_ids=set(), alpha=INFINITY, beta=INFINITY
     ):
         """
         Builds game tree to a given depth
 
         Parameters:
-            node (MinimaxNode): the node from which we build down
+            parent (MinimaxNode): the node from which we build down
             depth (int): how far down the tree we want to build
             node_ids (set): all the move ids which have been
                 encountered so far
@@ -181,10 +181,10 @@ class MinimaxTree:
             None
 
         Side effects:
-            builds tree from node
+            builds tree from parent
         """
         # Make sure we don't use same node twice
-        node_ids.add(node.node_id)
+        node_ids.add(parent.node_id)
 
         # error handling
         if depth < 0:
@@ -194,34 +194,34 @@ class MinimaxTree:
         # If we're at a leaf node leave the recursion
         if depth == 0:
             # error handling
-            if node.children != []:
-                e = f"Leaf node at depth {depth} shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)} first child id: {node.children[0].node_id}"
+            if parent.children != []:
+                e = f"Leaf node at depth {depth} shouldn't have children node_id: {parent.node_id}, number of children: {len(parent.children)} first child id: {parent.children[0].node_id}"
                 logger.error(e)
                 raise Exception(e)
 
-            node_score = node.get_utility()
-            node.set_score(node_score)
+            parent_score = parent.get_utility()
+            parent.set_score(parent_score)
 
             logger.debug(
-                f"Returning at depth of {depth} with score of {node_score} at node: {node.node_id}"
+                f"Returning at depth of {depth} with score of {parent_score} at node: {parent.node_id}"
             )
             return
 
         # don't build past the end of the game
-        if node.get_utility() == -INFINITY:
-            logger.debug(f"Minimizer win found at: {node.node_id}")
-            node_score = node.get_utility()
-            node.set_score(node_score)
+        if parent.get_utility() == -INFINITY:
+            logger.debug(f"Minimizer win found at: {parent.node_id}")
+            parent_score = parent.get_utility()
+            parent.set_score(parent_score)
             return
-        if node.get_utility() == INFINITY:
-            logger.debug(f"Maximizer win found at: {node.node_id}")
-            node_score = node.get_utility()
-            node.set_score(node_score)
+        if parent.get_utility() == INFINITY:
+            logger.debug(f"Maximizer win found at: {parent.node_id}")
+            parent_score = parent.get_utility()
+            parent.set_score(parent_score)
             return
 
         # recurse case
-        parent_node_id = node.get_node_id()
-        for child in node.generate_next_child(depth, parent_node_id):
+        parent_node_id = parent.get_node_id()
+        for child in parent.generate_next_child(depth, parent_node_id):
             # error handling
             assert (
                 child.children == []
@@ -248,24 +248,26 @@ class MinimaxTree:
                 child.set_score(child.get_utility())
 
                 # build tree horizontally
-                node.add_child(child)
-                best_child = node.get_optimal_move()
+                parent.add_child(child)
+                best_child = parent.get_optimal_move()
                 best_score = best_child.get_score()
 
                 # set node score
-                node.set_score(best_score)
+                parent.set_score(best_score)
 
                 # TODO set alpha and beta
-                if node.get_player_to_move() == "maximizer":
-                    node.set_alpha_beta(alpha=best_score, beta=beta)
+                if parent.get_player_to_move() == "maximizer":
+                    parent.set_alpha_beta(alpha=best_score, beta=beta)
+                elif parent.get_player_to_move() == "minimizer":
+                    parent.set_alpha_beta(alpha=alpha, beta=best_score)
                 else:
-                    node.set_alpha_beta(alpha=alpha, beta=best_score)
+                    raise Exception(f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}")
 
-                alpha, beta = node.get_alpha_beta()
+                alpha, beta = parent.get_alpha_beta()
 
                 # TODO break loop if alpha >= beta
-                if beta <= alpha and alpha:
-                    logger.info(f"Returning as beta of {beta} <= alpha of {alpha}")
+                if beta <= alpha:
+                    logger.info(f"Returning at {child.get_node_id()} as beta of {beta} <= alpha of {alpha}")
                     return
 
         logger.debug("Returning at end of function")
