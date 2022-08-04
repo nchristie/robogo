@@ -30,6 +30,12 @@ class MinimaxNode:
             f"number of children: {len(self.get_children())}"
         )
 
+    def get_player_to_move(self):
+        return self.player_to_move
+
+    def set_player_to_move(self, player_to_move):
+        self.player_to_move = player_to_move
+
     def set_score(self, score):
         # logger.debug(f"In set_score for node: {self.node_id}, score: {score}")
         if type(score) not in [int, float]:
