@@ -849,3 +849,36 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = (0, 4)
         self.assertEqual(expected, actual)
+
+    def test_build_and_prune_game_tree_recursive_3_by_3(self):
+        # GIVEN
+        node_0805_2100 = GoNode(
+            node_id="root_node_0805_2100",
+            score=None,
+            children=[],
+            board_state=[
+                ["●", "●", "+"],
+                ["○", "+", "+"],
+                ["+", "+", "+"],
+            ],
+            player_to_move="minimizer",
+        )
+        # hack to get around suspected test pollution
+        node_0805_2100.children = []
+
+        tree_0805_2100 = GoTree(node_0805_2100)
+        depth = 4
+
+        tree_0805_2100.build_and_prune_game_tree_recursive(
+            tree_0805_2100.root_node, depth, winning_score=3
+        )
+        white_move_node = tree_0805_2100.root_node.get_optimal_move()
+
+        # WHEN
+        actual = white_move_node.move_coordinates
+
+        # THEN
+        expected = (0, 2)
+        self.assertEqual(expected, actual)
+
+

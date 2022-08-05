@@ -112,10 +112,10 @@ class GoNode(MinimaxNode):
         score = score_dict["relative_black_score"]
         if score_dict[BLACK_STONE] >= winning_score:
             score = INFINITY
-            logger.info(f"Black win found for {self.get_node_id()}, {self.move_coordinates}")
+            logger.debug(f"Black win found for {self.get_node_id()}, {self.move_coordinates}")
         if score_dict[WHITE_STONE] >= winning_score:
             score = -INFINITY
-            logger.info(f"White win found for {self.get_node_id()}, {self.move_coordinates}")
+            logger.debug(f"White win found for {self.get_node_id()}, {self.move_coordinates}")
         if not score and score != 0:
             raise Exception(f"Score could not be set score_dict: {score_dict}")
         else:

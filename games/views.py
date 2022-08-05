@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 DEPTH = 100000
-BOARD_SIZE = 4
+BOARD_SIZE = 3
 
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
@@ -101,7 +101,7 @@ class Board:
             return
         self.state[x][y] = player
 
-
+# Helpers
 def get_client_ip(request):
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
@@ -137,8 +137,11 @@ def get_white_response(board_state):
     try:
         # using build_and_prune
         depth = 4
-        game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth)
-        white_move_node = game_tree.root_node.get_optimal_move()
+        game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth, winning_score=WINNING_SCORE)
+        try:
+            white_move_node = game_tree.root_node.get_optimal_move()
+        except Exception as e:
+            logger.error(f"Couldn't get optimal move {e}")
         print_node = white_move_node
         try:
             for i in range(depth):
@@ -150,7 +153,7 @@ def get_white_response(board_state):
                 else:
                     break
         except Exception as e:
-            logger.info(f"Error printing board: {e}")
+            logger.error(f"Error printing board: {e}")
 
         # # using evaluate function
         # best_score = game_tree.evaluate(root_node, 2, set(), INFINITY, -INFINITY)
