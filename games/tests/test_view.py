@@ -1,5 +1,5 @@
 from django.test import TestCase
-from games.views import Board, find_game_by_ip
+from games.views import Board, find_game_by_ip, get_white_response
 
 
 class BoardTestCase(TestCase):
@@ -33,3 +33,68 @@ class BoardTestCase(TestCase):
         expected = "Black"
         actual = self.my_board.state[0][0]
         self.assertEqual(actual, expected)
+
+class HelpersTestCase(TestCase):
+    def test_get_white_response_3x3(self):
+        # GIVEN
+        board_state=[
+                ["●", "●", "+"],
+                ["○", "+", "+"],
+                ["+", "+", "+"],
+            ]
+        winning_score = 3
+
+        # WHEN
+        actual = get_white_response(
+            board_state=board_state,
+            winning_score=winning_score,
+            depth=4
+        )
+
+        # THEN
+        expected = (0, 2)
+        self.assertEqual(expected, actual)
+
+    def test_get_white_response_two_calls(self):
+        # GIVEN
+        board_state_1=[
+                ["●", "+", "+", "+"],
+                ["+", "+", "+", "+"],
+                ["+", "+", "+", "+"],
+                ["+", "+", "+", "+"]
+            ]
+
+        board_state_2=[
+                ["●", "●", "+", "+"],
+                ["○", "+", "+", "+"],
+                ["+", "+", "+", "+"],
+                ["+", "+", "+", "+"]
+            ]
+        winning_score = 3
+        depth = 4
+
+        # WHEN
+        first_call = get_white_response(board_state_1, winning_score=winning_score, depth=depth)
+        actual = get_white_response(board_state_2, winning_score=winning_score, depth=depth)
+
+        # THEN
+        expected = (0, 2)
+        self.assertEqual(expected, actual)
+
+    def test_get_white_response_depth_greater_than_remaining_moves(self):
+        # GIVEN
+        board_state=[
+                ["●", "●", "○", "●"],
+                ["○", "○", "●", "+"],
+                ["○", "●", "○", "+"],
+                ["●", "○", "●", "+"]
+            ]
+        winning_score = 3
+        depth = 4
+
+        # WHEN
+        actual = get_white_response(board_state, winning_score=winning_score, depth=depth)
+
+        # THEN
+        expected = (1, 3)
+        self.assertEqual(expected, actual)

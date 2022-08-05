@@ -11,8 +11,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-DEPTH = 100000
-BOARD_SIZE = 3
+BOARD_SIZE = 5
+DEPTH = 4
 
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
@@ -41,11 +41,16 @@ class Index(View):
         scores = get_score_dict(my_board.state)
         black_score = scores[BLACK_STONE]
         white_score = scores[WHITE_STONE]
+
+        open_moves = sum(x == "+" for x in list(itertools.chain(*my_board.state)))
+
         winner = "No-one"
         if black_score >= WINNING_SCORE:
             winner = "Black"
         elif white_score >= WINNING_SCORE:
             winner = "White"
+        elif open_moves == 0:
+            winner = "Stalemate"
 
         if winner == "No-one":
             # get white response
@@ -76,7 +81,7 @@ class Index(View):
             "form": form,
             "black_score": black_score,
             "white_score": white_score,
-            "winner": winner,
+            "winner": winner
         }
         return render(request, "games/index.html", context)
 
@@ -125,7 +130,7 @@ def find_game_by_ip(ip):
     return user_game
 
 
-def get_white_response(board_state):
+def get_white_response(board_state, winning_score=WINNING_SCORE, depth=DEPTH):
     root_node = GoNode(
         node_id="root_node",
         score=None,
@@ -136,8 +141,15 @@ def get_white_response(board_state):
     game_tree = GoTree(root_node)
     try:
         # using build_and_prune
-        depth = 4
-        game_tree.build_and_prune_game_tree_recursive(game_tree.root_node, depth, winning_score=WINNING_SCORE)
+        open_moves = sum(x == "+" for x in list(itertools.chain(*board_state)))
+        if open_moves < depth:
+            depth = open_moves
+        game_tree.build_and_prune_game_tree_recursive(
+            parent=game_tree.root_node,
+            depth=depth,
+            node_ids=set(),
+            winning_score=winning_score
+        )
         try:
             white_move_node = game_tree.root_node.get_optimal_move()
         except Exception as e:
@@ -147,6 +159,7 @@ def get_white_response(board_state):
             for i in range(depth):
                 logger.info(f"Move {i}")
                 for row in transpose_board(print_node.board_state):
+                # for row in print_node.board_state:
                     logger.info(row)
                 if not print_node.is_leaf_node():
                     print_node = print_node.get_optimal_move()
@@ -154,13 +167,6 @@ def get_white_response(board_state):
                     break
         except Exception as e:
             logger.error(f"Error printing board: {e}")
-
-        # # using evaluate function
-        # best_score = game_tree.evaluate(root_node, 2, set(), INFINITY, -INFINITY)
-        # logger.info(f"evaluate function found a best score of: {best_score}")
-
-        # # using minimax_depth_of_2
-        # white_move_node = game_tree.minimax_depth_of_2()
 
     except Exception as e:
         logger.error(f"get_white_response failed with error: {e}")

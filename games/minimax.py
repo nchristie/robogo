@@ -197,7 +197,7 @@ class MinimaxTree:
         if depth == 0:
             # error handling
             if parent.children != []:
-                e = f"Leaf node at depth {depth} shouldn't have children node_id: {terminal_node.get_node_id()}, number of children: {len(terminal_node.children)} first child id: {terminal_node.children[0].get_node_id()}"
+                e = f"Leaf node at depth {depth} shouldn't have children node_id: {parent.get_node_id()}, number of children: {len(parent.children)} first child id: {parent.children[0].get_node_id()}"
                 logger.error(e)
                 raise Exception(e)
 
