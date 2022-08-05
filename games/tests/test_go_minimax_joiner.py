@@ -423,7 +423,9 @@ class GoTreeTestCase(TestCase):
         # hack to get around suspected test pollution
         game_tree_node_6.children = []
         tree_6 = GoTree(game_tree_node_6)
-        tree_6.evaluate(game_tree_node_6, node_6_depth, set(), alpha, beta, winning_score=5)
+        tree_6.evaluate(
+            game_tree_node_6, node_6_depth, set(), alpha, beta, winning_score=5
+        )
 
         # WHEN
         actual = tree_6.root_node.get_score()
@@ -455,15 +457,13 @@ class GoTreeTestCase(TestCase):
         expected = []
         self.assertEqual(expected, actual)
 
-    def test_build_and_prune_game_tree_recursive_breadth_noughts_and_crosses_style(self):
+    def test_build_and_prune_game_tree_recursive_breadth_noughts_and_crosses_style(
+        self,
+    ):
         # GIVEN
         game_tree_node_072604 = GoNode(
             node_id="072604",
-            board_state=[
-                ["○", "+", "●"],
-                ["+", "●", "+"],
-                ["○", "+", "○"]
-            ],
+            board_state=[["○", "+", "●"], ["+", "●", "+"], ["○", "+", "○"]],
             player_to_move="maximizer",
         )
 
@@ -550,7 +550,9 @@ class GoTreeTestCase(TestCase):
 
         # WHEN
         tree_3 = GoTree(game_tree_node_3)
-        tree_3.build_and_prune_game_tree_recursive(game_tree_node_3, depth, set(), winning_score=5)
+        tree_3.build_and_prune_game_tree_recursive(
+            game_tree_node_3, depth, set(), winning_score=5
+        )
         children = game_tree_node_3.get_children()
         actual = all([child.is_leaf_node() for child in children])
 
@@ -577,7 +579,9 @@ class GoTreeTestCase(TestCase):
         tree_4 = GoTree(game_tree_node_4)
 
         # WHEN
-        tree_4.build_and_prune_game_tree_recursive(game_tree_node_4, depth, set(), winning_score=5)
+        tree_4.build_and_prune_game_tree_recursive(
+            game_tree_node_4, depth, set(), winning_score=5
+        )
         children = game_tree_node_4.get_children()
         actual = all([child.is_leaf_node() for child in children])
 
@@ -665,7 +669,9 @@ class GoTreeTestCase(TestCase):
         depth = 0
         # hack to get around suspected test pollution
         node_0801_1308.children = []
-        tree_0801_1308.build_and_prune_game_tree_recursive(node_0801_1308, depth, set(), winning_score=5)
+        tree_0801_1308.build_and_prune_game_tree_recursive(
+            node_0801_1308, depth, set(), winning_score=5
+        )
 
         # WHEN
         actual = tree_0801_1308.root_node.get_score()
@@ -687,7 +693,9 @@ class GoTreeTestCase(TestCase):
         tree_0801_1253 = GoTree(node_0801_1253)
         # hack to get around suspected test pollution
         node_0801_1253.children = []
-        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set(), winning_score=5)
+        tree_0801_1253.build_and_prune_game_tree_recursive(
+            node_0801_1253, depth, set(), winning_score=5
+        )
 
         # WHEN
         actual, x = tree_0801_1253.root_node.get_alpha_beta()
@@ -714,7 +722,9 @@ class GoTreeTestCase(TestCase):
 
         depth = 0
         tree_0801_1253 = GoTree(node_0801_1253)
-        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set(), winning_score=5)
+        tree_0801_1253.build_and_prune_game_tree_recursive(
+            node_0801_1253, depth, set(), winning_score=5
+        )
 
         # WHEN
         actual = (
@@ -745,7 +755,9 @@ class GoTreeTestCase(TestCase):
         depth = 2
         tree_0801_1411 = GoTree(node_0801_1411)
 
-        tree_0801_1411.build_and_prune_game_tree_recursive(node_0801_1411, depth, set(), winning_score=5)
+        tree_0801_1411.build_and_prune_game_tree_recursive(
+            node_0801_1411, depth, set(), winning_score=5
+        )
 
         # WHEN
         actual = tree_0801_1411.root_node.get_score(), len(
@@ -776,7 +788,9 @@ class GoTreeTestCase(TestCase):
         depth = 2
         tree_0801_1435 = GoTree(node_0801_1435)
 
-        tree_0801_1435.build_and_prune_game_tree_recursive(node_0801_1435, depth, set(), winning_score=5)
+        tree_0801_1435.build_and_prune_game_tree_recursive(
+            node_0801_1435, depth, set(), winning_score=5
+        )
 
         # WHEN
         actual, x = tree_0801_1435.root_node.get_alpha_beta()
@@ -880,5 +894,3 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = (0, 2)
         self.assertEqual(expected, actual)
-
-

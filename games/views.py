@@ -81,7 +81,7 @@ class Index(View):
             "form": form,
             "black_score": black_score,
             "white_score": white_score,
-            "winner": winner
+            "winner": winner,
         }
         return render(request, "games/index.html", context)
 
@@ -105,6 +105,7 @@ class Board:
             logger.error("Illegal move, try again")
             return
         self.state[x][y] = player
+
 
 # Helpers
 def get_client_ip(request):
@@ -148,7 +149,7 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=DEPTH):
             parent=game_tree.root_node,
             depth=depth,
             node_ids=set(),
-            winning_score=winning_score
+            winning_score=winning_score,
         )
         try:
             white_move_node = game_tree.root_node.get_optimal_move()
@@ -159,7 +160,7 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=DEPTH):
             for i in range(depth):
                 logger.info(f"Move {i}")
                 for row in transpose_board(print_node.board_state):
-                # for row in print_node.board_state:
+                    # for row in print_node.board_state:
                     logger.info(row)
                 if not print_node.is_leaf_node():
                     print_node = print_node.get_optimal_move()

@@ -168,7 +168,13 @@ class MinimaxTree:
         self.root_node = root_node
 
     def build_and_prune_game_tree_recursive(
-        self, parent, depth, node_ids=set(), alpha=-INFINITY, beta=INFINITY, winning_score=WINNING_SCORE
+        self,
+        parent,
+        depth,
+        node_ids=set(),
+        alpha=-INFINITY,
+        beta=INFINITY,
+        winning_score=WINNING_SCORE,
     ):
         """
         Builds game tree to a given depth
@@ -217,17 +223,20 @@ class MinimaxTree:
             logger.debug(f"Minimizer win found at: {parent.get_node_id()}")
             parent_score = parent_utility
             parent.set_score(parent_score)
-            logger.debug(f"Returning at minimizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}")
+            logger.debug(
+                f"Returning at minimizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
+            )
             return
         elif parent_utility == INFINITY:
             logger.debug(f"Maximizer win found at: {parent.get_node_id()}")
             parent_score = parent_utility
             parent.set_score(parent_score)
-            logger.debug(f"Returning at maximizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}")
+            logger.debug(
+                f"Returning at maximizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
+            )
             return
         else:
             logger.debug("Win condition not met")
-
 
         # recurse case
         parent_node_id = parent.get_node_id()
@@ -239,7 +248,9 @@ class MinimaxTree:
 
             # Make sure we don't use same node twice
             if child.get_node_id() in node_ids:
-                logger.debug(f"node_id: {child.get_node_id()} already visited, skipping")
+                logger.debug(
+                    f"node_id: {child.get_node_id()} already visited, skipping"
+                )
                 continue
 
             # use recursion to build tree vertically
@@ -255,7 +266,9 @@ class MinimaxTree:
 
                 child_score = child.get_score()
                 if not child_score and child_score != 0:
-                    raise Exception(f"No score found at node: {child.get_node_id()} score: {child.get_score()}")
+                    raise Exception(
+                        f"No score found at node: {child.get_node_id()} score: {child.get_score()}"
+                    )
                 else:
                     logger.debug(f"Score found for node: {child.get_node_id()}")
 
@@ -275,13 +288,17 @@ class MinimaxTree:
                     beta = min(best_score, beta)
                     child.set_alpha_beta(alpha=alpha, beta=beta)
                 else:
-                    raise Exception(f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}")
+                    raise Exception(
+                        f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}"
+                    )
 
                 alpha, beta = child.get_alpha_beta()
 
                 # TODO break loop if alpha >= beta
                 if beta <= alpha:
-                    logger.debug(f"Breaking at {child.get_node_id()} as beta of {beta} <= alpha of {alpha}")
+                    logger.debug(
+                        f"Breaking at {child.get_node_id()} as beta of {beta} <= alpha of {alpha}"
+                    )
                     break
 
         logger.debug("Returning at end of function")
