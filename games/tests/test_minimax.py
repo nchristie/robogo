@@ -51,7 +51,7 @@ class MinimaxNodeTestCase(TestCase):
         # WHEN
         my_node_4.add_child(child)
         child_0 = my_node_4.get_children()[0]
-        actual = (child_0.node_id, child.score, child.player_to_move)
+        actual = (child_0.get_node_id(), child.score, child.player_to_move)
 
         # THEN
         expected = (node_id, score, player_to_move)

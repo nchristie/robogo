@@ -37,16 +37,16 @@ class MinimaxNode:
         self.player_to_move = player_to_move
 
     def set_score(self, score):
-        # logger.debug(f"In set_score for node: {self.node_id}, score: {score}")
+        logger.debug(f"In set_score for node: {self.get_node_id()}, score: {score}")
         if type(score) not in [int, float]:
             raise Exception(
-                f"set_score error: score must be int or float got {type(score)} for node: {self.node_id}"
+                f"set_score error: score must be int or float got {type(score)} for node: {self.get_node_id()}"
             )
         self.score = score
 
     def get_score(self):
         if not self.score and self.score != 0:
-            e = f"Score has not been set for node {self.node_id}"
+            e = f"Score has not been set for node {self.get_node_id()}"
             logger.error(e)
             raise Exception(e)
         return self.score
@@ -54,14 +54,18 @@ class MinimaxNode:
     def get_node_id(self):
         return self.node_id
 
+    def get_short_node_id(self):
+        # TODO test
+        return self.get_node_id().split("_")[0]
+
     def add_child(self, child):
-        child_depth = get_depth_from_node_id(child.node_id)
-        parent_depth = get_depth_from_node_id(self.node_id)
+        child_depth = get_depth_from_node_id(child.get_node_id())
+        parent_depth = get_depth_from_node_id(self.get_node_id())
         if child_depth == parent_depth:
             raise Exception(
                 f"Attempt to append two nodes at same depth: child_depth: {child_depth}, parent_depth: {parent_depth}"
             )
-        logger.debug(f"add_child {child.node_id} to parent {self.node_id}")
+        logger.debug(f"add_child {child.get_node_id()} to parent {self.get_node_id()}")
         self.children.append(child)
 
     def get_children(self):
@@ -71,7 +75,7 @@ class MinimaxNode:
         # input is Node, output is Node
         if not self.children:
             raise Exception(
-                f"get_optimal_move error for {self.node_id}: node has no children {[child for child in self.children]}"
+                f"get_optimal_move error for {self.get_node_id()}: node has no children {[child for child in self.children]}"
             )
         best_move = self.children[0]
         player_to_move = self.player_to_move
@@ -101,11 +105,11 @@ class MinimaxNode:
 
     def generate_next_child(self, depth, parent_node_id="NA"):
         raise Exception(
-            f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth}"
+            f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
         )
 
     def is_leaf_node(self):
-        # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, node_id = {self.node_id}")
+        # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, node_id = {self.get_node_id()}")
         return not self.children
 
     def make_node_id(self, depth, index, parent_node_id="NA"):
@@ -113,9 +117,7 @@ class MinimaxNode:
         Creates a unique id for each move
         Returns (str):
         """
-        # Can comment out the following line if we want to debug where a node came from
-        parent_node_id = parent_node_id.split("_")[0]
-        return f"d{depth}-i{index}_p{parent_node_id}"
+        return f"d{depth}-i{index}_{parent_node_id}"
 
     def alternate_player_to_move(self):
         """
@@ -149,7 +151,7 @@ class MinimaxNode:
         try:
             if self.score == None:
                 logger.debug(
-                    f"calculate_alpha_and_beta >> Node: {self.node_id} hasn't got a score, returning without update"
+                    f"calculate_alpha_and_beta >> Node: {self.get_node_id()} hasn't got a score, returning without update"
                 )
                 return alpha, beta
             if this_node_player == "minimizer":
@@ -166,7 +168,7 @@ class MinimaxTree:
         self.root_node = root_node
 
     def build_and_prune_game_tree_recursive(
-        self, parent, depth, node_ids=set(), alpha=INFINITY, beta=INFINITY
+        self, parent, depth, node_ids=set(), alpha=-INFINITY, beta=INFINITY
     ):
         """
         Builds game tree to a given depth
@@ -184,7 +186,7 @@ class MinimaxTree:
             builds tree from parent
         """
         # Make sure we don't use same node twice
-        node_ids.add(parent.node_id)
+        node_ids.add(parent.get_node_id())
 
         # error handling
         if depth < 0:
@@ -195,29 +197,37 @@ class MinimaxTree:
         if depth == 0:
             # error handling
             if parent.children != []:
-                e = f"Leaf node at depth {depth} shouldn't have children node_id: {parent.node_id}, number of children: {len(parent.children)} first child id: {parent.children[0].node_id}"
+                e = f"Leaf node at depth {depth} shouldn't have children node_id: {terminal_node.get_node_id()}, number of children: {len(terminal_node.children)} first child id: {terminal_node.children[0].get_node_id()}"
                 logger.error(e)
                 raise Exception(e)
 
+            logger.debug("Getting score for terminal node")
             parent_score = parent.get_utility()
             parent.set_score(parent_score)
 
             logger.debug(
-                f"Returning at depth of {depth} with score of {parent_score} at node: {parent.node_id}"
+                f"Returning at depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
             )
             return
 
         # don't build past the end of the game
-        if parent.get_utility() == -INFINITY:
-            logger.debug(f"Minimizer win found at: {parent.node_id}")
+        logger.debug("Checking if win condition met")
+        parent_utility = parent.get_utility()
+        if parent_utility == -INFINITY:
+            logger.debug(f"Minimizer win found at: {parent.get_node_id()}")
             parent_score = parent.get_utility()
             parent.set_score(parent_score)
+            logger.debug(f"Returning at minimizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}")
             return
-        if parent.get_utility() == INFINITY:
-            logger.debug(f"Maximizer win found at: {parent.node_id}")
+        elif parent_utility == INFINITY:
+            logger.debug(f"Maximizer win found at: {parent.get_node_id()}")
             parent_score = parent.get_utility()
             parent.set_score(parent_score)
+            logger.debug(f"Returning at maximizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}")
             return
+        else:
+            logger.debug("Win condition not met")
+
 
         # recurse case
         parent_node_id = parent.get_node_id()
@@ -228,8 +238,8 @@ class MinimaxTree:
             ), f"Error: Nodes should initialise without children. Node {child.get_node_id()} initialized with children including: {child.children[0].get_node_id()}"
 
             # Make sure we don't use same node twice
-            if child.node_id in node_ids:
-                logger.debug(f"node_id: {child.node_id} already visited, skipping")
+            if child.get_node_id() in node_ids:
+                logger.debug(f"node_id: {child.get_node_id()} already visited, skipping")
                 continue
 
             # use recursion to build tree vertically
@@ -238,14 +248,16 @@ class MinimaxTree:
             ):
 
                 # not self.build_and_prune_game_tree_recursive(..) will be True if:
-                # 1. we've reached the end of depth count-down,
-                # 2. there are no more child nodes to create at this depth
+                # 1. we've reached the end of depth count-down
                 # This means first we'll get to the point we want to stop building vertically
                 # and then add children at this level. Once all children are added we will work
                 # back up the tree and add child nodes at higher levels
 
-                # set child score
-                child.set_score(child.get_utility())
+                child_score = child.get_score()
+                if not child_score and child_score != 0:
+                    raise Exception(f"No score found at node: {child.get_node_id()} score: {child.get_score()}")
+                else:
+                    logger.debug(f"Score found for node: {child.get_node_id()}")
 
                 # build tree horizontally
                 parent.add_child(child)
@@ -258,19 +270,19 @@ class MinimaxTree:
                 # TODO set alpha and beta
                 if parent.get_player_to_move() == "maximizer":
                     alpha = max(best_score, alpha)
-                    parent.set_alpha_beta(alpha=alpha, beta=beta)
+                    child.set_alpha_beta(alpha=alpha, beta=beta)
                 elif parent.get_player_to_move() == "minimizer":
                     beta = min(best_score, beta)
-                    parent.set_alpha_beta(alpha=alpha, beta=beta)
+                    child.set_alpha_beta(alpha=alpha, beta=beta)
                 else:
                     raise Exception(f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}")
 
-                alpha, beta = parent.get_alpha_beta()
+                alpha, beta = child.get_alpha_beta()
 
                 # TODO break loop if alpha >= beta
                 if beta <= alpha:
-                    logger.info(f"Returning at {child.get_node_id()} as beta of {beta} <= alpha of {alpha}")
-                    return
+                    logger.debug(f"Breaking at {child.get_node_id()} as beta of {beta} <= alpha of {alpha}")
+                    break
 
         logger.debug("Returning at end of function")
         return
@@ -284,7 +296,7 @@ class MinimaxTree:
         if node.is_leaf_node():
             logger.debug(f"child {type(node)}")
             logger.debug(
-                f"depth: {depth}, node_id: {node.node_id} is_leaf_node: {node.is_leaf_node()}"
+                f"depth: {depth}, node_id: {node.get_node_id()} is_leaf_node: {node.is_leaf_node()}"
             )
             logger.debug(f"returning at depth of {depth} owing to terminal node")
             return depth
@@ -292,7 +304,7 @@ class MinimaxTree:
         # recurse case
         for i, child in enumerate(node.children):
             logger.debug(
-                f"depth: {depth}, child index: {i}, node_id: {child.node_id} is_leaf_node: {child.is_leaf_node()}, child {type(child)}"
+                f"depth: {depth}, child index: {i}, node_id: {child.get_node_id()} is_leaf_node: {child.is_leaf_node()}, child type: {type(child)}"
             )
             return self.find_depth_recursive(child, depth + 1)
 

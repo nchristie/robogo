@@ -34,6 +34,12 @@ class GoNode(MinimaxNode):
         self.move_coordinates = move_coordinates
         self.optimal_move_coordinates = optimal_move_coordinates
 
+    def get_board_state(self):
+        return self.board_state
+
+    def set_board_state(self, board_state):
+        self.board_state = board_state
+
     def generate_next_child(self, depth, parent_node_id="NA"):
         """
         Yields:
@@ -107,18 +113,18 @@ class GoNode(MinimaxNode):
         score = score_dict["relative_black_score"]
         if score_dict[BLACK_STONE] >= WINNING_SCORE:
             score = INFINITY
-            logger.info(f"Black win found for {self.node_id}, {self.move_coordinates}")
+            logger.info(f"Black win found for {self.get_node_id()}, {self.move_coordinates}")
         if score_dict[WHITE_STONE] >= WINNING_SCORE:
             score = -INFINITY
-            logger.info(f"White win found for {self.node_id}, {self.move_coordinates}")
+            logger.info(f"White win found for {self.get_node_id()}, {self.move_coordinates}")
         if not score and score != 0:
             raise Exception(f"Score could not be set score_dict: {score_dict}")
         else:
             logger.debug(
-                f"Utility for node {self.node_id} with coordinates {self.move_coordinates} = {score}"
+                f"Utility for node {self.get_node_id()} with coordinates {self.move_coordinates} = {score}"
             )
         if not score and score != 0:
-            raise Exception(f"Couldn't get utility for {self.node_id}")
+            raise Exception(f"Couldn't get utility for {self.get_node_id()}")
         return score
 
     # TODO find_connecting_stones():
@@ -152,15 +158,15 @@ class GoTree(MinimaxTree):
                 scores up the tree
         """
         logger.debug(
-            f"In evaluate, node: {node.node_id} depth: {depth}, {node.player_to_move} to move, alpha: {alpha}, beta: {beta}"
+            f"In evaluate, node: {node.get_node_id()} depth: {depth}, {node.player_to_move} to move, alpha: {alpha}, beta: {beta}"
         )
 
         # Make sure we don't use same node twice
-        node_ids.add(node.node_id)
+        node_ids.add(node.get_node_id())
 
         # error handling
         if depth < 0:
-            e = f"Maximum tree depth exceeded at node: {node.node_id}"
+            e = f"Maximum tree depth exceeded at node: {node.get_node_id()}"
             logger.error(e)
             raise Exception(e)
 
@@ -170,13 +176,13 @@ class GoTree(MinimaxTree):
             # error handling
             assert (
                 not node.children
-            ), f"Node at depth 0 shouldn't have children node_id: {node.node_id}, number of children: {len(node.children)}"
+            ), f"Node at depth 0 shouldn't have children node_id: {node.get_node_id()}, number of children: {len(node.children)}"
 
             node_score = node.get_utility()
             node.set_score(node_score)
 
             logger.debug(
-                f"Returning at depth of {depth} with score of {node_score} at node: {node.node_id}"
+                f"Returning at depth of {depth} with score of {node_score} at node: {node.get_node_id()}"
             )
             return node.get_score()
 
@@ -184,26 +190,26 @@ class GoTree(MinimaxTree):
 
         # error handling
         if node.children != []:
-            e = f"Node {node.node_id} children == None, all nodes should be initialised with children of []"
+            e = f"Node {node.get_node_id()} children == None, all nodes should be initialised with children of []"
             logger.error(e)
             raise Exception(e)
 
         for child in node.generate_next_child(depth, self.root_node.get_node_id()):
             # Don't add nodes which have already been visited
-            if str(child.node_id) in node_ids:
+            if str(child.get_node_id()) in node_ids:
                 logger.debug("Board state already seen, skipping this node")
                 continue
 
             # TODO if child score is a winning score then don't build branches further
             utility = child.get_utility()
             if utility == -INFINITY:
-                logger.debug(f"White win found at: {node.node_id}")
+                logger.debug(f"White win found at: {node.get_node_id()}")
                 child.set_score(utility)
                 node.add_child(child)
                 continue
 
             if utility == INFINITY:
-                logger.debug(f"Black win found at: {node.node_id}")
+                logger.debug(f"Black win found at: {node.get_node_id()}")
                 child.set_score(utility)
                 node.add_child(child)
                 continue
@@ -224,7 +230,7 @@ class GoTree(MinimaxTree):
                 logger.debug(f"beta set to {beta}")
             if beta <= alpha:
                 logger.debug(
-                    f"Breakpoint reached for {node.player_to_move} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.node_id}"
+                    f"Breakpoint reached for {node.player_to_move} alpha: {alpha}, beta: {beta}, node score: {best_score}, node id: {node.get_node_id()}"
                 )
                 # build tree horizontally
                 node.add_child(child)

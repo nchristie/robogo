@@ -455,12 +455,16 @@ class GoTreeTestCase(TestCase):
         expected = []
         self.assertEqual(expected, actual)
 
-    def test_build_and_prune_game_tree_recursive_breadth(self):
+    def test_build_and_prune_game_tree_recursive_breadth_noughts_and_crosses_style(self):
         # GIVEN
         game_tree_node_072604 = GoNode(
             node_id="072604",
-            board_state=[["●", "+"], ["+", "+"]],
-            player_to_move="minimizer",
+            board_state=[
+                ["○", "+", "●"],
+                ["+", "●", "+"],
+                ["○", "+", "○"]
+            ],
+            player_to_move="maximizer",
         )
 
         node_072604_depth = 3
@@ -475,8 +479,9 @@ class GoTreeTestCase(TestCase):
         actual = len(tree_072604.root_node.children[1].children)
 
         # THEN
-        expected = 2
-        self.assertEqual(expected, actual)
+        expected = 1
+        # NOTE: this test uses assertGreater
+        self.assertGreater(actual, expected)
 
     def test_build_and_prune_game_tree_recursive_depth_1(self):
         # GIVEN

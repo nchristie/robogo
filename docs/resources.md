@@ -8,9 +8,9 @@
  - https://www.linkedin.com/learning/ai-algorithms-for-gaming/alpha-beta-pruning
  - https://www.linkedin.com/learning/ai-algorithms-for-gaming/the-alpha-beta-search-algorithm
 - https://www.youtube.com/watch?v=l-hh51ncgDI
-- https://www.youtube.com/watch?v=_i-lZcbWkps
-- https://www.youtube.com/watch?v=d2maa6k2gYE
-- tic tac toe: https://www.youtube.com/watch?v=trKjYdBASyQ
+- https://www.youtube.com/watch?v=_i-lZcbWkps - at 4.56 tree is pruned
+- https://www.youtube.com/watch?v=d2maa6k2gYE - presenter gets slightly muddled when talking
+- tic tac toe with minimax algo: https://www.youtube.com/watch?v=trKjYdBASyQ
 
 # Minimax and Alpha-Beta Search with Python
 - https://levelup.gitconnected.com/mastering-tic-tac-toe-with-minimax-algorithm-3394d65fa88f

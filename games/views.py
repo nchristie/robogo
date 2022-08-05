@@ -145,7 +145,10 @@ def get_white_response(board_state):
                 logger.info(f"Move {i}")
                 for row in transpose_board(print_node.board_state):
                     logger.info(row)
-                print_node = print_node.get_optimal_move()
+                if not print_node.is_leaf_node():
+                    print_node = print_node.get_optimal_move()
+                else:
+                    break
         except Exception as e:
             logger.info(f"Error printing board: {e}")
 
@@ -162,7 +165,7 @@ def get_white_response(board_state):
 
     assert (
         type(white_move_node) == GoNode
-    ), f"White move node isn't of type GoNode for node: {white_move_node.node_id}"
+    ), f"White move node isn't of type GoNode for node: {white_move_node.get_node_id()}"
     white_move = white_move_node.move_coordinates
     logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move
