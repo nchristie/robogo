@@ -4,7 +4,6 @@ from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode, GoTree
-from .minimax import are_break_conditions_met
 from .game_logic import *
 import itertools
 
@@ -13,6 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 DEPTH = 100000
+BOARD_SIZE = 4
 
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
@@ -34,7 +34,7 @@ class Index(View):
         if form.is_valid():
             form.save()
 
-        my_board = Board()
+        my_board = Board(BOARD_SIZE)
         moves = user_game.move_set.all().order_by("-id")
         my_board.update(moves)
 

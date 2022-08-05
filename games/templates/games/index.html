@@ -29,15 +29,19 @@ Black score: {{black_score}} | White score: {{white_score}}
 <br>
 
 <!-- Show x coordinates at top of board -->
-&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp0
-&nbsp&nbsp1
-&nbsp&nbsp&nbsp2
-&nbsp&nbsp3
-&nbsp&nbsp4
-&nbsp&nbsp5
-&nbsp&nbsp&nbsp6
-&nbsp&nbsp7
-&nbsp&nbsp8
+
+
+{% for row in board_state %}
+	{% with forloop.counter0 as i %}
+	{% if i == 0%}
+		&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{i}}
+	{% elif i == 2 or i == 6 %}
+		&nbsp&nbsp&nbsp{{i}}
+	{% else %}
+		&nbsp&nbsp{{i}}
+	{% endif %}
+	{% endwith %}
+{% endfor %}
 <br>
 
 {% for row in board_state %}
