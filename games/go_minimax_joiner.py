@@ -91,7 +91,6 @@ class GoNode(MinimaxNode):
                                 move_coordinates=move_coordinates,
                                 player_to_move=player_to_move,
                             )
-                            # child.set_score(child.get_utility())
                             yield child
 
     def find_moves_around_position(self, x_coordinate, y_coordinate):
@@ -102,7 +101,7 @@ class GoNode(MinimaxNode):
         down = (x_coordinate + 1, y_coordinate)
         return [up, left, right, down]
 
-    def get_utility(self):
+    def get_utility(self, winning_score=WINNING_SCORE):
         """
         Finds value of node. To be used for terminal nodes only
         Returns:
@@ -111,10 +110,10 @@ class GoNode(MinimaxNode):
         score_dict = get_score_dict(self.board_state)
 
         score = score_dict["relative_black_score"]
-        if score_dict[BLACK_STONE] >= WINNING_SCORE:
+        if score_dict[BLACK_STONE] >= winning_score:
             score = INFINITY
             logger.info(f"Black win found for {self.get_node_id()}, {self.move_coordinates}")
-        if score_dict[WHITE_STONE] >= WINNING_SCORE:
+        if score_dict[WHITE_STONE] >= winning_score:
             score = -INFINITY
             logger.info(f"White win found for {self.get_node_id()}, {self.move_coordinates}")
         if not score and score != 0:
@@ -134,7 +133,7 @@ class GoTree(MinimaxTree):
     def __init__(self, root_node):
         self.root_node = root_node
 
-    def evaluate(self, node, depth, node_ids, alpha, beta):
+    def evaluate(self, node, depth, node_ids, alpha, beta, winning_score=WINNING_SCORE):
         """
         Builds game tree to a given depth then returns the best next
         move using the information gathered. Only builds branches
@@ -178,7 +177,7 @@ class GoTree(MinimaxTree):
                 not node.children
             ), f"Node at depth 0 shouldn't have children node_id: {node.get_node_id()}, number of children: {len(node.children)}"
 
-            node_score = node.get_utility()
+            node_score = node.get_utility(winning_score=winning_score)
             node.set_score(node_score)
 
             logger.debug(
@@ -201,7 +200,7 @@ class GoTree(MinimaxTree):
                 continue
 
             # TODO if child score is a winning score then don't build branches further
-            utility = child.get_utility()
+            utility = child.get_utility(winning_score=winning_score)
             if utility == -INFINITY:
                 logger.debug(f"White win found at: {node.get_node_id()}")
                 child.set_score(utility)
@@ -218,13 +217,13 @@ class GoTree(MinimaxTree):
             # set best score to the max or min of alpha vs recurse or beta vs recurse
             if node.player_to_move == "maximizer":
                 best_score = max(
-                    alpha, self.evaluate(child, depth - 1, node_ids, alpha, beta)
+                    alpha, self.evaluate(child, depth - 1, node_ids, alpha, beta, winning_score=winning_score)
                 )
                 alpha = best_score
                 logger.debug(f"alpha set to {alpha}")
             if node.player_to_move == "minimizer":
                 best_score = min(
-                    beta, self.evaluate(child, depth - 1, node_ids, alpha, beta)
+                    beta, self.evaluate(child, depth - 1, node_ids, alpha, beta, winning_score=winning_score)
                 )
                 beta = best_score
                 logger.debug(f"beta set to {beta}")
@@ -243,7 +242,7 @@ class GoTree(MinimaxTree):
             return best_score
         raise Exception("Reached end of evaluate function without returning")
 
-    def minimax_depth_of_2(self):
+    def minimax_depth_of_2(self, winning_score=WINNING_SCORE):
         depth = 2
         self.build_and_prune_game_tree_recursive(self.root_node, depth, set())
 
@@ -251,7 +250,7 @@ class GoTree(MinimaxTree):
 
         for child in current_node.get_children():
             for child2 in child.get_children():
-                child2.set_score(child2.get_utility())
+                child2.set_score(child2.get_utility(winning_score=winning_score))
             child2_optimal_move = child.get_optimal_move()
             child.set_score(child2_optimal_move.get_score())
 

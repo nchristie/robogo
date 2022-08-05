@@ -1,5 +1,5 @@
 import logging
-from .game_logic import INFINITY
+from .game_logic import INFINITY, WINNING_SCORE
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +168,7 @@ class MinimaxTree:
         self.root_node = root_node
 
     def build_and_prune_game_tree_recursive(
-        self, parent, depth, node_ids=set(), alpha=-INFINITY, beta=INFINITY
+        self, parent, depth, node_ids=set(), alpha=-INFINITY, beta=INFINITY, winning_score=WINNING_SCORE
     ):
         """
         Builds game tree to a given depth
@@ -202,7 +202,7 @@ class MinimaxTree:
                 raise Exception(e)
 
             logger.debug("Getting score for terminal node")
-            parent_score = parent.get_utility()
+            parent_score = parent.get_utility(winning_score=winning_score)
             parent.set_score(parent_score)
 
             logger.debug(
@@ -212,16 +212,16 @@ class MinimaxTree:
 
         # don't build past the end of the game
         logger.debug("Checking if win condition met")
-        parent_utility = parent.get_utility()
+        parent_utility = parent.get_utility(winning_score=winning_score)
         if parent_utility == -INFINITY:
             logger.debug(f"Minimizer win found at: {parent.get_node_id()}")
-            parent_score = parent.get_utility()
+            parent_score = parent_utility
             parent.set_score(parent_score)
             logger.debug(f"Returning at minimizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}")
             return
         elif parent_utility == INFINITY:
             logger.debug(f"Maximizer win found at: {parent.get_node_id()}")
-            parent_score = parent.get_utility()
+            parent_score = parent_utility
             parent.set_score(parent_score)
             logger.debug(f"Returning at maximizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}")
             return
@@ -244,7 +244,7 @@ class MinimaxTree:
 
             # use recursion to build tree vertically
             if not self.build_and_prune_game_tree_recursive(
-                child, depth - 1, node_ids, alpha, beta
+                child, depth - 1, node_ids, alpha, beta, winning_score=winning_score
             ):
 
                 # not self.build_and_prune_game_tree_recursive(..) will be True if:

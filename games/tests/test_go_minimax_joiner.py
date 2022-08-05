@@ -142,7 +142,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_9.get_utility()
+        actual = my_node_9.get_utility(winning_score=5)
 
         # THEN
         expected = 1
@@ -156,7 +156,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_10.get_utility()
+        actual = my_node_10.get_utility(winning_score=5)
 
         # THEN
         expected = 1
@@ -170,7 +170,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_11.get_utility()
+        actual = my_node_11.get_utility(winning_score=5)
 
         # THEN
         expected = 2
@@ -184,7 +184,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_12.get_utility()
+        actual = my_node_12.get_utility(winning_score=5)
 
         # THEN
         expected = 2
@@ -198,7 +198,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_13.get_utility()
+        actual = my_node_13.get_utility(winning_score=5)
 
         # THEN
         expected = -2
@@ -212,7 +212,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_14.get_utility()
+        actual = my_node_14.get_utility(winning_score=5)
 
         # THEN
         expected = 2
@@ -236,7 +236,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_15.get_utility()
+        actual = my_node_15.get_utility(winning_score=5)
 
         # THEN
         expected = 0
@@ -260,7 +260,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_15.get_utility()
+        actual = my_node_15.get_utility(winning_score=5)
 
         # THEN
         expected = INFINITY
@@ -284,7 +284,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_15.get_utility()
+        actual = my_node_15.get_utility(winning_score=5)
 
         # THEN
         expected = -INFINITY
@@ -423,7 +423,7 @@ class GoTreeTestCase(TestCase):
         # hack to get around suspected test pollution
         game_tree_node_6.children = []
         tree_6 = GoTree(game_tree_node_6)
-        tree_6.evaluate(game_tree_node_6, node_6_depth, set(), alpha, beta)
+        tree_6.evaluate(game_tree_node_6, node_6_depth, set(), alpha, beta, winning_score=5)
 
         # WHEN
         actual = tree_6.root_node.get_score()
@@ -550,7 +550,7 @@ class GoTreeTestCase(TestCase):
 
         # WHEN
         tree_3 = GoTree(game_tree_node_3)
-        tree_3.build_and_prune_game_tree_recursive(game_tree_node_3, depth, set())
+        tree_3.build_and_prune_game_tree_recursive(game_tree_node_3, depth, set(), winning_score=5)
         children = game_tree_node_3.get_children()
         actual = all([child.is_leaf_node() for child in children])
 
@@ -577,7 +577,7 @@ class GoTreeTestCase(TestCase):
         tree_4 = GoTree(game_tree_node_4)
 
         # WHEN
-        tree_4.build_and_prune_game_tree_recursive(game_tree_node_4, depth, set())
+        tree_4.build_and_prune_game_tree_recursive(game_tree_node_4, depth, set(), winning_score=5)
         children = game_tree_node_4.get_children()
         actual = all([child.is_leaf_node() for child in children])
 
@@ -609,7 +609,7 @@ class GoTreeTestCase(TestCase):
         # WHEN
         game_tree_5 = GoTree(game_tree_node_5)
         game_tree_5.build_and_prune_game_tree_recursive(
-            game_tree_node_5, depth=depth, node_ids=set()
+            game_tree_node_5, depth=depth, node_ids=set(), winning_score=5
         )
         children = game_tree_node_5.get_children()
         terminality = [child.is_leaf_node() for child in children]
@@ -643,7 +643,7 @@ class GoTreeTestCase(TestCase):
         # WHEN
         game_tree_5 = GoTree(game_tree_node_1733_0730)
         game_tree_5.build_and_prune_game_tree_recursive(
-            game_tree_node_1733_0730, depth=depth, node_ids=set()
+            game_tree_node_1733_0730, depth=depth, node_ids=set(), winning_score=5
         )
         children = game_tree_node_1733_0730.get_children()
         terminality = [child.is_leaf_node() for child in children]
@@ -665,7 +665,7 @@ class GoTreeTestCase(TestCase):
         depth = 0
         # hack to get around suspected test pollution
         node_0801_1308.children = []
-        tree_0801_1308.build_and_prune_game_tree_recursive(node_0801_1308, depth, set())
+        tree_0801_1308.build_and_prune_game_tree_recursive(node_0801_1308, depth, set(), winning_score=5)
 
         # WHEN
         actual = tree_0801_1308.root_node.get_score()
@@ -687,7 +687,7 @@ class GoTreeTestCase(TestCase):
         tree_0801_1253 = GoTree(node_0801_1253)
         # hack to get around suspected test pollution
         node_0801_1253.children = []
-        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set())
+        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set(), winning_score=5)
 
         # WHEN
         actual, x = tree_0801_1253.root_node.get_alpha_beta()
@@ -714,7 +714,7 @@ class GoTreeTestCase(TestCase):
 
         depth = 0
         tree_0801_1253 = GoTree(node_0801_1253)
-        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set())
+        tree_0801_1253.build_and_prune_game_tree_recursive(node_0801_1253, depth, set(), winning_score=5)
 
         # WHEN
         actual = (
@@ -745,7 +745,7 @@ class GoTreeTestCase(TestCase):
         depth = 2
         tree_0801_1411 = GoTree(node_0801_1411)
 
-        tree_0801_1411.build_and_prune_game_tree_recursive(node_0801_1411, depth, set())
+        tree_0801_1411.build_and_prune_game_tree_recursive(node_0801_1411, depth, set(), winning_score=5)
 
         # WHEN
         actual = tree_0801_1411.root_node.get_score(), len(
@@ -776,7 +776,7 @@ class GoTreeTestCase(TestCase):
         depth = 2
         tree_0801_1435 = GoTree(node_0801_1435)
 
-        tree_0801_1435.build_and_prune_game_tree_recursive(node_0801_1435, depth, set())
+        tree_0801_1435.build_and_prune_game_tree_recursive(node_0801_1435, depth, set(), winning_score=5)
 
         # WHEN
         actual, x = tree_0801_1435.root_node.get_alpha_beta()
@@ -805,7 +805,7 @@ class GoTreeTestCase(TestCase):
 
         # WHEN
         actual = tree_0801_1445.build_and_prune_game_tree_recursive(
-            node_0801_1445, depth, set()
+            node_0801_1445, depth, set(), winning_score=5
         )
 
         # THEN
@@ -839,7 +839,7 @@ class GoTreeTestCase(TestCase):
         depth = 2
 
         tree_0801_1547.build_and_prune_game_tree_recursive(
-            tree_0801_1547.root_node, depth
+            tree_0801_1547.root_node, depth, winning_score=5
         )
         white_move_node = tree_0801_1547.root_node.get_optimal_move()
 
