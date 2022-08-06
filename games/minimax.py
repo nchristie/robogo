@@ -280,13 +280,13 @@ class MinimaxTree:
                 # set node score
                 parent.set_score(best_score)
 
-                # TODO set alpha and beta
+                # set alpha and beta
                 if parent.get_player_to_move() == "maximizer":
                     alpha = max(best_score, alpha)
-                    child.set_alpha_beta(alpha=alpha, beta=beta)
+                    parent.set_alpha_beta(alpha=alpha, beta=beta)
                 elif parent.get_player_to_move() == "minimizer":
                     beta = min(best_score, beta)
-                    child.set_alpha_beta(alpha=alpha, beta=beta)
+                    parent.set_alpha_beta(alpha=alpha, beta=beta)
                 else:
                     raise Exception(
                         f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}"

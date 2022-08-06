@@ -680,16 +680,15 @@ class GoTreeTestCase(TestCase):
         expected = 2
         self.assertEqual(expected, actual)
 
-    @skip("WIP")
     def test_build_and_prune_game_tree_recursive_sets_alpha(self):
         # GIVEN
         node_0801_1253 = GoNode(
             node_id="root_node_0801_1253",
             board_state=[["●", "●"], ["+", "+"]],
-            player_to_move="minimizer",
+            player_to_move="maximizer",
         )
 
-        depth = 0
+        depth = 1
         tree_0801_1253 = GoTree(node_0801_1253)
         # hack to get around suspected test pollution
         node_0801_1253.children = []
