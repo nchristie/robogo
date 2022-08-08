@@ -3,7 +3,7 @@ from .game_logic import INFINITY, WINNING_SCORE
 
 logger = logging.getLogger(__name__)
 
-MAX_TREE_DEPTH = 5
+MAX_TREE_DEPTH = 6
 
 
 class MinimaxNode:
@@ -220,20 +220,13 @@ class MinimaxTree:
         # don't build past the end of the game
         logger.debug("Checking if win condition met")
         parent_utility = parent.get_utility(winning_score=winning_score)
-        if parent_utility == -INFINITY:
-            logger.debug(f"Minimizer win found at: {parent.get_node_id()}")
+        if abs(parent_utility) == INFINITY:
+            winner = "Maximizer" if parent_utility == INFINITY else "Minimizer"
+            logger.info(f"{winner} win found at: {parent.get_node_id()}")
             parent_score = parent_utility
             parent.set_score(parent_score)
             logger.debug(
-                f"Returning at minimizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
-            )
-            return
-        elif parent_utility == INFINITY:
-            logger.debug(f"Maximizer win found at: {parent.get_node_id()}")
-            parent_score = parent_utility
-            parent.set_score(parent_score)
-            logger.debug(
-                f"Returning at maximizer win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
+                f"Returning at {winner} win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
             )
             return
         else:
@@ -295,10 +288,10 @@ class MinimaxTree:
 
                 alpha, beta = parent.get_alpha_beta()
 
-                # TODO break loop if alpha >= beta
+                # TODO break loop if beta <= alpha
                 if beta <= alpha:
                     logger.debug(
-                        f"Returning at {parent.get_node_id()} as beta of {beta} <= alpha of {alpha}"
+                        f"Returning at {parent.get_node_id()} as beta of {beta} < alpha of {alpha}"
                     )
                     return
 

@@ -103,3 +103,30 @@ class HelpersTestCase(TestCase):
         # THEN
         expected = (1, 3)
         self.assertEqual(expected, actual)
+
+    def test_get_white_response_blocks_between_stones(self):
+        # GIVEN
+        winning_score = 3
+        depth = 6
+
+        board_state = [
+            ["●", "○", "+", "+", "+"],
+            ["+", "+", "+", "+", "+"],
+            ["●", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+"],
+        ]
+
+        # WHEN
+        x, y = get_white_response(
+            board_state, winning_score=winning_score, depth=depth
+        )
+        board_state[x][y] = "○"
+        print("\n\n\n***TEST BOARD STATE***")
+        [print(f"{row}") for row in board_state]
+
+        # THEN
+        actual = (x, y)
+        expected = (1, 0)
+        self.assertEqual(expected, actual)
+

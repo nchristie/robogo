@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 BOARD_SIZE = 5
-DEPTH = 4
+DEPTH = 6
 
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
@@ -76,6 +76,7 @@ class Index(View):
         transposed_board = transpose_board(my_board.state)
 
         context = {
+            # transposed board here so that it makes sense to viewer when they input their moves
             "board_state": transposed_board,
             "all_moves": moves,
             "form": form,
@@ -83,6 +84,7 @@ class Index(View):
             "white_score": white_score,
             "winner": winner,
         }
+        # TODO show white win as soon as white has played a winning move
         return render(request, "games/index.html", context)
 
 
@@ -103,6 +105,7 @@ class Board:
         legal_move = legal_move & 0 <= y < self.size
         if not legal_move:
             logger.error("Illegal move, try again")
+            # TODO currently this forfeits the move, write logic to raise error in UI and allow another attempt
             return
         self.state[x][y] = player
 
