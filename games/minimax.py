@@ -130,6 +130,7 @@ class MinimaxNode:
         return "minimizer"
 
     def set_alpha_beta(self, alpha=-INFINITY, beta=INFINITY):
+        logger.debug(f"Setting alpha: {alpha}, beta: {beta}. Node: {self.get_node_id()}.")
         self.alpha = alpha
         self.beta = beta
 
@@ -292,16 +293,16 @@ class MinimaxTree:
                         f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}"
                     )
 
-                alpha, beta = child.get_alpha_beta()
+                alpha, beta = parent.get_alpha_beta()
 
                 # TODO break loop if alpha >= beta
                 if beta <= alpha:
                     logger.debug(
-                        f"Breaking at {child.get_node_id()} as beta of {beta} <= alpha of {alpha}"
+                        f"Returning at {parent.get_node_id()} as beta of {beta} <= alpha of {alpha}"
                     )
-                    break
+                    return
 
-        logger.debug("Returning at end of function")
+        logger.debug(f"Returning at end of function {parent.get_node_id()} alpha, beta: {parent.get_alpha_beta()}")
         return
 
     def find_depth_recursive(self, node, depth):

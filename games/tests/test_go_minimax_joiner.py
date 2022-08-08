@@ -759,15 +759,12 @@ class GoTreeTestCase(TestCase):
         )
 
         # WHEN
-        actual = tree_0801_1411.root_node.get_score(), len(
-            tree_0801_1411.root_node.get_children()
-        )
+        actual = tree_0801_1411.root_node.get_score()
 
         # THEN
-        expected = 3, 21
+        expected = 3
         self.assertEqual(expected, actual)
 
-    @skip("WIP")
     def test_build_and_prune_game_tree_recursive_sets_alpha_and_beta_values(self):
         # GIVEN
         node_0801_1435 = GoNode(
@@ -792,7 +789,7 @@ class GoTreeTestCase(TestCase):
         )
 
         # WHEN
-        actual, x = tree_0801_1435.root_node.get_alpha_beta()
+        x, actual = tree_0801_1435.root_node.get_alpha_beta()
 
         # THEN
         expected = 3
@@ -825,7 +822,6 @@ class GoTreeTestCase(TestCase):
         expected = "BREAK CONDITION MET"  # TODO
         self.assertEqual(expected, actual)
 
-    @skip("WIP")
     def test_build_and_prune_game_tree_recursive_nine_by_nine(self):
         # GIVEN
         node_0801_1547 = GoNode(
