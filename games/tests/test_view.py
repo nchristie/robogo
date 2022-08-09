@@ -118,9 +118,7 @@ class HelpersTestCase(TestCase):
         ]
 
         # WHEN
-        x, y = get_white_response(
-            board_state, winning_score=winning_score, depth=depth
-        )
+        x, y = get_white_response(board_state, winning_score=winning_score, depth=depth)
         board_state[x][y] = "○"
         print("\n\n\n***TEST BOARD STATE***")
         [print(f"{row}") for row in board_state]
@@ -129,4 +127,3 @@ class HelpersTestCase(TestCase):
         actual = (x, y)
         expected = (1, 0)
         self.assertEqual(expected, actual)
-

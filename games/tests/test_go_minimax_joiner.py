@@ -919,7 +919,6 @@ class GoTreeTestCase(TestCase):
         )
         white_move_node = tree_0809_0414.root_node.get_optimal_move()
 
-
         # WHEN
         actual = white_move_node.move_coordinates
 

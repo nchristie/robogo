@@ -131,7 +131,9 @@ class MinimaxNode:
         return "minimizer"
 
     def set_alpha_beta(self, alpha=-INFINITY, beta=INFINITY):
-        logger.debug(f"Setting alpha: {alpha}, beta: {beta}. Node: {self.get_node_id()}.")
+        logger.debug(
+            f"Setting alpha: {alpha}, beta: {beta}. Node: {self.get_node_id()}."
+        )
         self.alpha = alpha
         self.beta = beta
 
@@ -162,7 +164,7 @@ class MinimaxNode:
                 alpha = max(alpha, self.get_score())
             return alpha, beta
         except Exception as e:
-            raise Exception(f"calculate_alpha_and_beta failed with excepetion: {e}")
+            raise Exception(f"calculate_alpha_and_beta failed with exception: {e}")
 
 
 class MinimaxTree:
@@ -176,7 +178,7 @@ class MinimaxTree:
         node_ids=set(),
         alpha=-INFINITY,
         beta=INFINITY,
-        winning_score=WINNING_SCORE
+        winning_score=WINNING_SCORE,
     ):
         """
         Builds game tree to a given depth
@@ -203,7 +205,9 @@ class MinimaxTree:
         # Base case
         # If we're at a leaf node leave the recursion
         if depth == 0:
-            raise_error_if_node_has_children(parent, depth, message="Leaf nodes shouldn't have children")
+            raise_error_if_node_has_children(
+                parent, depth, message="Leaf nodes shouldn't have children"
+            )
 
             logger.debug("Getting score for terminal node")
             parent.set_score(parent_utility)
@@ -227,7 +231,9 @@ class MinimaxTree:
         # recurse case
         for child in parent.generate_next_child(depth, parent_node_id):
             child_node_id = child.get_node_id()
-            raise_error_if_node_has_children(child, depth, message="Nodes should initialise without children")
+            raise_error_if_node_has_children(
+                child, depth, message="Nodes should initialise without children"
+            )
 
             # Make sure we don't use same node twice
             if node_already_visited(child_node_id, node_ids):
@@ -275,7 +281,9 @@ class MinimaxTree:
                 )
                 return best_score
 
-        logger.debug(f"Returning at end of function {parent_node_id} alpha, beta: {(alpha, beta)}")
+        logger.debug(
+            f"Returning at end of function {parent_node_id} alpha, beta: {(alpha, beta)}"
+        )
         return best_score
 
     def find_depth_recursive(self, node, depth):
@@ -314,6 +322,7 @@ def are_break_conditions_met(alpha, beta):
     white_win = beta == -INFINITY
     return prune_tree or black_win or white_win
 
+
 def is_win_state(node, node_utility):
     if abs(node_utility) == INFINITY:
         winner = "Maximizer" if node_utility == INFINITY else "Minimizer"
@@ -321,20 +330,21 @@ def is_win_state(node, node_utility):
         return True
     return False
 
+
 def raise_error_if_node_has_children(node, depth, message=""):
     if node.children != []:
         e = f"{message}. Node at depth {depth} shouldn't have children node_id: {node.get_node_id()}, number of children: {len(node.children)} first child id: {node.children[0].get_node_id()}"
         logger.error(e)
         raise Exception(e)
 
+
 def raise_error_if_depth_less_than_zero(depth):
     if depth < 0:
         raise Exception(f"Maximum tree depth exceeded")
 
+
 def node_already_visited(node_id, node_ids):
     # Make sure we don't use same node twice
     if node_id in node_ids:
-        logger.debug(
-            f"node_id: {node_id} already visited, skipping"
-        )
+        logger.debug(f"node_id: {node_id} already visited, skipping")
         return True
