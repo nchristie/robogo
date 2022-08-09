@@ -3,7 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-WINNING_SCORE = 3
+WINNING_SCORE = 5
 
 INFINITY = float("inf")
 

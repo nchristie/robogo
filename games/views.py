@@ -11,8 +11,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-BOARD_SIZE = 5
-DEPTH = 6
+BOARD_SIZE = 9
+DEPTH = 5
 
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game

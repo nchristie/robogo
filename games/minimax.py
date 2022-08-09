@@ -27,7 +27,8 @@ class MinimaxNode:
         return (
             f"node_id: {self.get_node_id()}, "
             f"score: {self.get_score()}, "
-            f"number of children: {len(self.get_children())}"
+            f"number of children: {len(self.get_children())}, "
+            f"player_to_move: {self.get_player_to_move()}"
         )
 
     def get_player_to_move(self):
@@ -175,7 +176,7 @@ class MinimaxTree:
         node_ids=set(),
         alpha=-INFINITY,
         beta=INFINITY,
-        winning_score=WINNING_SCORE,
+        winning_score=WINNING_SCORE
     ):
         """
         Builds game tree to a given depth
@@ -193,110 +194,89 @@ class MinimaxTree:
             builds tree from parent
         """
         # Make sure we don't use same node twice
-        node_ids.add(parent.get_node_id())
+        parent_node_id = parent.get_node_id()
+        parent_utility = parent.get_utility(winning_score=winning_score)
+        node_ids.add(parent_node_id)
 
-        # error handling
-        if depth < 0:
-            raise Exception(f"Maximum tree depth exceeded")
+        raise_error_if_depth_less_than_zero(depth)
 
         # Base case
         # If we're at a leaf node leave the recursion
         if depth == 0:
-            # error handling
-            if parent.children != []:
-                e = f"Leaf node at depth {depth} shouldn't have children node_id: {parent.get_node_id()}, number of children: {len(parent.children)} first child id: {parent.children[0].get_node_id()}"
-                logger.error(e)
-                raise Exception(e)
+            raise_error_if_node_has_children(parent, depth, message="Leaf nodes shouldn't have children")
 
             logger.debug("Getting score for terminal node")
-            parent_score = parent.get_utility(winning_score=winning_score)
-            parent.set_score(parent_score)
+            parent.set_score(parent_utility)
 
             logger.debug(
-                f"Returning at depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
+                f"Returning at depth of {depth} with score of {parent_utility} at node: {parent_node_id}"
             )
-            return
+            return parent_utility
 
-        # don't build past the end of the game
+        # don't build depth past the end of the game
         logger.debug("Checking if win condition met")
-        parent_utility = parent.get_utility(winning_score=winning_score)
-        if abs(parent_utility) == INFINITY:
-            winner = "Maximizer" if parent_utility == INFINITY else "Minimizer"
-            logger.info(f"{winner} win found at: {parent.get_node_id()}")
-            parent_score = parent_utility
-            parent.set_score(parent_score)
-            logger.debug(
-                f"Returning at {winner} win depth of {depth} with score of {parent_score} at node: {parent.get_node_id()}"
-            )
-            return
-        else:
-            logger.debug("Win condition not met")
+        if is_win_state(parent, parent_utility):
+            parent.set_score(parent_utility)
+            return parent_utility
+        logger.debug("Win condition not met")
+
+        best_score = INFINITY
+        if parent.player_to_move == "maximizer":
+            best_score = -INFINITY
 
         # recurse case
-        parent_node_id = parent.get_node_id()
         for child in parent.generate_next_child(depth, parent_node_id):
-            # error handling
-            assert (
-                child.children == []
-            ), f"Error: Nodes should initialise without children. Node {child.get_node_id()} initialized with children including: {child.children[0].get_node_id()}"
+            child_node_id = child.get_node_id()
+            raise_error_if_node_has_children(child, depth, message="Nodes should initialise without children")
 
             # Make sure we don't use same node twice
-            if child.get_node_id() in node_ids:
-                logger.debug(
-                    f"node_id: {child.get_node_id()} already visited, skipping"
-                )
+            if node_already_visited(child_node_id, node_ids):
                 continue
 
+            # TODO don't build breadth or depth beyond win state
+
+            # **************************************************************************
             # use recursion to build tree vertically
-            if not self.build_and_prune_game_tree_recursive(
+            score = self.build_and_prune_game_tree_recursive(
                 child, depth - 1, node_ids, alpha, beta, winning_score=winning_score
-            ):
+            )
+            # **************************************************************************
 
-                # not self.build_and_prune_game_tree_recursive(..) will be True if:
-                # 1. we've reached the end of depth count-down
-                # This means first we'll get to the point we want to stop building vertically
-                # and then add children at this level. Once all children are added we will work
-                # back up the tree and add child nodes at higher levels
+            # to get to this stage:
+            # 1. we've reached the end of depth count-down
+            # This means first we'll get to the point we want to stop building vertically
+            # and then add children at this level. Once all children are added we will work
+            # back up the tree and add child nodes at higher levels
 
-                child_score = child.get_score()
-                if not child_score and child_score != 0:
-                    raise Exception(
-                        f"No score found at node: {child.get_node_id()} score: {child.get_score()}"
-                    )
-                else:
-                    logger.debug(f"Score found for node: {child.get_node_id()}")
+            # build tree horizontally
+            parent.add_child(child)
 
-                # build tree horizontally
-                parent.add_child(child)
-                best_child = parent.get_optimal_move()
-                best_score = best_child.get_score()
+            # set alpha and beta
+            if parent.get_player_to_move() == "maximizer":
+                best_score = max(best_score, score)
+                alpha = max(best_score, alpha)
+                parent.set_alpha_beta(alpha=alpha, beta=beta)
+            elif parent.get_player_to_move() == "minimizer":
+                best_score = min(best_score, score)
+                beta = min(best_score, beta)
+                parent.set_alpha_beta(alpha=alpha, beta=beta)
+            else:
+                raise Exception(
+                    f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}"
+                )
 
-                # set node score
-                parent.set_score(best_score)
+            # TODO is this the right place to set node score?
+            parent.set_score(best_score)
 
-                # set alpha and beta
-                if parent.get_player_to_move() == "maximizer":
-                    alpha = max(best_score, alpha)
-                    parent.set_alpha_beta(alpha=alpha, beta=beta)
-                elif parent.get_player_to_move() == "minimizer":
-                    beta = min(best_score, beta)
-                    parent.set_alpha_beta(alpha=alpha, beta=beta)
-                else:
-                    raise Exception(
-                        f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}"
-                    )
+            # break loop if beta <= alpha
+            if beta <= alpha:
+                logger.info(
+                    f"Returning at {parent.get_node_id()} as beta of {beta} <= alpha of {alpha}"
+                )
+                return best_score
 
-                alpha, beta = parent.get_alpha_beta()
-
-                # TODO break loop if beta <= alpha
-                if beta <= alpha:
-                    logger.debug(
-                        f"Returning at {parent.get_node_id()} as beta of {beta} < alpha of {alpha}"
-                    )
-                    return
-
-        logger.debug(f"Returning at end of function {parent.get_node_id()} alpha, beta: {parent.get_alpha_beta()}")
-        return
+        logger.debug(f"Returning at end of function {parent_node_id} alpha, beta: {(alpha, beta)}")
+        return best_score
 
     def find_depth_recursive(self, node, depth):
         if depth > MAX_TREE_DEPTH:
@@ -333,3 +313,28 @@ def are_break_conditions_met(alpha, beta):
     black_win = alpha == INFINITY
     white_win = beta == -INFINITY
     return prune_tree or black_win or white_win
+
+def is_win_state(node, node_utility):
+    if abs(node_utility) == INFINITY:
+        winner = "Maximizer" if node_utility == INFINITY else "Minimizer"
+        logger.debug(f"{winner} win found at: {node.get_node_id()}")
+        return True
+    return False
+
+def raise_error_if_node_has_children(node, depth, message=""):
+    if node.children != []:
+        e = f"{message}. Node at depth {depth} shouldn't have children node_id: {node.get_node_id()}, number of children: {len(node.children)} first child id: {node.children[0].get_node_id()}"
+        logger.error(e)
+        raise Exception(e)
+
+def raise_error_if_depth_less_than_zero(depth):
+    if depth < 0:
+        raise Exception(f"Maximum tree depth exceeded")
+
+def node_already_visited(node_id, node_ids):
+    # Make sure we don't use same node twice
+    if node_id in node_ids:
+        logger.debug(
+            f"node_id: {node_id} already visited, skipping"
+        )
+        return True
