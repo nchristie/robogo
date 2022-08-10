@@ -157,9 +157,10 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=DEPTH):
 
         logger.info(f"root node: {game_tree.root_node.__str__()}")
         for child in game_tree.root_node.get_children():
-            logger.info(f"{child.__str__()}")
-            # if child.get_move_coordinates() == (1, 0):
-            #     import pdb; pdb.set_trace()
+            if child.get_move_coordinates() == (1, 0):
+                for next_child in child.get_children():
+                    logger.info(next_child.__str__())
+
 
         try:
             white_move_node = game_tree.root_node.get_optimal_move()

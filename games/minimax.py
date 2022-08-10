@@ -1,5 +1,5 @@
 import logging
-from .game_logic import INFINITY, WINNING_SCORE
+from .game_logic import INFINITY, WINNING_SCORE, HIGHEST_SCORE, LOWEST_SCORE
 
 logger = logging.getLogger(__name__)
 
@@ -95,9 +95,9 @@ class MinimaxNode:
     def minimizer_strategy(self, child_score, best_score):
         return child_score < best_score
 
-    def get_utility(self):
+    def find_utility(self):
         raise Exception(
-            "In minimax get_utility, this should be implemented by class which inherits"
+            "In minimax find_utility, this should be implemented by class which inherits"
         )
 
     def generate_next_child(self, depth, parent_node_id="NA"):
@@ -135,8 +135,6 @@ class MinimaxTree:
         parent,
         depth,
         node_ids=set(),
-        alpha=-INFINITY,
-        beta=INFINITY,
         winning_score=WINNING_SCORE,
     ):
         """
@@ -156,19 +154,19 @@ class MinimaxTree:
         """
         # Make sure we don't use same node twice
         parent_node_id = parent.get_node_id()
-        parent_utility = parent.get_utility(winning_score=winning_score)
         node_ids.add(parent_node_id)
+
+        parent_utility = parent.find_utility(winning_score=winning_score)
 
         raise_error_if_depth_less_than_zero(depth)
 
         # Base case
         # If we're at a leaf node leave the recursion
-        if depth == 0:
+        # a leaf node is a node at full depth or a winning node
+        if depth == 0 or is_win_state(parent, parent_utility):
             raise_error_if_node_has_children(
                 parent, depth, message="Leaf nodes shouldn't have children"
             )
-
-            logger.debug("Getting score for terminal node")
             parent.set_score(parent_utility)
 
             logger.debug(
@@ -176,17 +174,12 @@ class MinimaxTree:
             )
             return parent_utility
 
-        # don't build depth past the end of the game
-        logger.debug("Checking if win condition met")
-        if is_win_state(parent, parent_utility):
-            parent.set_score(parent_utility)
-            return parent_utility
-        logger.debug("Win condition not met")
-
         if parent.player_to_move == "minimizer":
-            best_score = INFINITY
+            best_score = HIGHEST_SCORE
         if parent.player_to_move == "maximizer":
-            best_score = -INFINITY
+            best_score = LOWEST_SCORE
+
+        alpha, beta = -INFINITY, INFINITY
 
         # recurse case
         for child in parent.generate_next_child(depth, parent_node_id):
@@ -204,7 +197,7 @@ class MinimaxTree:
             # **************************************************************************
             # use recursion to build tree vertically
             score = self.build_and_prune_game_tree_recursive(
-                child, depth - 1, node_ids, alpha, beta, winning_score=winning_score
+                child, depth - 1, node_ids, winning_score=winning_score
             )
             # **************************************************************************
 
@@ -235,7 +228,7 @@ class MinimaxTree:
             # break loop if beta <= alpha
             if break_conditions_are_met(alpha, beta):
                 logger.info(
-                    f"Returning at {parent.get_node_id()}"
+                    f"Breaking at {parent.get_node_id()}"
                 )
                 break
 
@@ -276,16 +269,16 @@ def get_depth_from_node_id(node_id):
 
 def break_conditions_are_met(alpha, beta):
     prune_tree = alpha >= beta
-    maximizer_win = alpha == INFINITY
-    minimizer_win = beta == -INFINITY
+    maximizer_win = alpha == HIGHEST_SCORE
+    minimizer_win = beta == LOWEST_SCORE
     if prune_tree or maximizer_win or minimizer_win:
         logger.info(f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}")
     return prune_tree or maximizer_win or minimizer_win
 
 
 def is_win_state(node, node_utility):
-    if abs(node_utility) == INFINITY:
-        winner = "Maximizer" if node_utility == INFINITY else "Minimizer"
+    if abs(node_utility) == HIGHEST_SCORE:
+        winner = "Maximizer" if node_utility == HIGHEST_SCORE else "Minimizer"
         logger.debug(f"{winner} win found at: {node.get_node_id()}")
         return True
     return False

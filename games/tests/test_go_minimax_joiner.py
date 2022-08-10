@@ -2,7 +2,7 @@ from django.test import TestCase
 from games.go_minimax_joiner import GoNode, GoTree
 from types import GeneratorType
 from unittest import skip
-from games.game_logic import INFINITY
+from games.game_logic import HIGHEST_SCORE, LOWEST_SCORE
 
 
 class GoNodeTestCase(TestCase):
@@ -142,7 +142,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_9.get_utility(winning_score=5)
+        actual = my_node_9.find_utility(winning_score=5)
 
         # THEN
         expected = 1
@@ -156,7 +156,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_10.get_utility(winning_score=5)
+        actual = my_node_10.find_utility(winning_score=5)
 
         # THEN
         expected = 1
@@ -170,7 +170,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_11.get_utility(winning_score=5)
+        actual = my_node_11.find_utility(winning_score=5)
 
         # THEN
         expected = 2
@@ -184,7 +184,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_12.get_utility(winning_score=5)
+        actual = my_node_12.find_utility(winning_score=5)
 
         # THEN
         expected = 2
@@ -198,7 +198,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_13.get_utility(winning_score=5)
+        actual = my_node_13.find_utility(winning_score=5)
 
         # THEN
         expected = -2
@@ -212,7 +212,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_14.get_utility(winning_score=5)
+        actual = my_node_14.find_utility(winning_score=5)
 
         # THEN
         expected = 2
@@ -236,7 +236,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_15.get_utility(winning_score=5)
+        actual = my_node_15.find_utility(winning_score=5)
 
         # THEN
         expected = 0
@@ -260,10 +260,10 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_15.get_utility(winning_score=5)
+        actual = my_node_15.find_utility(winning_score=5)
 
         # THEN
-        expected = INFINITY
+        expected = HIGHEST_SCORE
         self.assertEqual(expected, actual)
 
     def test_get_scores_winner_white(self):
@@ -284,10 +284,10 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        actual = my_node_15.get_utility(winning_score=5)
+        actual = my_node_15.find_utility(winning_score=5)
 
         # THEN
-        expected = -INFINITY
+        expected = LOWEST_SCORE
         self.assertEqual(expected, actual)
 
     # TODO test_find_connecting_stones
@@ -596,7 +596,7 @@ class GoTreeTestCase(TestCase):
         )
 
         # THEN
-        expected = INFINITY, []
+        expected = HIGHEST_SCORE, []
         self.assertEqual(expected, actual)
 
     def test_build_and_prune_game_tree_recursive_sets_score_based_on_children(self):

@@ -114,7 +114,7 @@ class GoNode(MinimaxNode):
         down = (x_coordinate + 1, y_coordinate)
         return [up, left, right, down]
 
-    def get_utility(self, winning_score=WINNING_SCORE):
+    def find_utility(self, winning_score=WINNING_SCORE):
         """
         Finds value of node. To be used for terminal nodes only
         Returns:
@@ -124,12 +124,12 @@ class GoNode(MinimaxNode):
 
         score = score_dict["relative_black_score"]
         if score_dict[BLACK_STONE] >= winning_score:
-            score = INFINITY
+            score = HIGHEST_SCORE
             logger.debug(
                 f"Maximizer win found for {self.get_node_id()}, {self.move_coordinates}"
             )
         if score_dict[WHITE_STONE] >= winning_score:
-            score = -INFINITY
+            score = LOWEST_SCORE
             logger.debug(
                 f"Minimizer win found for {self.get_node_id()}, {self.move_coordinates}"
             )
@@ -158,7 +158,7 @@ class GoTree(MinimaxTree):
 
         for child in current_node.get_children():
             for child2 in child.get_children():
-                child2.set_score(child2.get_utility(winning_score=winning_score))
+                child2.set_score(child2.find_utility(winning_score=winning_score))
             child2_optimal_move = child.get_optimal_move()
             child.set_score(child2_optimal_move.get_score())
 

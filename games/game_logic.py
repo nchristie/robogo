@@ -7,7 +7,8 @@ WINNING_SCORE = 5
 
 INFINITY = float("inf")
 
-INITIAL_OPTIMAL_VALUES = {"maximizer": -INFINITY, "minimizer": INFINITY}
+HIGHEST_SCORE = 100
+LOWEST_SCORE = -HIGHEST_SCORE
 
 
 def is_move_valid(board_state, move_coordinates):
