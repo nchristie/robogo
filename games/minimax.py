@@ -12,15 +12,11 @@ class MinimaxNode:
         node_id=None,
         score=None,
         children=[],
-        alpha=-INFINITY,
-        beta=INFINITY,
         player_to_move=None,
     ):
         self.children = children
         self.node_id = node_id
         self.score = score
-        self.alpha = alpha
-        self.beta = beta
         self.player_to_move = player_to_move
 
     def __str__(self):
@@ -130,43 +126,6 @@ class MinimaxNode:
             return "maximizer"
         return "minimizer"
 
-    def set_alpha_beta(self, alpha=-INFINITY, beta=INFINITY):
-        logger.debug(
-            f"Setting alpha: {alpha}, beta: {beta}. Node: {self.get_node_id()}."
-        )
-        self.alpha = alpha
-        self.beta = beta
-
-    def get_alpha_beta(self):
-        return self.alpha, self.beta
-
-    def calculate_alpha_and_beta(self, alpha=-INFINITY, beta=INFINITY):
-        """
-        Takes the highest and lowest scores seen so far, and compares with the current node score
-        and updates alpha or beta depending on whether this node is a maximizer or minimizer
-        Parameters:
-            node (MinimaxNode): a node to check against running scores
-            alpha (int or float): highest score seen so far
-            beta (int or float): lowest score seen so far
-        Returns:
-            alpha, beta: as above
-        """
-        this_node_player = self.alternate_player_to_move()
-        try:
-            if self.score == None:
-                logger.debug(
-                    f"calculate_alpha_and_beta >> Node: {self.get_node_id()} hasn't got a score, returning without update"
-                )
-                return alpha, beta
-            if this_node_player == "minimizer":
-                beta = min(beta, self.get_score())
-            if this_node_player == "maximizer":
-                alpha = max(alpha, self.get_score())
-            return alpha, beta
-        except Exception as e:
-            raise Exception(f"calculate_alpha_and_beta failed with exception: {e}")
-
-
 class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
@@ -224,7 +183,8 @@ class MinimaxTree:
             return parent_utility
         logger.debug("Win condition not met")
 
-        best_score = INFINITY
+        if parent.player_to_move == "minimizer":
+            best_score = INFINITY
         if parent.player_to_move == "maximizer":
             best_score = -INFINITY
 
@@ -261,11 +221,9 @@ class MinimaxTree:
             if parent.get_player_to_move() == "maximizer":
                 best_score = max(best_score, score)
                 alpha = max(best_score, alpha)
-                parent.set_alpha_beta(alpha=alpha, beta=beta)
             elif parent.get_player_to_move() == "minimizer":
                 best_score = min(best_score, score)
                 beta = min(best_score, beta)
-                parent.set_alpha_beta(alpha=alpha, beta=beta)
             else:
                 raise Exception(
                     f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}"
@@ -275,11 +233,11 @@ class MinimaxTree:
             parent.set_score(best_score)
 
             # break loop if beta <= alpha
-            if beta <= alpha:
+            if break_conditions_are_met(alpha, beta):
                 logger.info(
-                    f"Returning at {parent.get_node_id()} as beta of {beta} <= alpha of {alpha}"
+                    f"Returning at {parent.get_node_id()}"
                 )
-                return best_score
+                break
 
         logger.debug(
             f"Returning at end of function {parent_node_id} alpha, beta: {(alpha, beta)}"
@@ -316,11 +274,13 @@ def get_depth_from_node_id(node_id):
     return str(node_id).split("-")[0]
 
 
-def are_break_conditions_met(alpha, beta):
-    prune_tree = alpha > beta
-    black_win = alpha == INFINITY
-    white_win = beta == -INFINITY
-    return prune_tree or black_win or white_win
+def break_conditions_are_met(alpha, beta):
+    prune_tree = alpha >= beta
+    maximizer_win = alpha == INFINITY
+    minimizer_win = beta == -INFINITY
+    if prune_tree or maximizer_win or minimizer_win:
+        logger.info(f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}")
+    return prune_tree or maximizer_win or minimizer_win
 
 
 def is_win_state(node, node_utility):

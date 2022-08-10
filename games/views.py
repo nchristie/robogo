@@ -154,6 +154,13 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=DEPTH):
             node_ids=set(),
             winning_score=winning_score,
         )
+
+        logger.info(f"root node: {game_tree.root_node.__str__()}")
+        for child in game_tree.root_node.get_children():
+            logger.info(f"{child.__str__()}")
+            # if child.get_move_coordinates() == (1, 0):
+            #     import pdb; pdb.set_trace()
+
         try:
             white_move_node = game_tree.root_node.get_optimal_move()
         except Exception as e:
@@ -175,6 +182,8 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=DEPTH):
     except Exception as e:
         logger.error(f"get_white_response failed with error: {e}")
         return
+
+    logger.info(f"white_move_node: {white_move_node.__str__()}")
 
     assert (
         type(white_move_node) == GoNode
