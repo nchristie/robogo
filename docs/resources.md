@@ -11,6 +11,7 @@
 - https://www.youtube.com/watch?v=_i-lZcbWkps - at 4.56 tree is pruned
 - https://www.youtube.com/watch?v=d2maa6k2gYE - presenter gets slightly muddled when talking
 - tic tac toe with minimax algo: https://www.youtube.com/watch?v=trKjYdBASyQ
+- https://mathspp.com/blog/minimax-algorithm-and-alpha-beta-pruning
 
 # Minimax and Alpha-Beta Search with Python
 - https://levelup.gitconnected.com/mastering-tic-tac-toe-with-minimax-algorithm-3394d65fa88f

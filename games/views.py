@@ -161,7 +161,6 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=DEPTH):
                 for next_child in child.get_children():
                     logger.info(next_child.__str__())
 
-
         try:
             white_move_node = game_tree.root_node.get_optimal_move()
         except Exception as e:

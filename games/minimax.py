@@ -28,7 +28,13 @@ class MinimaxNode:
         )
 
     def get_player_to_move(self):
-        return self.player_to_move
+        valid_options = ["maximizer", "minimizer"]
+        player_to_move = self.player_to_move
+        if player_to_move not in valid_options:
+            raise Exception(
+                f"Error for {self.node_id}, get_player_to_move returned invalid option: {player_to_move}"
+            )
+        return player_to_move
 
     def set_player_to_move(self, player_to_move):
         self.player_to_move = player_to_move
@@ -174,12 +180,17 @@ class MinimaxTree:
             )
             return parent_utility
 
-        if parent.player_to_move == "minimizer":
-            best_score = HIGHEST_SCORE
-        if parent.player_to_move == "maximizer":
-            best_score = LOWEST_SCORE
 
-        alpha, beta = -INFINITY, INFINITY
+        alpha = -INFINITY
+        beta = INFINITY
+        player_to_move = parent.get_player_to_move()
+
+        if player_to_move == "maximizer":
+            best_score = -INFINITY
+            func = max
+        elif player_to_move == "minimizer":
+            best_score = INFINITY
+            func = min
 
         # recurse case
         for child in parent.generate_next_child(depth, parent_node_id):
@@ -196,9 +207,9 @@ class MinimaxTree:
 
             # **************************************************************************
             # use recursion to build tree vertically
-            score = self.build_and_prune_game_tree_recursive(
+            best_score = func(self.build_and_prune_game_tree_recursive(
                 child, depth - 1, node_ids, winning_score=winning_score
-            )
+            ), best_score)
             # **************************************************************************
 
             # to get to this stage:
@@ -209,21 +220,13 @@ class MinimaxTree:
 
             # build tree horizontally
             parent.add_child(child)
+            parent.set_score(best_score)
 
             # set alpha and beta
-            if parent.get_player_to_move() == "maximizer":
-                best_score = max(best_score, score)
-                alpha = max(best_score, alpha)
-            elif parent.get_player_to_move() == "minimizer":
-                best_score = min(best_score, score)
-                beta = min(best_score, beta)
-            else:
-                raise Exception(
-                    f"Error for {parent_node_id}, get_player_to_move returned: {parent.get_player_to_move()}"
-                )
-
-            # TODO is this the right place to set node score?
-            parent.set_score(best_score)
+            if player_to_move == "maximizer":
+                alpha = func(best_score, alpha)
+            elif player_to_move == "minimizer":
+                beta = func(best_score, beta)
 
             # break loop if beta <= alpha
             if break_conditions_are_met(alpha, beta):

@@ -83,3 +83,37 @@ Looking at the function: get_optimal_move, it seems originally the way I was han
 
 # Handy for seeing board state from pdb
 [print(f"{row}") for row in board_state]
+
+[print(child) for child in tree_0809_0414.root_node.get_children()[3].get_children()[7].get_children()[7].get_children()[10].get_children()[0].board_state]
+
+
+(Pdb) [print(row) for row in tree_0809_0414.root_node.get_children()[3].board_state]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+[None, None, None, None, None]
+(Pdb) [print(row) for row in tree_0809_0414.root_node.get_children()[3].get_children()[7].board_state]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '●', '+', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+[None, None, None, None, None]
+(Pdb) [print(row) for row in tree_0809_0414.root_node.get_children()[3].get_children()[7].get_children()[7].board_state]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '●', '○', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+[None, None, None, None, None]
+(Pdb) [print(row) for row in tree_0809_0414.root_node.get_children()[3].get_children()[7].get_children()[7].get_children[10].board_state]
+*** TypeError: 'method' object is not subscriptable
+(Pdb) [print(row) for row in tree_0809_0414.root_node.get_children()[3].get_children()[7].get_children()[7].get_children()[10].board_state]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '●', '○', '+', '+']
+['+', '●', '+', '+', '+']
+['+', '+', '+', '+', '+']
+[None, None, None, None, None]
