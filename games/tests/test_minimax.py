@@ -110,6 +110,7 @@ class MinimaxNodeTestCase(TestCase):
         actual = optimal_move.get_score()
         self.assertEqual(expected, actual)
 
+
 class HelpersTestCase(TestCase):
     def test_break_conditions_are_met(self):
         # GIVEN

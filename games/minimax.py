@@ -132,6 +132,7 @@ class MinimaxNode:
             return "maximizer"
         return "minimizer"
 
+
 class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
@@ -180,7 +181,6 @@ class MinimaxTree:
             )
             return parent_utility
 
-
         alpha = -INFINITY
         beta = INFINITY
         player_to_move = parent.get_player_to_move()
@@ -207,9 +207,12 @@ class MinimaxTree:
 
             # **************************************************************************
             # use recursion to build tree vertically
-            best_score = func(self.build_and_prune_game_tree_recursive(
-                child, depth - 1, node_ids, winning_score=winning_score
-            ), best_score)
+            best_score = func(
+                self.build_and_prune_game_tree_recursive(
+                    child, depth - 1, node_ids, winning_score=winning_score
+                ),
+                best_score,
+            )
             # **************************************************************************
 
             # to get to this stage:
@@ -230,9 +233,7 @@ class MinimaxTree:
 
             # break loop if beta <= alpha
             if break_conditions_are_met(alpha, beta):
-                logger.info(
-                    f"Breaking at {parent.get_node_id()}"
-                )
+                logger.info(f"Breaking at {parent.get_node_id()}")
                 break
 
         logger.debug(
@@ -275,7 +276,9 @@ def break_conditions_are_met(alpha, beta):
     maximizer_win = alpha == HIGHEST_SCORE
     minimizer_win = beta == LOWEST_SCORE
     if prune_tree or maximizer_win or minimizer_win:
-        logger.info(f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}")
+        logger.info(
+            f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}"
+        )
     return prune_tree or maximizer_win or minimizer_win
 
 
