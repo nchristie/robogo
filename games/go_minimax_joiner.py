@@ -26,8 +26,9 @@ class GoNode(MinimaxNode):
         move_coordinates=(),
         optimal_move_coordinates=None,
         player_to_move=None,
+        path_depth = 0
     ):
-        super().__init__(node_id, score, children, player_to_move)
+        super().__init__(node_id, score, children, player_to_move, path_depth)
         self.board_state = board_state
         self.set_move_coordinates(move_coordinates)
         self.optimal_move_coordinates = optimal_move_coordinates
@@ -38,7 +39,8 @@ class GoNode(MinimaxNode):
             f"score: {self.get_score()}, "
             f"number of children: {len(self.get_children())}, "
             f"player_to_move: {self.get_player_to_move()}, "
-            f"move_coordinates: {self.get_move_coordinates()},"
+            f"move_coordinates: {self.get_move_coordinates()}, "
+            f"path_depth: {self.get_path_depth()}"
         )
 
     def get_board_state(self):

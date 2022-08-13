@@ -1,9 +1,7 @@
 import logging
-from .game_logic import INFINITY, WINNING_SCORE, HIGHEST_SCORE, LOWEST_SCORE
+from .game_logic import *
 
 logger = logging.getLogger(__name__)
-
-MAX_TREE_DEPTH = 6
 
 class MinimaxNode:
     def __init__(
@@ -12,18 +10,21 @@ class MinimaxNode:
         score=None,
         children=[],
         player_to_move=None,
+        path_depth=0
     ):
         self.children = children
         self.node_id = node_id
         self.score = score
         self.player_to_move = player_to_move
+        self.path_depth = path_depth
 
     def __str__(self):
         return (
             f"node_id: {self.get_node_id()}, "
             f"score: {self.get_score()}, "
             f"number of children: {len(self.get_children())}, "
-            f"player_to_move: {self.get_player_to_move()}"
+            f"player_to_move: {self.get_player_to_move()} "
+            f"path_depth:  {self.path_depth}"
         )
 
     def get_player_to_move(self):
@@ -60,6 +61,12 @@ class MinimaxNode:
         # TODO test
         return self.get_node_id().split("_")[0]
 
+    def get_path_depth(self):
+        return self.path_depth
+
+    def set_path_depth(self, depth):
+        self.path_depth = depth
+
     def add_child(self, child):
         child_depth = get_depth_from_node_id(child.get_node_id())
         parent_depth = get_depth_from_node_id(self.get_node_id())
@@ -82,6 +89,7 @@ class MinimaxNode:
         best_move = self.children[0]
         player_to_move = self.player_to_move
         best_score = best_move.get_score()
+        best_path_depth = best_move.get_path_depth()
 
         strategy = self.maximizer_strategy
         if player_to_move == "minimizer":
@@ -89,9 +97,18 @@ class MinimaxNode:
 
         for child in self.children:
             child_score = child.get_score()
-            if strategy(child_score, best_score):
+            child_path_depth = child.get_path_depth()
+            if player_to_move == "maximizer" and child_score == HIGHEST_SCORE:
+                best_move = child
+            if player_to_move == "minimizer" and child_score == LOWEST_SCORE:
+                best_move = child
+            elif strategy(child_score, best_score):
                 best_move = child
                 best_score = best_move.get_score()
+            elif player_to_move == "minimizer" and child_score == HIGHEST_SCORE and child_score == best_score:
+                if child_path_depth < best_path_depth:
+                    best_path_depth = child_path_depth
+                    best_move = child
         return best_move
 
     def maximizer_strategy(self, child_score, best_score):
@@ -139,7 +156,7 @@ class MinimaxTree:
     def build_and_prune_game_tree_recursive(
         self,
         parent,
-        depth,
+        depth=MAX_TREE_DEPTH,
         node_ids=set(),
         winning_score=WINNING_SCORE,
     ):
@@ -151,9 +168,10 @@ class MinimaxTree:
             depth (int): how far down the tree we want to build
             node_ids (set): all the move ids which have been
                 encountered so far
+            winning_score: how many stones in a row constitutes a win
 
         Returns:
-            None
+            parent_utility at full depth and best_score at all other levels
 
         Side effects:
             builds tree from parent
@@ -174,15 +192,17 @@ class MinimaxTree:
                 parent, depth, message="Leaf nodes shouldn't have children"
             )
             parent.set_score(parent_utility)
+            parent.set_path_depth(depth)
 
             logger.debug(
                 f"Returning at depth of {depth} with score of {parent_utility} at node: {parent_node_id}"
             )
-            return parent_utility
+            return {"best_score": parent_utility, "path_depth": depth}
 
         alpha = -INFINITY
         beta = INFINITY
         player_to_move = parent.get_player_to_move()
+        best_path_depth = MAX_TREE_DEPTH
 
         if player_to_move == "maximizer":
             best_score = LOWEST_SCORE
@@ -206,12 +226,15 @@ class MinimaxTree:
 
             # **************************************************************************
             # use recursion to build tree vertically
-            best_score = func(
-                self.build_and_prune_game_tree_recursive(
+            res = self.build_and_prune_game_tree_recursive(
                     child, depth - 1, node_ids, winning_score=winning_score
-                ),
+                )
+            path_depth = res["path_depth"]
+            best_score = func(
+                res["best_score"],
                 best_score,
             )
+            best_path_depth = min(best_path_depth, path_depth)
             # **************************************************************************
 
             # to get to this stage:
@@ -223,6 +246,7 @@ class MinimaxTree:
             # build tree horizontally
             parent.add_child(child)
             parent.set_score(best_score)
+            parent.set_path_depth(child.get_path_depth())
 
             # set alpha and beta
             if player_to_move == "maximizer":
@@ -238,7 +262,7 @@ class MinimaxTree:
         logger.debug(
             f"Returning at end of function {parent_node_id} alpha, beta: {(alpha, beta)}"
         )
-        return best_score
+        return {"best_score": best_score, "path_depth": depth}
 
     def find_depth_recursive(self, node, depth):
         if depth > MAX_TREE_DEPTH:

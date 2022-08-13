@@ -117,3 +117,12 @@ Looking at the function: get_optimal_move, it seems originally the way I was han
 ['+', '●', '+', '+', '+']
 ['+', '+', '+', '+', '+']
 [None, None, None, None, None]
+
+
+[
+['●', '○', '●', '+', '+'],
+['○', '+', '●', '+', '+'],
+['+', '+', '+', '+', '+'],
+['+', '+', '+', '+', '+'],
+['+', '+', '+', '+', '+'],
+]

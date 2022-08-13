@@ -759,3 +759,5 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = (1, 0)
         self.assertEqual(expected, actual)
+
+
