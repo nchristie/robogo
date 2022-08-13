@@ -11,7 +11,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-BOARD_SIZE = 9
+BOARD_SIZE = 5
 DEPTH = 5
 
 # TODO remove drop down with ip addresses and form entry for player colour

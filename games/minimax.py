@@ -5,7 +5,6 @@ logger = logging.getLogger(__name__)
 
 MAX_TREE_DEPTH = 6
 
-
 class MinimaxNode:
     def __init__(
         self,
@@ -186,10 +185,10 @@ class MinimaxTree:
         player_to_move = parent.get_player_to_move()
 
         if player_to_move == "maximizer":
-            best_score = -INFINITY
+            best_score = LOWEST_SCORE
             func = max
         elif player_to_move == "minimizer":
-            best_score = INFINITY
+            best_score = HIGHEST_SCORE
             func = min
 
         # recurse case
@@ -233,7 +232,7 @@ class MinimaxTree:
 
             # break loop if beta <= alpha
             if break_conditions_are_met(alpha, beta):
-                logger.info(f"Breaking at {parent.get_node_id()}")
+                logger.info(f"Breaking at {parent.__str__()}")
                 break
 
         logger.debug(
