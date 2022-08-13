@@ -3,14 +3,10 @@ from .game_logic import *
 
 logger = logging.getLogger(__name__)
 
+
 class MinimaxNode:
     def __init__(
-        self,
-        node_id=None,
-        score=None,
-        children=[],
-        player_to_move=None,
-        path_depth=0
+        self, node_id=None, score=None, children=[], player_to_move=None, path_depth=0
     ):
         self.children = children
         self.node_id = node_id
@@ -105,7 +101,11 @@ class MinimaxNode:
             elif strategy(child_score, best_score):
                 best_move = child
                 best_score = best_move.get_score()
-            elif player_to_move == "minimizer" and child_score == HIGHEST_SCORE and child_score == best_score:
+            elif (
+                player_to_move == "minimizer"
+                and child_score == HIGHEST_SCORE
+                and child_score == best_score
+            ):
                 if child_path_depth < best_path_depth:
                     best_path_depth = child_path_depth
                     best_move = child
@@ -227,8 +227,8 @@ class MinimaxTree:
             # **************************************************************************
             # use recursion to build tree vertically
             res = self.build_and_prune_game_tree_recursive(
-                    child, depth - 1, node_ids, winning_score=winning_score
-                )
+                child, depth - 1, node_ids, winning_score=winning_score
+            )
             path_depth = res["path_depth"]
             best_score = func(
                 res["best_score"],

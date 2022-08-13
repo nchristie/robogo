@@ -56,8 +56,10 @@ class Index(View):
             # TODO split some logic here out into other function
             chained_state = list(itertools.chain(*my_board.state))
             if BLACK_STONE in chained_state:
-                if sum(stone==BLACK_STONE for stone in chained_state) == 1:
-                    white_x = 0 # TODO either pick random board location or sensible one
+                if sum(stone == BLACK_STONE for stone in chained_state) == 1:
+                    white_x = (
+                        0  # TODO either pick random board location or sensible one
+                    )
                     white_y = 1
                 else:
                     try:
