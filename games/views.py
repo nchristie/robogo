@@ -11,8 +11,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-BOARD_SIZE = 5
-
 # TODO remove drop down with ip addresses and form entry for player colour
 # TODO create button for starting new game
 
@@ -80,6 +78,21 @@ class Index(View):
         # Update board with white response
         moves = user_game.move_set.all().order_by("-id")
         my_board.update(moves)
+
+        scores = get_score_dict(my_board.state)
+        black_score = scores[BLACK_STONE]
+        white_score = scores[WHITE_STONE]
+
+        open_moves = sum(x == "+" for x in list(itertools.chain(*my_board.state)))
+
+        winner = "No-one"
+        if black_score >= WINNING_SCORE:
+            winner = "Black"
+        elif white_score >= WINNING_SCORE:
+            winner = "White"
+        elif open_moves == 0:
+            winner = "Stalemate"
+
         transposed_board = transpose_board(my_board.state)
 
         context = {
@@ -90,6 +103,7 @@ class Index(View):
             "black_score": black_score,
             "white_score": white_score,
             "winner": winner,
+            "winning_score": WINNING_SCORE,
         }
         # TODO show white win as soon as white has played a winning move
         return render(request, "games/index.html", context)

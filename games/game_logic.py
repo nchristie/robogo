@@ -3,8 +3,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-WINNING_SCORE = 3
-MAX_TREE_DEPTH = 6
+BOARD_SIZE = 9
+WINNING_SCORE = 5
+MAX_TREE_DEPTH = 2
 
 INFINITY = float("inf")
 
