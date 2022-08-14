@@ -84,37 +84,52 @@ class GoNode(MinimaxNode):
             i += 1
             yield next_node
 
-    def generate_next_child_around_existing_moves(
-        self, depth=0, player_to_move="maximizer"
-    ):
+    def get_all_children_around_existing_moves(self, depth=0, parent_node_id="NA"):
+        """
+        Returns:
+            GoNode: possible moves on the board sorted by proximity to other stones
+        """
         # I've returned this function to the code as I think I may want it later
+        moves = []
+        all_positions = []
+        player_to_move = self.alternate_player_to_move()
+        stone = PLAYER_DICT[player_to_move]
+        board_size = len(self.board_state)
+        populated_cells = []
+
         for x_coordinate, row in enumerate(self.board_state):
             for y_coordinate, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
-                    all_intersecting_positions = self.find_moves_around_position(
-                        x_coordinate, y_coordinate
-                    )
-                    for i, move_coordinates in enumerate(all_intersecting_positions):
-                        if is_move_valid(self.board_state, move_coordinates):
-                            new_board_state = deepcopy(self.board_state)
-                            x = move_coordinates[0]
-                            y = move_coordinates[1]
-                            new_board_state[x][y] = BLACK_STONE
-                            child = GoNode(
-                                node_id=self.make_node_id(depth, i),
-                                board_state=new_board_state,
-                                move_coordinates=move_coordinates,
-                                player_to_move=player_to_move,
-                            )
-                            yield child
+                    populated_cells.append((x_coordinate, y_coordinate))
 
-    def find_moves_around_position(self, x_coordinate, y_coordinate):
-        # I've returned this function to the code as I think I may want it later
-        up = (x_coordinate - 1, y_coordinate)
-        left = (x_coordinate, y_coordinate - 1)
-        right = (x_coordinate, y_coordinate + 1)
-        down = (x_coordinate + 1, y_coordinate)
-        return [up, left, right, down]
+        for jump_size in range(1, board_size):
+
+            for x_coordinate, y_coordinate in populated_cells:
+                surrounding_positions = find_moves_around_position(
+                    x_coordinate, y_coordinate, jump_size=jump_size
+                )
+                for position in surrounding_positions:
+                    if not is_move_valid(self.board_state, position):
+                        continue
+                    if position not in all_positions:
+                        all_positions.append(position)
+            jump_size += 1
+
+        for i, move_coordinates in enumerate(all_positions):
+            new_board_state = deepcopy(self.board_state)
+            x = move_coordinates[0]
+            y = move_coordinates[1]
+            new_board_state[x][y] = stone
+            node_id = self.make_node_id(depth, i, parent_node_id)
+            child = GoNode(
+                node_id=node_id,
+                board_state=new_board_state,
+                move_coordinates=move_coordinates,
+                children=[],
+                player_to_move=player_to_move,
+            )
+            moves.append(child)
+        return moves
 
     def find_utility(self, winning_score=WINNING_SCORE):
         """

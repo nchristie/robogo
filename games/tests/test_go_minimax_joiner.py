@@ -2,25 +2,10 @@ from django.test import TestCase
 from games.go_minimax_joiner import GoNode, GoTree
 from types import GeneratorType
 from unittest import skip
-from games.game_logic import HIGHEST_SCORE, LOWEST_SCORE
+from games.game_logic import *
 
 
 class GoNodeTestCase(TestCase):
-    def test_find_legal_move(self):
-        # GIVEN
-        board_state = [["+", "+", "+"], ["+", "●", "+"], ["+", "+", "+"]]
-        my_node_1 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
-
-        # WHEN
-        potential_moves = my_node_1.generate_next_child_around_existing_moves()
-        actual = [item.move_coordinates for item in potential_moves]
-
-        # THEN
-        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        self.assertEqual(expected, actual)
-
     def test_find_legal_move_when_boundary(self):
         # GIVEN
         board_state = [["+", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
@@ -29,11 +14,11 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_2.generate_next_child_around_existing_moves()
-        actual = [item.move_coordinates for item in potential_moves]
+        potential_moves = my_node_2.get_all_children_around_existing_moves()
+        actual = [item.move_coordinates for item in potential_moves][:3]
 
         # THEN
-        expected = [(1, 2), (2, 1)]
+        expected = [(1, 1), (1, 2), (2, 1)]
         self.assertEqual(expected, actual)
 
     def test_find_legal_move_when_neighbouring_stones(self):
@@ -49,11 +34,22 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_3.generate_next_child_around_existing_moves()
-        actual = [item.move_coordinates for item in potential_moves]
+        potential_moves = my_node_3.get_all_children_around_existing_moves()
+        actual = [item.move_coordinates for item in potential_moves][:10]
 
         # THEN
-        expected = [(0, 1), (1, 0), (1, 2), (2, 0), (2, 2), (3, 1)]
+        expected = [
+            (0, 0),
+            (0, 1),
+            (0, 2),
+            (1, 2),
+            (2, 2),
+            (2, 0),
+            (1, 0),
+            (3, 2),
+            (3, 1),
+            (3, 0),
+        ]
         self.assertEqual(expected, actual)
 
     # TODO test_find_legal_move_when_surrounded
@@ -74,7 +70,7 @@ class GoNodeTestCase(TestCase):
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 
-    def test_child_getter_returns_attack_options(self):
+    def test_get_all_children_around_existing_moves_attack_options(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_5 = GoNode(
@@ -84,8 +80,8 @@ class GoNodeTestCase(TestCase):
         # WHEN
 
         # THEN
-        expected = [(0, 1), (1, 0)]
-        potential_moves = my_node_5.generate_next_child_around_existing_moves()
+        expected = [(0, 1), (1, 1), (1, 0)]
+        potential_moves = my_node_5.get_all_children_around_existing_moves()[:3]
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -99,9 +95,9 @@ class GoNodeTestCase(TestCase):
         # WHEN
 
         # THEN
-        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_6.generate_next_child_around_existing_moves()
-        actual = [item.move_coordinates for item in potential_moves]
+        expected = [(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)]
+        potential_moves = my_node_6.get_all_children_around_existing_moves()
+        actual = [item.move_coordinates for item in potential_moves][:5]
         self.assertEqual(expected, actual)
 
     def test_child_getter_returns_defend_options_2_groups(self):
@@ -114,12 +110,31 @@ class GoNodeTestCase(TestCase):
         # WHEN
 
         # THEN
-        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_7.generate_next_child_around_existing_moves()
-        actual = [item.move_coordinates for item in potential_moves]
+        expected = [(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)]
+        potential_moves = my_node_7.get_all_children_around_existing_moves()
+        actual = [item.move_coordinates for item in potential_moves][:5]
         self.assertEqual(expected, actual)
 
-    def test_child_getter_returns_attack_and_defend_options(self):
+    def test_get_all_children_around_existing_moves_returns_all_moves(self):
+        # GIVEN
+        board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
+        my_node_0814_1445 = GoNode(
+            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+        )
+
+        # WHEN
+
+        # THEN
+        all_moves = set(list_all_moves_on_board(3))
+        all_moves.remove((0, 0))
+        expected = all_moves
+        potential_moves = my_node_0814_1445.get_all_children_around_existing_moves()
+        actual = set([item.move_coordinates for item in potential_moves])
+        self.assertEqual(expected, actual)
+
+    def test_get_all_children_around_existing_moves_returns_attack_and_defend_options_first(
+        self,
+    ):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
         my_node_8 = GoNode(
@@ -127,11 +142,11 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
+        potential_moves = my_node_8.get_all_children_around_existing_moves()
 
         # THEN
-        expected = [(0, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_8.generate_next_child_around_existing_moves()
-        actual = [item.move_coordinates for item in potential_moves]
+        expected = set([(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)])
+        actual = set([item.move_coordinates for item in potential_moves][:5])
         self.assertEqual(expected, actual)
 
     def test_get_scores_one_stone(self):
@@ -759,3 +774,54 @@ class GoTreeTestCase(TestCase):
         # THEN
         expected = (1, 0)
         self.assertEqual(expected, actual)
+
+    @skip("WIP")
+    def test_build_and_prune_game_tree_recursive_blocks_again(self):
+        # GIVEN
+        winning_score = 3
+        depth = 6
+
+        board_state = [
+            ["●", "○", "+", "+", "+"],
+            ["○", "+", "+", "+", "+"],
+            ["●", "●", "+", "+", "+"],
+            ["+", "+", "+", "+", "+"],
+            ["+", "+", "+", "+", "+"],
+        ]
+        node_0813_1023 = GoNode(
+            node_id="root_node_0813_1023",
+            score=None,
+            children=[],
+            board_state=board_state,
+            player_to_move="minimizer",
+        )
+        # hack to get around suspected test pollution
+        node_0813_1023.children = []
+
+        tree_0813_1023 = GoTree(node_0813_1023)
+
+        tree_0813_1023.build_and_prune_game_tree_recursive(
+            tree_0813_1023.root_node, depth, winning_score=winning_score
+        )
+        white_move_node = tree_0813_1023.root_node.get_optimal_move()
+
+        # WHEN
+        actual = white_move_node.move_coordinates
+
+        # THEN
+        expected = (2, 2)
+        print_game_path(depth + 1, tree_0813_1023.root_node)
+        self.assertEqual(expected, actual)
+
+
+def print_game_path(depth, print_node):
+    for i in range(depth):
+        print(
+            f"Move {i} score: {print_node.get_score()}, path_depth: {print_node.get_path_depth()}"
+        )
+        for row in print_node.board_state:
+            print(row)
+        if not print_node.is_leaf_node():
+            print_node = print_node.get_optimal_move()
+        else:
+            break

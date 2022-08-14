@@ -97,3 +97,6 @@ https://stackoverflow.com/
 # Logging
 - https://docs.djangoproject.com/en/4.0/topics/logging/
 - https://www.sentinelone.com/blog/getting-started-quickly-django-logging/
+
+# Sorting moves
+- https://www.youtube.com/watch?v=dqL0L6tNz_M

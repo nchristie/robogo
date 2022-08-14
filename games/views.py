@@ -174,15 +174,7 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_
             logger.error(f"Couldn't get optimal move {e}")
         print_node = white_move_node
         try:
-            for i in range(depth):
-                logger.error(f"Move {i}")
-                for row in transpose_board(print_node.board_state):
-                    # for row in print_node.board_state:
-                    logger.error(row)
-                if not print_node.is_leaf_node():
-                    print_node = print_node.get_optimal_move()
-                else:
-                    break
+            print_game_path(depth, print_node)
         except Exception as e:
             logger.error(f"Error printing board: {e}")
 
@@ -198,3 +190,14 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_
     white_move = white_move_node.move_coordinates
     logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move
+
+
+def print_game_path(depth, print_node):
+    for i in range(depth):
+        logger.error(f"Move {i} score: {print_node.get_score()}")
+        for row in transpose_board(print_node.board_state):
+            logger.error(row)
+        if not print_node.is_leaf_node():
+            print_node = print_node.get_optimal_move()
+        else:
+            break

@@ -1,3 +1,4 @@
+from typing import Any
 from games.game_logic import *
 import pytest
 from games.go_minimax_joiner import GoNode
@@ -214,4 +215,61 @@ def test_list_all_moves_on_board():
 
     # THEN
     expected = 81
+    assert expected == actual
+
+
+def test_find_moves_around_position():
+    # GIVEN
+    # board_state = [
+    #     ["+", "+", "+"],
+    #     ["+", "●", "+"],
+    #     ["+", "+", "+"]
+    # ]
+    x_coordinate = 1
+    y_coordinate = 1
+    jump_size = 1
+
+    # WHEN
+    actual = find_moves_around_position(x_coordinate, y_coordinate, jump_size=jump_size)
+
+    # THEN
+    expected = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2), (2, 1), (2, 0), (1, 0)]
+    assert expected == actual
+
+
+def test_find_moves_around_position():
+    # GIVEN
+    # board_state = [
+    #     ["+", "+", "+", "+", "+"],
+    #     ["+", "+", "+", "+", "+"],
+    #     ["+", "+", "●", "+", "+"],
+    #     ["+", "+", "+", "+", "+"],
+    #     ["+", "+", "+", "+", "+"],
+    # ]
+    x_coordinate = 2
+    y_coordinate = 2
+    jump_size = 2
+
+    # WHEN
+    actual = find_moves_around_position(x_coordinate, y_coordinate, jump_size=jump_size)
+
+    # THEN
+    expected = [
+        (0, 0),  # top_left
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (0, 4),  # top_right
+        (1, 4),
+        (2, 4),
+        (3, 4),
+        (4, 4),  # bottom_left
+        (4, 3),
+        (4, 2),
+        (4, 1),
+        (4, 0),  # bottom_right
+        (3, 0),
+        (2, 0),
+        (1, 0),
+    ]
     assert expected == actual

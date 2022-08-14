@@ -172,3 +172,35 @@ def get_row_score(row, stone_colour):
         else:
             score_count += 1
     return max(row_score)
+
+
+def find_moves_around_position(x_coordinate, y_coordinate, jump_size=1):
+    moves_around_position = []
+    distance = jump_size * 2
+
+    top_row_x_coordinate = x_coordinate - jump_size
+    leftmost_y_coordinate = y_coordinate - jump_size
+    rightmost_y_coordinate = y_coordinate + jump_size
+    bottom_row_x_coordinate = x_coordinate + jump_size
+
+    # find all coordinates between top_left (incl) and top_right (excl)
+    for i in range(distance):
+        moves_around_position.append((top_row_x_coordinate, leftmost_y_coordinate + i))
+
+    # find all coordinates between top_right (incl) and bottom_right (excl)
+    for i in range(distance):
+        moves_around_position.append((top_row_x_coordinate + i, rightmost_y_coordinate))
+
+    # find all coordinates between bottom_right (incl) and bottom_left (excl)
+    for i in range(distance):
+        moves_around_position.append(
+            (bottom_row_x_coordinate, rightmost_y_coordinate - i)
+        )
+
+    # find all coordinates between bottom_left (incl) and top_left (excl)
+    for i in range(distance):
+        moves_around_position.append(
+            (bottom_row_x_coordinate - i, leftmost_y_coordinate)
+        )
+
+    return moves_around_position

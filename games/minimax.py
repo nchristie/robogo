@@ -77,7 +77,7 @@ class MinimaxNode:
         return self.children
 
     def get_optimal_move(self):
-        # input is Node, output is Node
+        # output is Node
         if not self.children:
             raise Exception(
                 f"get_optimal_move error for {self.get_node_id()}: node has no children {[child for child in self.children]}"
@@ -98,17 +98,13 @@ class MinimaxNode:
                 best_move = child
             if player_to_move == "minimizer" and child_score == LOWEST_SCORE:
                 best_move = child
-            elif strategy(child_score, best_score):
-                best_move = child
-                best_score = best_move.get_score()
-            elif (
-                player_to_move == "minimizer"
-                and child_score == HIGHEST_SCORE
-                and child_score == best_score
-            ):
+            elif minimizer_is_on_losing_path(player_to_move, child_score, best_score):
                 if child_path_depth < best_path_depth:
                     best_path_depth = child_path_depth
                     best_move = child
+            elif strategy(child_score, best_score):
+                best_move = child
+                best_score = best_move.get_score()
         return best_move
 
     def maximizer_strategy(self, child_score, best_score):
@@ -125,6 +121,11 @@ class MinimaxNode:
     def generate_next_child(self, depth, parent_node_id="NA"):
         raise Exception(
             f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
+        )
+
+    def get_all_children_around_existing_moves(self, depth=0, parent_node_id="NA"):
+        raise Exception(
+            f"In minimax get_all_children_around_existing_moves, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
         )
 
     def is_leaf_node(self):
@@ -330,3 +331,11 @@ def node_already_visited(node_id, node_ids):
     if node_id in node_ids:
         logger.debug(f"node_id: {node_id} already visited, skipping")
         return True
+
+
+def minimizer_is_on_losing_path(player_to_move, child_score, best_score):
+    return (
+        player_to_move == "minimizer"
+        and child_score == HIGHEST_SCORE
+        and child_score == best_score
+    )
