@@ -89,7 +89,7 @@ class GoNode(MinimaxNode):
         Returns:
             GoNode: possible moves on the board sorted by proximity to other stones
         """
-        # I've returned this function to the code as I think I may want it later
+
         moves = []
         all_positions = []
         player_to_move = self.alternate_player_to_move()
@@ -101,6 +101,9 @@ class GoNode(MinimaxNode):
             for y_coordinate, cell in enumerate(row):
                 if cell != EMPTY_POSITION:
                     populated_cells.append((x_coordinate, y_coordinate))
+
+        if not populated_cells:
+            return [child for child in self.generate_next_child(depth, parent_node_id)]
 
         for jump_size in range(1, board_size):
 

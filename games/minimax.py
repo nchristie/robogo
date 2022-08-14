@@ -213,7 +213,7 @@ class MinimaxTree:
             func = min
 
         # recurse case
-        for child in parent.generate_next_child(depth, parent_node_id):
+        for child in parent.get_all_children_and_rank_by_proximity(depth, parent_node_id):
             child_node_id = child.get_node_id()
             raise_error_if_node_has_children(
                 child, depth, message="Nodes should initialise without children"
