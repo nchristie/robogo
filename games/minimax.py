@@ -123,9 +123,9 @@ class MinimaxNode:
             f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
         )
 
-    def get_all_children_around_existing_moves(self, depth=0, parent_node_id="NA"):
+    def get_all_children_and_rank_by_proximity(self, depth=0, parent_node_id="NA"):
         raise Exception(
-            f"In minimax get_all_children_around_existing_moves, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
+            f"In minimax get_all_children_and_rank_by_proximity, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
         )
 
     def is_leaf_node(self):

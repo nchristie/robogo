@@ -14,7 +14,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_2.get_all_children_around_existing_moves()
+        potential_moves = my_node_2.get_all_children_and_rank_by_proximity()
         actual = [item.move_coordinates for item in potential_moves][:3]
 
         # THEN
@@ -34,7 +34,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_3.get_all_children_around_existing_moves()
+        potential_moves = my_node_3.get_all_children_and_rank_by_proximity()
         actual = [item.move_coordinates for item in potential_moves][:10]
 
         # THEN
@@ -70,7 +70,7 @@ class GoNodeTestCase(TestCase):
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 
-    def test_get_all_children_around_existing_moves_attack_options(self):
+    def test_get_all_children_and_rank_by_proximity_attack_options(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_5 = GoNode(
@@ -81,7 +81,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 1), (1, 0)]
-        potential_moves = my_node_5.get_all_children_around_existing_moves()[:3]
+        potential_moves = my_node_5.get_all_children_and_rank_by_proximity()[:3]
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -96,7 +96,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_6.get_all_children_around_existing_moves()
+        potential_moves = my_node_6.get_all_children_and_rank_by_proximity()
         actual = [item.move_coordinates for item in potential_moves][:5]
         self.assertEqual(expected, actual)
 
@@ -111,11 +111,11 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = my_node_7.get_all_children_around_existing_moves()
+        potential_moves = my_node_7.get_all_children_and_rank_by_proximity()
         actual = [item.move_coordinates for item in potential_moves][:5]
         self.assertEqual(expected, actual)
 
-    def test_get_all_children_around_existing_moves_returns_all_moves(self):
+    def test_get_all_children_and_rank_by_proximity_returns_all_moves(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_0814_1445 = GoNode(
@@ -128,11 +128,11 @@ class GoNodeTestCase(TestCase):
         all_moves = set(list_all_moves_on_board(3))
         all_moves.remove((0, 0))
         expected = all_moves
-        potential_moves = my_node_0814_1445.get_all_children_around_existing_moves()
+        potential_moves = my_node_0814_1445.get_all_children_and_rank_by_proximity()
         actual = set([item.move_coordinates for item in potential_moves])
         self.assertEqual(expected, actual)
 
-    def test_get_all_children_around_existing_moves_returns_attack_and_defend_options_first(
+    def test_get_all_children_and_rank_by_proximity_returns_attack_and_defend_options_first(
         self,
     ):
         # GIVEN
@@ -142,7 +142,7 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = my_node_8.get_all_children_around_existing_moves()
+        potential_moves = my_node_8.get_all_children_and_rank_by_proximity()
 
         # THEN
         expected = set([(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)])

@@ -84,7 +84,7 @@ class GoNode(MinimaxNode):
             i += 1
             yield next_node
 
-    def get_all_children_around_existing_moves(self, depth=0, parent_node_id="NA"):
+    def get_all_children_and_rank_by_proximity(self, depth=0, parent_node_id="NA"):
         """
         Returns:
             GoNode: possible moves on the board sorted by proximity to other stones
