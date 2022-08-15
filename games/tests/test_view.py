@@ -1,5 +1,5 @@
 from django.test import TestCase
-from games.views import Board, find_game_by_ip, get_white_response
+from games.views import Board, find_game_by_ip, get_white_response, get_white_response_no_tree
 
 
 class BoardTestCase(TestCase):
@@ -47,6 +47,24 @@ class HelpersTestCase(TestCase):
 
         # WHEN
         actual = get_white_response(
+            board_state=board_state, winning_score=winning_score, depth=4
+        )
+
+        # THEN
+        expected = (0, 2)
+        self.assertEqual(expected, actual)
+
+    def test_get_white_response_no_tree_3x3(self):
+        # GIVEN
+        board_state = [
+            ["●", "●", "+"],
+            ["○", "+", "+"],
+            ["+", "+", "+"],
+        ]
+        winning_score = 3
+
+        # WHEN
+        actual = get_white_response_no_tree(
             board_state=board_state, winning_score=winning_score, depth=4
         )
 

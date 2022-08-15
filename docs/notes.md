@@ -232,6 +232,30 @@ child getter = generate_next_child_and_rank_by_proximity
 Calculated white move:          (2,0)
 Minimax seconds to execute:     19.7513
 
+## 10
+BOARD_SIZE = 5
+WINNING_SCORE = 3
+MAX_TREE_DEPTH = 6
+child getter = generate_next_child_and_rank_by_proximity
+minimax algo = prune_game_tree_recursive
+
+Calculated white move:          (2,0)
+Minimax seconds to execute:     22.0170
+
+## 12
+Removes all logging and reference to node ids from prune_game_tree_recursive
+
+BOARD_SIZE = 5
+WINNING_SCORE = 3
+MAX_TREE_DEPTH = 6
+child getter = generate_next_child_and_rank_by_proximity
+minimax algo = prune_game_tree_recursive
+
+Calculated white move:          (2,0)
+Minimax seconds to execute:     20.9708
+
+
+
 
 
 

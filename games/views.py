@@ -62,7 +62,7 @@ class Index(View):
                     white_y = 1
                 else:
                     try:
-                        white_x, white_y = get_white_response(my_board.state)
+                        white_x, white_y = get_white_response_no_tree(my_board.state)
                     except Exception as e:
                         logger.error(f"Failed to get white move with exception: {e}")
 
@@ -198,6 +198,48 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_
 
     except Exception as e:
         logger.error(f"get_white_response failed with error: {e}")
+        return
+
+    logger.info(f"white_move_node: {white_move_node.__str__()}")
+
+    assert (
+        type(white_move_node) == GoNode
+    ), f"White move node isn't of type GoNode for node: {white_move_node.get_node_id()}"
+    white_move = white_move_node.move_coordinates
+    logger.debug(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
+    return white_move
+
+def get_white_response_no_tree(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_DEPTH):
+    root_node = GoNode(
+        node_id="root_node",
+        score=None,
+        children=[],
+        board_state=board_state,
+        player_to_move="minimizer",
+    )
+    game_tree = GoTree(root_node)
+    try:
+        # using prune_game_tree_recursive
+        open_moves = sum(x == "+" for x in list(itertools.chain(*board_state)))
+        if open_moves < depth:
+            depth = open_moves
+        start_minimax = perf_counter()
+        try:
+            white_move_node = game_tree.prune_game_tree_recursive(
+                parent=game_tree.root_node,
+                depth=depth,
+                winning_score=winning_score,
+            )["move_node"]
+        except Exception as e:
+            message = f"Couldn't get optimal move {e}"
+            logger.error(message)
+            raise Exception(message)
+        end_minimax = perf_counter()
+        minimax_seconds_to_execute = f"{end_minimax - start_minimax:0.4f}"
+        logger.info(f"\n>>> >>> Minimax seconds to execute: {minimax_seconds_to_execute} <<< <<<\n")
+
+    except Exception as e:
+        logger.error(f"get_white_response_no_tree failed with error: {e}")
         return
 
     logger.info(f"white_move_node: {white_move_node.__str__()}")

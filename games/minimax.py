@@ -273,6 +273,88 @@ class MinimaxTree:
         )
         return {"best_score": best_score, "path_depth": depth}
 
+
+    def prune_game_tree_recursive(
+        self,
+        parent,
+        depth=MAX_TREE_DEPTH,
+        winning_score=WINNING_SCORE,
+    ):
+        """
+        Builds game tree to a given depth
+
+        Parameters:
+            parent (MinimaxNode): the node from which we build down
+            depth (int): how far down the tree we want to build
+            node_ids (set): all the move ids which have been
+                encountered so far
+            winning_score: how many stones in a row constitutes a win
+
+        Returns:
+            object containing best score and best node
+        """
+        # Make sure we don't use same node twice
+        parent_utility = parent.find_utility(winning_score=winning_score)
+
+        raise_error_if_depth_less_than_zero(depth)
+
+        # Base case
+        # If we're at a leaf node leave the recursion
+        # a leaf node is a node at full depth or a winning node
+        if depth == 0 or is_win_state(parent, parent_utility):
+            return {"best_score": parent_utility, "move_node": parent}
+
+        alpha = -INFINITY
+        beta = INFINITY
+        player_to_move = parent.get_player_to_move()
+
+        if player_to_move == "maximizer":
+            best_score = LOWEST_SCORE
+            func = max
+        elif player_to_move == "minimizer":
+            best_score = HIGHEST_SCORE
+            func = min
+
+        # recurse case
+        cells_are_not_populated = set(list(itertools.chain(*parent.get_board_state()))) == set(["+"])
+
+        if cells_are_not_populated:
+            child_generator = parent.generate_next_child
+        else:
+            child_generator = parent.generate_next_child_and_rank_by_proximity
+
+        for child in child_generator(depth):
+            # **************************************************************************
+            # use recursion to build tree vertically
+            res = self.build_and_prune_game_tree_recursive(
+                child, depth - 1, winning_score=winning_score
+            )
+            best_score = func(
+                res["best_score"],
+                best_score,
+            )
+            if child.get_score() == best_score:
+                best_node = child
+            # **************************************************************************
+
+            # to get to this stage:
+            # 1. we've reached the end of depth count-down
+            # This means first we'll get to the point we want to stop building vertically
+            # and then add children at this level. Once all children are added we will work
+            # back up the tree and add child nodes at higher levels
+
+            # set alpha and beta
+            if player_to_move == "maximizer":
+                alpha = func(best_score, alpha)
+            elif player_to_move == "minimizer":
+                beta = func(best_score, beta)
+
+            # break loop if beta <= alpha
+            if break_conditions_are_met(alpha, beta):
+                break
+        return {"best_score": best_score, "move_node": best_node}
+
+
     def find_depth_recursive(self, node, depth):
         if depth > MAX_TREE_DEPTH:
             raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
