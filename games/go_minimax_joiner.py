@@ -36,7 +36,7 @@ class GoNode(MinimaxNode):
     def __str__(self):
         return (
             f"node_id: {self.get_node_id()}, "
-            f"score: {self.get_score()}, "
+            # f"score: {self.get_score()}, "
             f"number of children: {len(self.get_children())}, "
             f"player_to_move: {self.get_player_to_move()}, "
             f"move_coordinates: {self.get_move_coordinates()}, "
@@ -55,7 +55,7 @@ class GoNode(MinimaxNode):
     def get_move_coordinates(self):
         return self.move_coordinates
 
-    def generate_next_child(self, depth, parent_node_id="NA"):
+    def generate_next_child(self, depth="NA", parent_node_id="NA"):
         """
         Yields:
             GoNode: next possible move on the board
@@ -178,6 +178,38 @@ class GoNode(MinimaxNode):
                 player_to_move=player_to_move,
             )
             yield child
+
+
+    def generate_next_child_and_rank_by_proximity_to_latest_move(self, depth="NA", parent_node_id="NA"):
+        """
+        Returns:
+            GoNode: possible moves on the board sorted by proximity to other latest move
+        """
+        player_to_move = self.alternate_player_to_move()
+        stone = PLAYER_DICT[player_to_move]
+        board_size = len(self.board_state)
+        latest_move_coordinates = self.get_move_coordinates()
+
+        for jump_size in range(1, board_size):
+
+            surrounding_positions = find_moves_around_position(
+                latest_move_coordinates[0], latest_move_coordinates[1], jump_size=jump_size
+            )
+            for move_coordinates in surrounding_positions:
+                if not is_move_valid(self.board_state, move_coordinates):
+                    continue
+                new_board_state = deepcopy(self.board_state)
+                x = move_coordinates[0]
+                y = move_coordinates[1]
+                new_board_state[x][y] = stone
+                child = GoNode(
+                    node_id="NA",
+                    board_state=new_board_state,
+                    move_coordinates=move_coordinates,
+                    children=[],
+                    player_to_move=player_to_move,
+                )
+                yield child
 
     def find_utility(self, winning_score=WINNING_SCORE):
         """

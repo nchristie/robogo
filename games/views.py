@@ -62,9 +62,14 @@ class Index(View):
                     white_y = 1
                 else:
                     try:
-                        white_x, white_y = get_white_response_no_tree(my_board.state)
+                        last_move = user_game.move_set.last()
+                        move_coordinates = (last_move.x_coordinate, last_move.y_coordinate)
+                        logger.info(f"last move coordinates: {move_coordinates}")
+                        white_x, white_y = get_white_response_no_tree(board_state=my_board.state, move_coordinates=move_coordinates)
                     except Exception as e:
-                        logger.error(f"Failed to get white move with exception: {e}")
+                        message = f"Failed to get white move with exception: {e}"
+                        logger.error(message)
+                        raise Exception(message)
 
                 white_move = Move(
                     game=user_game,
@@ -209,13 +214,16 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_
     logger.debug(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move
 
-def get_white_response_no_tree(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_DEPTH):
+def get_white_response_no_tree(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_DEPTH, move_coordinates=()):
+    if not move_coordinates:
+        raise Exception(f"get_white_response_no_tree requires move coordinates and got move_coordinates of: {move_coordinates}")
     root_node = GoNode(
         node_id="root_node",
-        score=None,
+        score=0, # TODO check if this is going to break anything
         children=[],
         board_state=board_state,
         player_to_move="minimizer",
+        move_coordinates=move_coordinates,
     )
     game_tree = GoTree(root_node)
     try:
@@ -231,24 +239,26 @@ def get_white_response_no_tree(board_state, winning_score=WINNING_SCORE, depth=M
                 winning_score=winning_score,
             )["move_node"]
         except Exception as e:
-            message = f"Couldn't get optimal move {e}"
+            message = f"Couldn't get white response {e}"
             logger.error(message)
             raise Exception(message)
+
         end_minimax = perf_counter()
         minimax_seconds_to_execute = f"{end_minimax - start_minimax:0.4f}"
         logger.info(f"\n>>> >>> Minimax seconds to execute: {minimax_seconds_to_execute} <<< <<<\n")
 
     except Exception as e:
-        logger.error(f"get_white_response_no_tree failed with error: {e}")
-        return
+        message = f"get_white_response_no_tree failed with error: {e}"
+        logger.error(message)
+        raise Exception(message)
 
-    logger.info(f"white_move_node: {white_move_node.__str__()}")
+    # logger.info(f"white_move_node: {white_move_node.__str__()}")
 
     assert (
         type(white_move_node) == GoNode
     ), f"White move node isn't of type GoNode for node: {white_move_node.get_node_id()}"
     white_move = white_move_node.move_coordinates
-    logger.debug(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
+    # logger.debug(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move
 
 

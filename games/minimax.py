@@ -18,7 +18,7 @@ class MinimaxNode:
     def __str__(self):
         return (
             f"node_id: {self.get_node_id()}, "
-            f"score: {self.get_score()}, "
+            # f"score: {self.get_score()}, "
             f"number of children: {len(self.get_children())}, "
             f"player_to_move: {self.get_player_to_move()} "
             f"path_depth:  {self.path_depth}"
@@ -48,7 +48,7 @@ class MinimaxNode:
         if not self.score and self.score != 0:
             e = f"Score has not been set for node {self.get_node_id()}"
             logger.error(e)
-            raise Exception(e)
+            # raise Exception(e)
         return self.score
 
     def get_node_id(self):
@@ -323,17 +323,18 @@ class MinimaxTree:
         else:
             child_generator = parent.generate_next_child_and_rank_by_proximity
 
-        for child in child_generator(depth):
+        for child in child_generator(depth=depth):
             # **************************************************************************
             # use recursion to build tree vertically
-            res = self.build_and_prune_game_tree_recursive(
+            res = self.prune_game_tree_recursive(
                 child, depth - 1, winning_score=winning_score
             )
             best_score = func(
                 res["best_score"],
                 best_score,
             )
-            if child.get_score() == best_score:
+
+            if res["best_score"] == best_score:
                 best_node = child
             # **************************************************************************
 

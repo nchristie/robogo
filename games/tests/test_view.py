@@ -65,7 +65,7 @@ class HelpersTestCase(TestCase):
 
         # WHEN
         actual = get_white_response_no_tree(
-            board_state=board_state, winning_score=winning_score, depth=4
+            board_state=board_state, winning_score=winning_score, depth=4, move_coordinates=(0,1)
         )
 
         # THEN
@@ -101,6 +101,37 @@ class HelpersTestCase(TestCase):
         # THEN
         expected = (0, 2)
         self.assertEqual(expected, actual)
+
+    def test_get_white_response_no_tree_two_calls(self):
+        # GIVEN
+        board_state_0815_1406 = [
+            ["●", "+", "+", "+"],
+            ["+", "+", "+", "+"],
+            ["+", "+", "+", "+"],
+            ["+", "+", "+", "+"],
+        ]
+
+        board_state_0815_1406 = [
+            ["●", "●", "+", "+"],
+            ["○", "+", "+", "+"],
+            ["+", "+", "+", "+"],
+            ["+", "+", "+", "+"],
+        ]
+        winning_score = 3
+        depth = 4
+
+        # WHEN
+        first_call_0815_1406 = get_white_response_no_tree(
+            board_state_0815_1406, winning_score=winning_score, depth=depth, move_coordinates=(0,0)
+        )
+        actual = get_white_response_no_tree(
+            board_state_0815_1406, winning_score=winning_score, depth=depth, move_coordinates=(0,1)
+        )
+
+        # THEN
+        expected = (0, 2)
+        self.assertEqual(expected, actual)
+
 
     def test_get_white_response_depth_greater_than_remaining_moves(self):
         # GIVEN
