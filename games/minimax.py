@@ -1,5 +1,6 @@
 import logging
 from .game_logic import *
+import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +214,14 @@ class MinimaxTree:
             func = min
 
         # recurse case
-        for child in parent.get_all_children_and_rank_by_proximity(depth, parent_node_id):
+        cells_are_not_populated = set(list(itertools.chain(*parent.get_board_state()))) == set(["+"])
+
+        if cells_are_not_populated:
+            child_generator = parent.generate_next_child
+        else:
+            child_generator = parent.generate_next_child_and_rank_by_proximity
+
+        for child in child_generator(depth, parent_node_id):
             child_node_id = child.get_node_id()
             raise_error_if_node_has_children(
                 child, depth, message="Nodes should initialise without children"
@@ -257,7 +265,7 @@ class MinimaxTree:
 
             # break loop if beta <= alpha
             if break_conditions_are_met(alpha, beta):
-                logger.info(f"Breaking at {parent.__str__()}")
+                logger.debug(f"Breaking at {parent.__str__()}")
                 break
 
         logger.debug(
@@ -300,7 +308,7 @@ def break_conditions_are_met(alpha, beta):
     maximizer_win = alpha == HIGHEST_SCORE
     minimizer_win = beta == LOWEST_SCORE
     if prune_tree or maximizer_win or minimizer_win:
-        logger.info(
+        logger.debug(
             f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}"
         )
     return prune_tree or maximizer_win or minimizer_win

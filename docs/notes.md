@@ -126,3 +126,112 @@ Looking at the function: get_optimal_move, it seems originally the way I was han
 ['+', '+', '+', '+', '+'],
 ['+', '+', '+', '+', '+'],
 ]
+
+TIMING MINIMAX:
+I timed running minimax on the second move in the game with board state of latest move black to (1, 0):
+
+     0   1    2   3   4   5    6   7   8
+0     ●   ●   +   +   +   +   +   +   +
+1     ○   +   +   +   +   +   +   +   +
+2     +   +   +   +   +   +   +   +   +
+3     +   +   +   +   +   +   +   +   +
+4     +   +   +   +   +   +   +   +   +
+5     +   +   +   +   +   +   +   +   +
+6     +   +   +   +   +   +   +   +   +
+7     +   +   +   +   +   +   +   +   +
+8     +   +   +   +   +   +   +   +   +
+
+## 1
+
+BOARD_SIZE = 9
+WINNING_SCORE = 5
+MAX_TREE_DEPTH = 2
+child getter = get_all_children_and_rank_by_proximity
+
+Calculated white move: (1,1)
+Minimax seconds to execute: 0.6395
+
+## 2
+BOARD_SIZE = 9
+WINNING_SCORE = 5
+MAX_TREE_DEPTH = 3
+child getter = get_all_children_and_rank_by_proximity
+
+Calculated white move: (1,1)
+Minimax seconds to execute: 60.1060
+
+## 3
+BOARD_SIZE = 9
+WINNING_SCORE = 5
+MAX_TREE_DEPTH = 3
+child getter = generate_next_child
+
+Calculated white move: (0,2)
+Minimax seconds to execute: 48.8770
+
+## 4
+BOARD_SIZE = 9
+WINNING_SCORE = 5
+MAX_TREE_DEPTH = 3
+child getter = generate_next_child_and_rank_by_proximity
+
+Calculated white move: (1,1)
+Minimax seconds to execute: 55.3870
+
+## 5
+Reduce board size
+    0   1    2   3   4
+0     ●   ●   +   +   +
+1     ○   +   +   +   +
+2     +   +   +   +   +
+3     +   +   +   +   +
+4     +   +   +   +   +
+
+
+BOARD_SIZE = 5
+WINNING_SCORE = 3
+MAX_TREE_DEPTH = 2
+child getter = generate_next_child_and_rank_by_proximity
+
+Calculated white move: (2,0)
+Minimax seconds to execute: 0.0127
+
+## 6
+BOARD_SIZE = 5
+WINNING_SCORE = 3
+MAX_TREE_DEPTH = 3
+child getter = generate_next_child_and_rank_by_proximity
+
+Calculated white move:          (2,0)
+Minimax seconds to execute:     0.1270
+
+## 7
+BOARD_SIZE = 5
+WINNING_SCORE = 3
+MAX_TREE_DEPTH = 4
+child getter = generate_next_child_and_rank_by_proximity
+
+Calculated white move:          (2,0)
+Minimax seconds to execute:     0.7301
+
+## 8
+BOARD_SIZE = 5
+WINNING_SCORE = 3
+MAX_TREE_DEPTH = 5
+child getter = generate_next_child_and_rank_by_proximity
+
+Calculated white move:          (2,0)
+Minimax seconds to execute:     3.5241
+
+## 9
+BOARD_SIZE = 5
+WINNING_SCORE = 3
+MAX_TREE_DEPTH = 6
+child getter = generate_next_child_and_rank_by_proximity
+
+Calculated white move:          (2,0)
+Minimax seconds to execute:     19.7513
+
+
+
+

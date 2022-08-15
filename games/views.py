@@ -6,6 +6,7 @@ from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode, GoTree
 from .game_logic import *
 import itertools
+from time import perf_counter
 
 import logging
 
@@ -105,7 +106,6 @@ class Index(View):
             "winner": winner,
             "winning_score": WINNING_SCORE,
         }
-        # TODO show white win as soon as white has played a winning move
         return render(request, "games/index.html", context)
 
 
@@ -169,12 +169,16 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_
         open_moves = sum(x == "+" for x in list(itertools.chain(*board_state)))
         if open_moves < depth:
             depth = open_moves
+        start_minimax = perf_counter()
         game_tree.build_and_prune_game_tree_recursive(
             parent=game_tree.root_node,
             depth=depth,
             node_ids=set(),
             winning_score=winning_score,
         )
+        end_minimax = perf_counter()
+        minimax_seconds_to_execute = f"{end_minimax - start_minimax:0.4f}"
+        logger.info(f"\n>>> >>> Minimax seconds to execute: {minimax_seconds_to_execute} <<< <<<\n")
 
         logger.info(f"root node: {game_tree.root_node.__str__()}")
         for child in game_tree.root_node.get_children():
@@ -202,7 +206,7 @@ def get_white_response(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_
         type(white_move_node) == GoNode
     ), f"White move node isn't of type GoNode for node: {white_move_node.get_node_id()}"
     white_move = white_move_node.move_coordinates
-    logger.info(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
+    logger.debug(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
     return white_move
 
 
