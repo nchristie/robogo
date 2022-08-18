@@ -323,7 +323,7 @@ class MinimaxTree:
         else:
             child_generator = parent.generate_next_child_and_rank_by_proximity
 
-        for child in child_generator(depth=depth):
+        for child in child_generator(depth=depth, latest_move_coordinates=self.root_node.get_move_coordinates()):
             # **************************************************************************
             # use recursion to build tree vertically
             res = self.prune_game_tree_recursive(

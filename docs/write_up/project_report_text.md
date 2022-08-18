@@ -38,6 +38,7 @@ The main resources for understanding minimax and alpha-beta pruning were Patrick
 Additionally Lane Wagner's blog post on writing binary trees in Python was used as a model for how to build a tree by using a Python class to create the node object (22).
 
 ## III. Robogo User Guide
+
 The user should make sure they have Docker (25) installed on their machine. Then open a terminal at the robogo directory and type in the following command:
 `./start_game.sh`
 
