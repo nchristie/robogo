@@ -426,7 +426,7 @@ class GoTreeTestCase(TestCase):
         tree_072521 = GoTree(game_tree_node_072521)
 
         tree_072521.build_and_prune_game_tree_recursive(
-            game_tree_node_072521, node_072521_depth, set()
+            game_tree_node_072521, depth=node_072521_depth, node_ids=set(), winning_score=2
         )
 
         # WHEN

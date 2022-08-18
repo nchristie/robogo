@@ -155,6 +155,13 @@ class MinimaxTree:
     def __init__(self, root_node):
         self.root_node = root_node
 
+    def algo_chooser(self, choice):
+        algo_dict = {
+            "build_and_prune_game_tree_recursive": self.build_and_prune_game_tree_recursive,
+            "prune_game_tree_recursive": self.prune_game_tree_recursive,
+        }
+        return algo_dict[choice]
+
     def build_and_prune_game_tree_recursive(
         self,
         parent,

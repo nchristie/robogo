@@ -135,7 +135,7 @@ class GoNode(MinimaxNode):
             moves.append(child)
         return moves
 
-    def generate_next_child_and_rank_by_proximity(self, depth=0, parent_node_id="NA", latest_move_coordinates=()):
+    def generate_next_child_and_rank_by_proximity(self, depth=0, parent_node_id="NA", latest_move_coordinates=(), max_jump_size=None):
         """
         Returns:
             GoNode: possible moves on the board sorted by proximity to other stones
@@ -145,7 +145,9 @@ class GoNode(MinimaxNode):
         player_to_move = self.alternate_player_to_move()
         stone = PLAYER_DICT[player_to_move]
         board_size = len(self.board_state)
-        max_jump_size = ceil(board_size/3)
+        if max_jump_size == None:
+            max_jump_size = board_size
+        # max_jump_size = ceil(board_size/3)
         populated_cells = []
 
         for x_coordinate, row in enumerate(self.board_state):
