@@ -140,14 +140,17 @@ class GoNode(MinimaxNode):
         Returns:
             GoNode: possible moves on the board sorted by proximity to other stones
         """
-
         all_positions = []
         player_to_move = self.alternate_player_to_move()
         stone = PLAYER_DICT[player_to_move]
         board_size = len(self.board_state)
-        if max_jump_size == None:
+
+
+        max_jump_size = ceil(board_size/3)
+        min_jump_size = 1
+        if max_jump_size == None or max_jump_size <= min_jump_size:
             max_jump_size = board_size
-        # max_jump_size = ceil(board_size/3)
+
         populated_cells = []
 
         for x_coordinate, row in enumerate(self.board_state):
@@ -155,8 +158,7 @@ class GoNode(MinimaxNode):
                 if cell != EMPTY_POSITION:
                     populated_cells.append((x_coordinate, y_coordinate))
 
-        for jump_size in range(1, max_jump_size):
-
+        for jump_size in range(min_jump_size, max_jump_size):
             for x_coordinate, y_coordinate in populated_cells:
                 surrounding_positions = find_moves_around_position(
                     x_coordinate, y_coordinate, jump_size=jump_size

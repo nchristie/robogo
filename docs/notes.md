@@ -1441,3 +1441,136 @@ Black score: 3 | White score: 3
 2     ●   ●   ○   ○   ○
 3     ○   ●   ●   ●   ○
 4     ●   ○   ●   ○   ○
+
+
+# Odd game:
+
+web_1  | Watching for file changes with StatReloader
+web_1  | Watching for file changes with StatReloader
+web_1  | Performing system checks...
+web_1  |
+web_1  | System check identified no issues (0 silenced).
+web_1  | August 18, 2022 - 09:23:57
+web_1  | Django version 3.2.15, using settings 'go_app.settings'
+web_1  | Starting development server at http://0.0.0.0:8000/
+web_1  | Quit the server with CONTROL-C.
+web_1  | Couldn't find game for ip: 172.19.0.1, creating new game
+web_1  | user_game id: 782
+web_1  | No black stones on board
+web_1  | [18/Aug/2022 09:24:00] "GET /games/ HTTP/1.1" 200 1918
+web_1  | Not Found: /favicon.ico
+web_1  | Not Found: /favicon.ico
+web_1  | [18/Aug/2022 09:24:00] "GET /favicon.ico HTTP/1.1" 404 2214
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 782
+web_1  | [18/Aug/2022 09:24:12] "POST /games/ HTTP/1.1" 200 1720
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 782
+web_1  | last move coordinates: (2, 3)
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 6.7883 <<< <<<
+web_1  |
+web_1  | [18/Aug/2022 09:24:23] "POST /games/ HTTP/1.1" 200 1724
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 782
+web_1  | [18/Aug/2022 09:24:31] "POST /games/ HTTP/1.1" 200 755
+web_1  | /code/games/game_logic.py changed, reloading.
+web_1  | /code/games/game_logic.py changed, reloading.
+web_1  | Watching for file changes with StatReloader
+web_1  | Watching for file changes with StatReloader
+web_1  | Performing system checks...
+web_1  |
+web_1  | System check identified no issues (0 silenced).
+web_1  | August 18, 2022 - 09:35:14
+web_1  | Django version 3.2.15, using settings 'go_app.settings'
+web_1  | Starting development server at http://0.0.0.0:8000/
+web_1  | Quit the server with CONTROL-C.
+web_1  | Couldn't find game for ip: 172.19.0.1, creating new game
+web_1  | user_game id: 783
+web_1  | No black stones on board
+web_1  | [18/Aug/2022 09:35:56] "GET /games/ HTTP/1.1" 200 1822
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (3, 3)
+web_1  | Executing minimax, searching to depth of 2, open moves: 96%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 0.0393 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d2-i23_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (1, 0), path_depth: 0
+web_1  | [18/Aug/2022 09:36:03] "POST /games/ HTTP/1.1" 200 1624
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (1, 3)
+web_1  | Executing minimax, searching to depth of 4, open moves: 88%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 5.4106 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d4-i10_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (2, 3), path_depth: 0
+web_1  | [18/Aug/2022 09:36:16] "POST /games/ HTTP/1.1" 200 1628
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (1, 1)
+web_1  | Executing minimax, searching to depth of 5, open moves: 80%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 108.0799 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d5-i10_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (2, 4), path_depth: 0
+web_1  | [18/Aug/2022 09:38:18] "POST /games/ HTTP/1.1" 200 1632
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (1, 2)
+web_1  | Executing minimax, searching to depth of 5, open moves: 72%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 12.0708 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d5-i8_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (1, 4), path_depth: 0
+web_1  | [18/Aug/2022 09:38:49] "POST /games/ HTTP/1.1" 200 1636
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (3, 1)
+web_1  | Executing minimax, searching to depth of 5, open moves: 64%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 1.7971 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d5-i2_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (2, 1), path_depth: 0
+web_1  | [18/Aug/2022 09:39:07] "POST /games/ HTTP/1.1" 200 1640
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (2, 2)
+web_1  | Executing minimax, searching to depth of 5, open moves: 56%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 5.2181 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d5-i8_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (3, 4), path_depth: 0
+web_1  | [18/Aug/2022 09:39:36] "POST /games/ HTTP/1.1" 200 1644
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (4, 4)
+web_1  | Executing minimax, searching to depth of 5, open moves: 48%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 0.8625 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d5-i2_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (2, 0), path_depth: 0
+web_1  | [18/Aug/2022 09:40:17] "POST /games/ HTTP/1.1" 200 1648
+web_1  | Found game for ip: 172.19.0.1
+web_1  | user_game id: 783
+web_1  | last move coordinates: (3, 2)
+web_1  | Executing minimax, searching to depth of 5, open moves: 40%
+web_1  |
+web_1  | >>> >>> Minimax seconds to execute: 0.1205 <<< <<<
+web_1  |
+web_1  | white_move_node: node_id: d5-i4_NA, number of children: 0, player_to_move: maximizer, move_coordinates: (0, 4), path_depth: 0
+web_1  | [18/Aug/2022 09:41:08] "POST /games/ HTTP/1.1" 200 780
+
+
+Game Over
+You lose :(
+
+Black score: 3 | White score: 4
+
+       0   1    2   3   4
+0     +   ○   ○   +   +
+1     +   ●   ○   ●   +
+2     +   ●   ●   ●   +
+3     +   ●   ○   ●   +
+4     ○   ○   ○   ○   ●  

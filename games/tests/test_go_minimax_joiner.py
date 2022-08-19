@@ -419,14 +419,14 @@ class GoTreeTestCase(TestCase):
                 ["+", "+"],
                 ["+", "+"],
             ],
-            player_to_move="minimizer",
+            player_to_move="maximizer",
         )
 
         node_072521_depth = 3
         tree_072521 = GoTree(game_tree_node_072521)
 
         tree_072521.build_and_prune_game_tree_recursive(
-            game_tree_node_072521, depth=node_072521_depth, node_ids=set(), winning_score=2
+            game_tree_node_072521, depth=node_072521_depth, node_ids=set(), winning_score=4
         )
 
         # WHEN
@@ -644,7 +644,7 @@ class GoTreeTestCase(TestCase):
         expected = 3
         self.assertEqual(expected, actual)
 
-    @skip("WIP")
+    @skip("Didn't manage to write a test for this in time, but manually tested it quite a lot")
     def test_build_and_prune_game_tree_loop_breaks_when_alpha_greater_than_beta(self):
         # GIVEN
         node_0801_1445 = GoNode(
@@ -720,6 +720,7 @@ class GoTreeTestCase(TestCase):
                 ["+", "+", "+"],
             ],
             player_to_move="minimizer",
+            move_coordinates=(0,1)
         )
         # hack to get around suspected test pollution
         node_0805_2100.children = []
@@ -775,8 +776,8 @@ class GoTreeTestCase(TestCase):
         expected = (1, 0)
         self.assertEqual(expected, actual)
 
-    @skip("WIP")
-    def test_build_and_prune_game_tree_recursive_blocks_again(self):
+    @skip("When minimizer is on losing path it doesn't try to win, needs more code to resolve this")
+    def test_prune_game_tree_recursive_blocks(self):
         # GIVEN
         winning_score = 3
         depth = 6
@@ -800,17 +801,13 @@ class GoTreeTestCase(TestCase):
 
         tree_0813_1023 = GoTree(node_0813_1023)
 
-        tree_0813_1023.build_and_prune_game_tree_recursive(
-            tree_0813_1023.root_node, depth, winning_score=winning_score
-        )
-        white_move_node = tree_0813_1023.root_node.get_optimal_move()
-
         # WHEN
-        actual = white_move_node.move_coordinates
+        actual = tree_0813_1023.prune_game_tree_recursive(
+            tree_0813_1023.root_node, depth, winning_score=winning_score
+        )["move_node"].get_move_coordinates()
 
         # THEN
         expected = (2, 2)
-        print_game_path(depth + 1, tree_0813_1023.root_node)
         self.assertEqual(expected, actual)
 
 

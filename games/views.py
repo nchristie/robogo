@@ -213,12 +213,11 @@ def get_white_response_no_tree(
     winning_score=WINNING_SCORE,
     depth=MAX_TREE_DEPTH,
     move_coordinates=(),
-    algorithm="build_and_prune_game_tree_recursive"):
+    algorithm="prune_game_tree_recursive"):
     if not move_coordinates:
         raise Exception(f"get_white_response_no_tree requires move coordinates and got move_coordinates of: {move_coordinates}")
     root_node = GoNode(
         node_id="root_node",
-        score=0, # TODO check if this is going to break anything
         children=[],
         board_state=board_state,
         player_to_move="minimizer",

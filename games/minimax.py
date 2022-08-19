@@ -223,10 +223,9 @@ class MinimaxTree:
         # recurse case
         cells_are_not_populated = set(list(itertools.chain(*parent.get_board_state()))) == set(["+"])
 
-        if cells_are_not_populated:
-            child_generator = parent.generate_next_child
-        else:
-            child_generator = parent.generate_next_child_and_rank_by_proximity
+
+        child_generator = parent.generate_next_child
+
 
         for child in child_generator(depth, parent_node_id):
             child_node_id = child.get_node_id()
@@ -237,8 +236,6 @@ class MinimaxTree:
             # Make sure we don't use same node twice
             if node_already_visited(child_node_id, node_ids):
                 continue
-
-            # TODO don't build breadth or depth beyond win state
 
             # **************************************************************************
             # use recursion to build tree vertically
@@ -323,12 +320,7 @@ class MinimaxTree:
             func = min
 
         # recurse case
-        cells_are_not_populated = set(list(itertools.chain(*parent.get_board_state()))) == set(["+"])
-
-        if cells_are_not_populated:
-            child_generator = parent.generate_next_child
-        else:
-            child_generator = parent.generate_next_child_and_rank_by_proximity
+        child_generator = parent.generate_next_child_and_rank_by_proximity
 
         for child in child_generator(depth=depth, latest_move_coordinates=self.root_node.get_move_coordinates()):
             # **************************************************************************
