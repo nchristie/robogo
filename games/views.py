@@ -209,7 +209,7 @@ def get_white_response_no_tree(
 
 
 def choose_depth(open_moves, max_open_moves):
-    depth = 2
+    depth = 3
     for i in range(99, 0, -5):
         percentage_multiplier = i / 100
         threshold = int(max_open_moves * percentage_multiplier)
