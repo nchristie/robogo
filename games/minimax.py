@@ -221,6 +221,8 @@ class MinimaxTree:
 
             # break loop if beta <= alpha
             if break_conditions_are_met(alpha, beta):
+                logger.info(child.get_node_id())
+                [ logger.info(row) for row in transpose_board(child.get_board_state()) ]
                 break
         return {"best_score": best_score, "move_node": best_node}
 
@@ -235,7 +237,7 @@ def break_conditions_are_met(alpha, beta):
     maximizer_win = alpha == HIGHEST_SCORE
     minimizer_win = beta == LOWEST_SCORE
     if prune_tree or maximizer_win or minimizer_win:
-        logger.debug(
+        logger.info(
             f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}"
         )
     return prune_tree or maximizer_win or minimizer_win
