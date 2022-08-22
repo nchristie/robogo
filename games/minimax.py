@@ -56,7 +56,7 @@ class MinimaxNode:
 
 
 # Helpers
-def prune_game_tree_recursive(
+def minimax_with_alpha_beta_pruning_algorithm(
     parent,
     depth=MAX_TREE_DEPTH,
     winning_score=WINNING_SCORE,
@@ -103,7 +103,7 @@ def prune_game_tree_recursive(
     ):
         # **************************************************************************
         # use recursion to build tree vertically
-        res = prune_game_tree_recursive(child, depth - 1, winning_score=winning_score)
+        res = minimax_with_alpha_beta_pruning_algorithm(child, depth - 1, winning_score=winning_score)
         best_score = func(
             res["best_score"],
             best_score,

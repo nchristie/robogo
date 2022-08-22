@@ -4,7 +4,7 @@ from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
 from .go_minimax_joiner import GoNode
-from .minimax import prune_game_tree_recursive
+from .minimax import minimax_with_alpha_beta_pruning_algorithm
 from .game_logic import *
 import itertools
 from time import perf_counter
@@ -177,7 +177,7 @@ def get_white_response_no_tree(
         )
         start_minimax = perf_counter()
         try:
-            white_move_node = prune_game_tree_recursive(
+            white_move_node = minimax_with_alpha_beta_pruning_algorithm(
                 parent=root_node,
                 depth=depth,
                 winning_score=winning_score,

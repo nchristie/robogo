@@ -1,6 +1,6 @@
 from django.test import TestCase
 from games.go_minimax_joiner import GoNode
-from games.minimax import prune_game_tree_recursive
+from games.minimax import minimax_with_alpha_beta_pruning_algorithm
 from types import GeneratorType
 from games.game_logic import *
 
@@ -312,7 +312,7 @@ class GoNodeTestCase(TestCase):
 
 
 class GoTreeTestCase(TestCase):
-    def test_prune_game_tree_recursive_assigns_scores(self):
+    def test_minimax_with_alpha_beta_pruning_algorithm_assigns_scores(self):
         # GIVEN
         node_0801_1308 = GoNode(
             node_id="root_0801_1308",
@@ -323,7 +323,7 @@ class GoTreeTestCase(TestCase):
         depth = 0
 
         # WHEN
-        actual = prune_game_tree_recursive(
+        actual = minimax_with_alpha_beta_pruning_algorithm(
             parent=node_0801_1308, depth=depth, winning_score=5
         )["best_score"]
 
@@ -331,7 +331,7 @@ class GoTreeTestCase(TestCase):
         expected = 2
         self.assertEqual(expected, actual)
 
-    def test_prune_game_tree_recursive_sets_score_winning_node(self):
+    def test_minimax_with_alpha_beta_pruning_algorithm_sets_score_winning_node(self):
         # GIVEN
         node_0801_1253 = GoNode(
             node_id="root_node_0801_1253",
@@ -348,7 +348,7 @@ class GoTreeTestCase(TestCase):
         depth = 0
 
         # WHEN
-        actual = prune_game_tree_recursive(
+        actual = minimax_with_alpha_beta_pruning_algorithm(
             parent=node_0801_1253, depth=depth, winning_score=5
         )["best_score"]
 
@@ -356,7 +356,7 @@ class GoTreeTestCase(TestCase):
         expected = HIGHEST_SCORE
         self.assertEqual(expected, actual)
 
-    def test_prune_game_tree_recursive_sets_score_based_on_children(self):
+    def test_minimax_with_alpha_beta_pruning_algorithm_sets_score_based_on_children(self):
         # GIVEN
         node_0801_1411 = GoNode(
             node_id="root_node_0801_1411",
@@ -373,7 +373,7 @@ class GoTreeTestCase(TestCase):
         depth = 2
 
         # WHEN
-        actual = prune_game_tree_recursive(
+        actual = minimax_with_alpha_beta_pruning_algorithm(
             parent=node_0801_1411, depth=depth, winning_score=5
         )["best_score"]
 
@@ -381,7 +381,7 @@ class GoTreeTestCase(TestCase):
         expected = 3
         self.assertEqual(expected, actual)
 
-    def test_prune_game_tree_recursive_nine_by_nine(self):
+    def test_minimax_with_alpha_beta_pruning_algorithm_nine_by_nine(self):
         # GIVEN
         node_0801_1547 = GoNode(
             node_id="root_node_0801_1547",
@@ -401,7 +401,7 @@ class GoTreeTestCase(TestCase):
         )
         depth = 2
 
-        white_move_node = prune_game_tree_recursive(
+        white_move_node = minimax_with_alpha_beta_pruning_algorithm(
             parent=node_0801_1547, depth=depth, winning_score=5
         )["move_node"]
 
@@ -412,7 +412,7 @@ class GoTreeTestCase(TestCase):
         expected = (0, 4)
         self.assertEqual(expected, actual)
 
-    def test_prune_game_tree_recursive_3_by_3(self):
+    def test_minimax_with_alpha_beta_pruning_algorithm_3_by_3(self):
         # GIVEN
         node_0805_2100 = GoNode(
             node_id="root_node_0805_2100",
@@ -428,7 +428,7 @@ class GoTreeTestCase(TestCase):
 
         depth = 4
 
-        white_move_node = prune_game_tree_recursive(
+        white_move_node = minimax_with_alpha_beta_pruning_algorithm(
             node_0805_2100, depth, winning_score=3
         )["move_node"]
 
@@ -439,7 +439,7 @@ class GoTreeTestCase(TestCase):
         expected = (0, 2)
         self.assertEqual(expected, actual)
 
-    def test_prune_game_tree_recursive_blocks_between_stones(self):
+    def test_minimax_with_alpha_beta_pruning_algorithm_blocks_between_stones(self):
         # GIVEN
         winning_score = 3
         depth = 2
@@ -458,7 +458,7 @@ class GoTreeTestCase(TestCase):
             player_to_move="minimizer",
         )
 
-        white_move_node = prune_game_tree_recursive(
+        white_move_node = minimax_with_alpha_beta_pruning_algorithm(
             parent=node_0809_0414, depth=depth, winning_score=winning_score
         )["move_node"]
 
