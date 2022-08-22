@@ -162,7 +162,6 @@ def get_white_response_no_tree(
 
     root_node = GoNode(
         node_id="root_node",
-        children=[],
         board_state=board_state,
         player_to_move="minimizer",
     )

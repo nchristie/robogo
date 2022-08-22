@@ -9,9 +9,7 @@ class GoNodeTestCase(TestCase):
     def test_find_legal_move_when_boundary(self):
         # GIVEN
         board_state = [["+", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
-        my_node_2 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_2 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         potential_moves = [
@@ -31,9 +29,7 @@ class GoNodeTestCase(TestCase):
             ["+", "●", "+", "+"],
             ["+", "+", "+", "+"],
         ]
-        my_node_3 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_3 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         potential_moves = [
@@ -61,9 +57,7 @@ class GoNodeTestCase(TestCase):
     def test_generate_next_child_and_rank_by_proximity_returns_generator(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
-        my_node_4 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_4 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
         depth = 1
 
         # WHEN
@@ -77,9 +71,7 @@ class GoNodeTestCase(TestCase):
     def test_generate_next_child_and_rank_by_proximity_attack_options(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
-        my_node_5 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_5 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
 
         # WHEN
 
@@ -94,9 +86,7 @@ class GoNodeTestCase(TestCase):
     def test_child_getter_returns_attack_options_2_groups(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "●"]]
-        my_node_6 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_6 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
 
         # WHEN
 
@@ -111,9 +101,7 @@ class GoNodeTestCase(TestCase):
     def test_child_getter_returns_defend_options_2_groups(self):
         # GIVEN
         board_state = [["○", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
-        my_node_7 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_7 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
 
         # WHEN
 
@@ -129,7 +117,7 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_0814_1445 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -150,9 +138,7 @@ class GoNodeTestCase(TestCase):
     ):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "○"]]
-        my_node_8 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_8 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         potential_moves = [
@@ -167,9 +153,7 @@ class GoNodeTestCase(TestCase):
     def test_get_scores_one_stone(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
-        my_node_9 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_9 = GoNode(score=0, board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_9.find_utility(winning_score=5)
@@ -182,7 +166,7 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "●"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_10 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -196,7 +180,7 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "●", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_11 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -210,7 +194,7 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["+", "+", "+"], ["●", "●", "+"], ["+", "+", "+"]]
         my_node_12 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -224,7 +208,7 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["+", "+", "+"], ["○", "○", "+"], ["+", "+", "+"]]
         my_node_13 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -238,7 +222,7 @@ class GoNodeTestCase(TestCase):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
         my_node_14 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -262,7 +246,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
         my_node_15 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -286,7 +270,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
         my_node_15 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -310,7 +294,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
         my_node_15 = GoNode(
-            score=0, children=[], board_state=board_state, player_to_move="minimizer"
+            score=0, board_state=board_state, player_to_move="minimizer"
         )
 
         # WHEN
@@ -387,8 +371,6 @@ class GoTreeTestCase(TestCase):
             ],
             player_to_move="minimizer",
         )
-        # hack to get around suspected test pollution
-        node_0801_1411.children = []
 
         depth = 2
         tree_0801_1411 = GoTree(node_0801_1411)
@@ -407,7 +389,6 @@ class GoTreeTestCase(TestCase):
         node_0801_1547 = GoNode(
             node_id="root_node_0801_1547",
             score=None,
-            children=[],
             board_state=[
                 ["●", "●", "●", "●", "+", "+", "+", "+", "+"],
                 ["○", "+", "+", "+", "+", "+", "+", "+", "+"],
@@ -441,7 +422,6 @@ class GoTreeTestCase(TestCase):
         node_0805_2100 = GoNode(
             node_id="root_node_0805_2100",
             score=None,
-            children=[],
             board_state=[
                 ["●", "●", "+"],
                 ["○", "+", "+"],
@@ -450,8 +430,6 @@ class GoTreeTestCase(TestCase):
             player_to_move="minimizer",
             move_coordinates=(0, 1),
         )
-        # hack to get around suspected test pollution
-        node_0805_2100.children = []
 
         tree_0805_2100 = GoTree(node_0805_2100)
         depth = 4
@@ -482,7 +460,6 @@ class GoTreeTestCase(TestCase):
         node_0809_0414 = GoNode(
             node_id="root_node_0809_0414",
             score=None,
-            children=[],
             board_state=board_state,
             player_to_move="minimizer",
         )

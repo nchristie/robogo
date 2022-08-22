@@ -6,20 +6,15 @@ logger = logging.getLogger(__name__)
 
 
 class MinimaxNode:
-    def __init__(
-        self, node_id=None, score=None, children=[], player_to_move=None, path_depth=0
-    ):
-        self.children = children
+    def __init__(self, node_id=None, score=None, player_to_move=None):
         self.node_id = node_id
         self.score = score
         self.player_to_move = player_to_move
-        self.path_depth = path_depth
 
     def __str__(self):
         return (
             f"node_id: {self.get_node_id()}, "
             f"player_to_move: {self.get_player_to_move()} "
-            f"path_depth:  {self.path_depth}"
         )
 
     def get_player_to_move(self):
@@ -129,7 +124,8 @@ class MinimaxTree:
             # or
             # 2. encountered a win state
             # This means first we'll get to the point we want to stop building vertically
-            # and then add children at this level. Once all children are added we will work
+            # and then evaluate children at this level. Once all children are evaluated
+            # or a break condition is met we will work
             # back up the tree and add child nodes at higher levels
 
             # set alpha and beta
