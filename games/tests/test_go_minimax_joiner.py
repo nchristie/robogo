@@ -14,7 +14,9 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = [move for move in my_node_2.generate_next_child_and_rank_by_proximity()]
+        potential_moves = [
+            move for move in my_node_2.generate_next_child_and_rank_by_proximity()
+        ]
         actual = [item.move_coordinates for item in potential_moves][:3]
 
         # THEN
@@ -34,7 +36,9 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = [move for move in my_node_3.generate_next_child_and_rank_by_proximity()]
+        potential_moves = [
+            move for move in my_node_3.generate_next_child_and_rank_by_proximity()
+        ]
         actual = [item.move_coordinates for item in potential_moves][:10]
 
         # THEN
@@ -81,7 +85,9 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 1), (1, 0)]
-        potential_moves = [move for move in my_node_5.generate_next_child_and_rank_by_proximity()][:3]
+        potential_moves = [
+            move for move in my_node_5.generate_next_child_and_rank_by_proximity()
+        ][:3]
         actual = [item.move_coordinates for item in potential_moves]
         self.assertEqual(expected, actual)
 
@@ -96,7 +102,9 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = [move for move in my_node_6.generate_next_child_and_rank_by_proximity()]
+        potential_moves = [
+            move for move in my_node_6.generate_next_child_and_rank_by_proximity()
+        ]
         actual = [item.move_coordinates for item in potential_moves][:5]
         self.assertEqual(expected, actual)
 
@@ -111,7 +119,9 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = [(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)]
-        potential_moves = [move for move in my_node_7.generate_next_child_and_rank_by_proximity()]
+        potential_moves = [
+            move for move in my_node_7.generate_next_child_and_rank_by_proximity()
+        ]
         actual = [item.move_coordinates for item in potential_moves][:5]
         self.assertEqual(expected, actual)
 
@@ -128,7 +138,10 @@ class GoNodeTestCase(TestCase):
         all_moves = set(list_all_moves_on_board(3))
         all_moves.remove((0, 0))
         expected = all_moves
-        potential_moves = [move for move in my_node_0814_1445.generate_next_child_and_rank_by_proximity()]
+        potential_moves = [
+            move
+            for move in my_node_0814_1445.generate_next_child_and_rank_by_proximity()
+        ]
         actual = set([item.move_coordinates for item in potential_moves])
         self.assertEqual(expected, actual)
 
@@ -142,7 +155,9 @@ class GoNodeTestCase(TestCase):
         )
 
         # WHEN
-        potential_moves = [move for move in my_node_8.generate_next_child_and_rank_by_proximity()]
+        potential_moves = [
+            move for move in my_node_8.generate_next_child_and_rank_by_proximity()
+        ]
 
         # THEN
         expected = set([(0, 1), (1, 1), (1, 0), (1, 2), (2, 1)])

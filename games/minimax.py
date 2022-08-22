@@ -192,9 +192,7 @@ class MinimaxTree:
             func = min
 
         # recurse case
-        for child in parent.generate_next_child_and_rank_by_proximity(
-            depth=depth
-        ):
+        for child in parent.generate_next_child_and_rank_by_proximity(depth=depth):
             # **************************************************************************
             # use recursion to build tree vertically
             res = self.prune_game_tree_recursive(
