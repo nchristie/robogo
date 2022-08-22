@@ -1,6 +1,6 @@
 import logging
 from .game_logic import *
-import itertools
+
 
 logger = logging.getLogger(__name__)
 
@@ -152,7 +152,7 @@ def break_conditions_are_met(alpha, beta):
     maximizer_win = alpha == HIGHEST_SCORE
     minimizer_win = beta == LOWEST_SCORE
     if prune_tree or maximizer_win or minimizer_win:
-        logger.info(
+        logger.debug(
             f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}"
         )
     return prune_tree or maximizer_win or minimizer_win
