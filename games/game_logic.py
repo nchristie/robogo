@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 BOARD_SIZE = 5
 WINNING_SCORE = 4
-MAX_TREE_DEPTH = 5
+MAX_TREE_DEPTH = 7
 
 INFINITY = float("inf")
 

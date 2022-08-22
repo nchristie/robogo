@@ -209,12 +209,18 @@ def get_white_response_no_tree(
 
 def choose_depth(open_moves, max_open_moves):
     depth = 3
-    for i in range(99, 0, -5):
-        percentage_multiplier = i / 100
-        threshold = int(max_open_moves * percentage_multiplier)
-        if open_moves < threshold:
-            depth += 1
 
+    percent_of_moves_left_on_board = open_moves / max_open_moves
+    logger.info(f"percent_of_moves_left_on_board {percent_of_moves_left_on_board}")
+    # under 90% do depth of 5
+    if percent_of_moves_left_on_board < 0.9:
+        depth = 5
+    # under 50% do depth of 6
+    if percent_of_moves_left_on_board < 0.5:
+        depth = 6
+    # under 30% do depth of 7
+    if percent_of_moves_left_on_board < 0.3:
+        depth = 7
     depth = depth if depth < MAX_TREE_DEPTH else MAX_TREE_DEPTH
     if open_moves < depth:
         depth = open_moves
