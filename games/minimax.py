@@ -71,7 +71,8 @@ class MinimaxTree:
         winning_score=WINNING_SCORE,
     ):
         """
-        Builds game tree to a given depth
+        Searches game tree to a given depth and calculates best next move
+        using minimax and alpha-beta pruning
 
         Parameters:
             parent (MinimaxNode): the node from which we build down
@@ -123,8 +124,10 @@ class MinimaxTree:
                 best_node = child
             # **************************************************************************
 
-            # to get to this stage:
-            # 1. we've reached the end of depth count-down
+            # To get to this stage we've:
+            # 1. reached the end of depth count-down
+            # or
+            # 2. encountered a win state
             # This means first we'll get to the point we want to stop building vertically
             # and then add children at this level. Once all children are added we will work
             # back up the tree and add child nodes at higher levels
@@ -135,10 +138,10 @@ class MinimaxTree:
             elif player_to_move == "minimizer":
                 beta = func(best_score, beta)
 
-            # break loop if beta <= alpha
+            # break loop if beta <= alpha or win state encountered
             if break_conditions_are_met(alpha, beta):
-                logger.info(child.get_node_id())
-                [logger.info(row) for row in transpose_board(child.get_board_state())]
+                logger.debug(child.get_node_id())
+                [logger.debug(row) for row in transpose_board(child.get_board_state())]
                 break
         return {"best_score": best_score, "move_node": best_node}
 

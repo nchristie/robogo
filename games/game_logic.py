@@ -39,7 +39,7 @@ def is_move_in_free_position(board_state, move_coordinates):
 
 # TODO won't cause own group to be captured
 def move_not_self_capture(board_state, move_coordinates):
-    return True
+    return
 
 
 # TODO doesn't bring board back to prior state (ko rule)
@@ -47,52 +47,9 @@ def move_doesnt_violate_ko_rule():
     return
 
 
-def find_all_moves(board_state):
-    moves = []
-    for i, row in enumerate(board_state):
-        for j, stone_colour in enumerate(row):
-            coordinates = (i, j)
-            contains_stone = stone_colour != EMPTY_POSITION
-            if contains_stone:
-                moves.append(coordinates)
-    return moves
-
-
 # TODO find all groups on board
 def find_groups(board_state):
-    moves = find_all_moves(board_state)
-    groups = []
-
-    for move in moves:
-        group = [move]
-        intersections = find_intersecting_positions(move)
-        for intersection in intersections:
-            if intersection in moves:
-                group.append(intersection)
-                moves.remove(intersection)
-        groups.append(group)
-        moves.remove(move)
-
-    return groups
-
-
-def find_groups_in_row(row, row_index, is_transposed=False):
-    groups = []
-    group = []
-    for i, stone_colour in enumerate(row):
-        contains_stone = stone_colour != EMPTY_POSITION
-        if contains_stone:
-            if is_transposed:
-                group.append((i, row_index))
-            else:
-                group.append((row_index, i))
-        else:
-            if group != []:
-                groups.append(group)
-                group = []
-    if group:
-        groups.append(group)
-    return groups
+    return
 
 
 def transpose_board(board_state):
@@ -121,16 +78,6 @@ def list_all_moves_on_board(board_size):
 
 def get_board_size(board_state):
     return len(board_state[0])
-
-
-def find_intersecting_positions(position):
-    x_coordinate = position[0]
-    y_coordinate = position[1]
-    up = (x_coordinate - 1, y_coordinate)
-    left = (x_coordinate, y_coordinate - 1)
-    right = (x_coordinate, y_coordinate + 1)
-    down = (x_coordinate + 1, y_coordinate)
-    return [up, left, right, down]
 
 
 def get_score_dict(board_state):
