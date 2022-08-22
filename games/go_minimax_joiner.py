@@ -21,12 +21,11 @@ class GoNode(MinimaxNode):
     def __init__(
         self,
         node_id=None,
-        score=None,
         board_state=None,
         move_coordinates=(),
         player_to_move=None,
     ):
-        super().__init__(node_id, score, player_to_move)
+        super().__init__(node_id, player_to_move)
         self.board_state = board_state
         self.set_move_coordinates(move_coordinates)
 

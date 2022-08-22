@@ -10,9 +10,8 @@ TIMEOUT_THRESHOLD = 60
 
 
 class MinimaxNode:
-    def __init__(self, node_id=None, score=None, player_to_move=None):
+    def __init__(self, node_id=None, player_to_move=None):
         self.node_id = node_id
-        self.score = score
         self.player_to_move = player_to_move
 
     def __str__(self):
@@ -77,7 +76,6 @@ def minimax_with_alpha_beta_pruning_algorithm(
     Returns:
         dictionary containing best score and best node
     """
-    # Make sure we don't use same node twice
     parent_utility = parent.find_utility(winning_score=winning_score)
 
     raise_error_if_depth_less_than_zero(depth)

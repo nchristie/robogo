@@ -72,16 +72,54 @@ Robogo is implemented using the Django web framework for the Python language and
 TODO ADD REFERENCES TO THIS PARAGRAPH
 The minimax algorithm allows the computer to optimise its choice of next move by looking ahead a number of steps in the game by creating a game tree made up of potential moves for each point in the game. The algorithm then assesses the utility of the moves at the given future point in the game. For ease this future point in the game will be referred to as the terminal state, although in reality is will normally be a few moves on in the game and not the end state of the game and greater discussion on the reasons behind that will come later. From this terminal state, the algorithm works back up the tree to establish the most optimal move for each player at each point by inheriting the utility from the terminal state. For a two-player game such as Go the computer will always choose the move with the minimum utility to its opponent and presume that its opponent will select their move for maximum utility, and this alternating minimising and maximising of utility is where the term minimax derives. Alpha beta pruning is layered over minimax to reduce the amount of computing time required to calculate the optimal move. It works by navigating the game tree to the terminal state of one branch and establishing the utility of the optimal move on that branch, now when the next branch is assessed, as soon as the utility breaches the threshold value set by the first branch we can ignore all paths below that level and avoid these calculations.
 
-TODO THIS LOGIC HAS CHANGED, REWRITE THIS PARAGRAPH
-In this project minimax is implemented using a base class in `games/minimax.py` called `MinimaxNode`. This class creates a node in the game tree, which in turn has a member variable called `children` which is a list of MinimaxNodes. The `MinimaxNode` is agnostic to which game is being played, and although it's used in Robogo in order to play this variation on five-in-a-row Go, it could equally be used for any adversarial two-player pure logic game, such as Chess. `MinimaxNode` has a method called `get_optimal_move` which can be used on the penultimate nodes in order to determine which terminal node would be selected. The method loops over the leaves of the penultimate node, and selects the one with the best score for the player, so if it's the minimiser this is the score which is worst for the opponent, and if it's the maximiser it's the score which is best for itself.
+In this project minimax is implemented in the file `games/minimax.py`. The core elements in this file are a base class called `MinimaxNode` and the algorithm itself, which is a free function called `minimax_with_alpha_beta_pruning_algorithm`. The code in this file is agnostic to which game is being played, and although it's used in Robogo in order to play this variation of Go, it could equally be used for any adversarial two-player pure logic game, such as Chess.
 
-TODO EXPLAIN HOW THE ALPHA BETA PRUNING WORKS IN THE CODE
-Alpha-Beta pruning is not yet implemented on this project although some initial investigation has been made and an `evaluate` method has been written based entirely on the pseudocode presented in Jain's blog post (21).
+#### MinimaxNode
+In earlier iterations of the code, MinimaxNode featured member variables to allow a tree to be built for future inspection such as score for that node and an array of its children, which in turn were also MinimaxNodes. It also had method called `get_optimal_move` which was used on the penultimate nodes in order to determine which terminal node would be selected. The method looped over the leaves of the penultimate node, and selects the one with the best score for the player, so if it's the minimiser this is the score which is worst for the opponent, and if it's the maximiser it's the score which is best for itself.
+
+```
+def get_optimal_move(self):
+    # output is Node
+    if not self.children:
+        raise Exception(
+            f"get_optimal_move error for {self.get_node_id()}: node has no children {[child for child in self.children]}"
+        )
+    best_move = self.children[0]
+    player_to_move = self.player_to_move
+    best_score = best_move.get_score()
+    best_path_depth = best_move.get_path_depth()
+
+    strategy = self.maximizer_strategy
+    if player_to_move == "minimizer":
+        strategy = self.minimizer_strategy
+
+    for child in self.children:
+        child_score = child.get_score()
+        child_path_depth = child.get_path_depth()
+        if player_to_move == "maximizer" and child_score == HIGHEST_SCORE:
+            best_move = child
+        if player_to_move == "minimizer" and child_score == LOWEST_SCORE:
+            best_move = child
+        elif minimizer_is_on_losing_path(player_to_move, child_score, best_score):
+            if child_path_depth < best_path_depth:
+                best_path_depth = child_path_depth
+                best_move = child
+        elif strategy(child_score, best_score):
+            best_move = child
+            best_score = best_move.get_score()
+    return best_move
+```
+
+During the course of developing the code and reading online resources (21, 26, 27) I realised that it was possible to do all the relevant calculations during the algorithm without storing the outcomes in the node objects, so the code in its current state does this to reduce the number of actions the algorithm has to perform in an attempt to speed up processing time. Almost all of the functions and members which used to reside in the MinimaxNode class are now gone.
+
+#### minimax_with_alpha_beta_pruning_algorithm
+The `minimax_with_alpha_beta_pruning_algorithm` function was developed using a number of online resources such as Jain's blog post (21). The function takes a MinimaxNode as its only required argument, and then has optional arguments for depth, winning_score and start_time. Depth and winning score both have default values set elsewhere in the code, while start_time is used if we want to apply a timeout to the function, but is not required in all cases (for example it isn't used in the tests). The function then checks if its base case has been met: if we've reached full depth or if the node has a winning utility. If either of these conditions are met then it returns a dictionary with the best score and the move node which will take the computer down the path with that best score. If the base case hasn't been met then the code then sets up some variables for use in the recurse case. `alpha` is the variable representing the best score for the maximizer and is initialised at -infinity, i.e. the worst possible score for the maximizer. `beta` is the variable representing the best score for the minimizer, and is initialised at the worst possible score for the minimizer; infinity. `best_score` is the variable for storing the best score found so far while navigating the game tree and is set to -100 if the player to move is the maximizer or 100 if it's the minimizer - I chose different values from the alpha and beta values in order to make it easier to examine what was happening in the code from the logs and the debugger. Finally `func` is a variable which is set to the Python inbuilt function max if the player to move is the maximizer, or min if the player to move is the minimizer - `func` will be used during the recursion to select the best move. We now begin examining the children of the parent node. This is done by looping over the output of the generator: `generate_next_child_and_rank_by_proximity`, which I will discuss in further detail later on in this report. At this stage the algorithm recurses, i.e. calls itself. The effect of this is that the first child of the root node will find its first child and so on until the base case is met, at which point the utility of the node is evaluated and returned alongside the node itself. Now the best score is found by taking the `func` of the best score from the result and the existing best score - i.e. the minimum of the two if it's the minimizer's turn to play or maximum if it's the maximizer. If our best score at this stage matches the score of this node, then the current child node is assigned the status of best node. At this stage if it's the maximizer's turn to move we set alpha, or beta if it's the minimizer's turn. We use `func` again to get the correct value comparing `best_score` to alpha or beta. At this stage we check if break conditions have been met. The following cases are valid break conditions: 1. alpha is greater or equal to beta - in this case we know that any remaining nodes down this branch of the tree cannot be an improvement on what we have available now. TODO GO INTO MORE DETAIL HERE. The other break conditions are if we're at a winning node as we don't need to examine the tree beyond a winning state, or if the process has timed out. The time out was set to 60 seconds, and this is in order to prevent highly prolongued lagging, but comes with the downside that not all options will have been evaluated and the move suggested after timeout may not be the best move in the game, simply the best of all the moves evaluated over the course of a minute. The function returns the best score and the move node from which the score came either once all child nodes on that level have been evaluated or when a break condition is met. The result is returned to the next level up in the loop, i.e. the parent node until it reaches the root node at which point we have the best move available for the root node which can then be presented in the UI.
 
 In order for Minimax to work it's necessary to be able to determine the utility of the terminal nodes, which is where the logic of the given game becomes relevant. In order to separate out the Go logic from the pure Minimax code a new class called `GoNode` was created in `games/go_minimax_joiner.py`. `GoNode` inherits all the variables and methods from `MinimaxNode` and in addition has the ability to examine any given board state. In order to determine the utility of the board state for a terminal node `GoNode` looks for all stones grouped in horizontal or vertical lines, and keeps a running score of the highest number of stones per player and then returns the highest group length as that player's score.
 
 TODO DESCRIBE THE VARIOUS APPROACHES TO GENERATING CHILDREN NODES
-During development the list of potential moves was kept artificially short in order to preserve computing resource, in particular before the alpha-beta pruning was applied. Another benefit to restricting move options is creating a beginner-friendly computer player who takes a simplistic strategy similar to that that human beginners tend to adopt. This beginner strategy involves either directly blocking one's opponenet, or alternatively connecting to one's own stones directly. More sophisticated gameplay tends to involve moves which don't always connect to one's own stones or the opponent's stones.
+**Getting node children; various approaches:**
+During development the list of potential moves was kept artificially short in order to preserve computing resource, in particular before the alpha-beta pruning was applied. Another benefit to restricting move options is creating a beginner-friendly computer player who takes a simplistic strategy similar to that that human beginners tend to adopt. This beginner strategy involves either directly blocking one's opponent, or alternatively connecting to one's own stones directly. More sophisticated gameplay tends to involve moves which don't always connect to one's own stones or the opponent's stones.
 
 TODO EXPLAIN THE VARIOUS MINIMAX FUNCTIONS I'VE USED ALONG THE WAY AND WHY I SETTLED ON THE ONE IN USE NOW
 This initial iteration of Minimax goes only one layer deep, i.e. treats the current board state as the penultimate move before assessing utility. As it only goes one layer deep and also deliberately only makes connecting moves it's currently very easy to beat the computer.
@@ -296,6 +334,8 @@ TODO CHANGE REFERENCES TO HARVARD STYLE
 - [23] https://blog.logrocket.com/dockerizing-django-app/
 - [24] https://docs.docker.com/samples/django/
 - [25] https://docs.docker.com/get-docker/
+- [26] https://mathspp.com/blog/minimax-algorithm-and-alpha-beta-pruning
+- [27] https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
 
 
 Note: the final project report write up will feature Vancouver-style referencing as outlined in the following resources:
