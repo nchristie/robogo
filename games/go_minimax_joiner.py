@@ -122,16 +122,14 @@ class GoNode(MinimaxNode):
                 f"Minimizer win found for {self.get_node_id()}, {self.move_coordinates}"
             )
         if not score and score != 0:
-            raise Exception(f"Score could not be set score_dict: {score_dict}")
+            raise Exception(
+                f"Couldn't find utility for {self.get_node_id()} score_dict: {score_dict}"
+            )
         else:
             logger.debug(
                 f"Utility for node {self.get_node_id()} with coordinates {self.move_coordinates} = {score}"
             )
-        if not score and score != 0:
-            raise Exception(f"Couldn't get utility for {self.get_node_id()}")
         return score
-
-    # TODO find_connecting_stones():
 
 
 class GoTree(MinimaxTree):
