@@ -56,7 +56,9 @@ class GoNode(MinimaxNode):
     def get_move_coordinates(self):
         return self.move_coordinates
 
-    def generate_next_child(self, depth="NA", parent_node_id="NA", latest_move_coordinates=()):
+    def generate_next_child(
+        self, depth="NA", parent_node_id="NA", latest_move_coordinates=()
+    ):
         """
         Yields:
             GoNode: next possible move on the board
@@ -85,7 +87,9 @@ class GoNode(MinimaxNode):
             i += 1
             yield next_node
 
-    def get_all_children_and_rank_by_proximity(self, depth=0, parent_node_id="NA", latest_move_coordinates=()):
+    def get_all_children_and_rank_by_proximity(
+        self, depth=0, parent_node_id="NA", latest_move_coordinates=()
+    ):
         """
         Returns:
             GoNode: possible moves on the board sorted by proximity to other stones
@@ -135,7 +139,13 @@ class GoNode(MinimaxNode):
             moves.append(child)
         return moves
 
-    def generate_next_child_and_rank_by_proximity(self, depth=0, parent_node_id="NA", latest_move_coordinates=(), max_jump_size=None):
+    def generate_next_child_and_rank_by_proximity(
+        self,
+        depth=0,
+        parent_node_id="NA",
+        latest_move_coordinates=(),
+        max_jump_size=None,
+    ):
         """
         Returns:
             GoNode: possible moves on the board sorted by proximity to other stones
@@ -145,8 +155,7 @@ class GoNode(MinimaxNode):
         stone = PLAYER_DICT[player_to_move]
         board_size = len(self.board_state)
 
-
-        max_jump_size = ceil(board_size/3)
+        max_jump_size = ceil(board_size / 3)
         min_jump_size = 1
         if max_jump_size == None or max_jump_size <= min_jump_size:
             max_jump_size = board_size
@@ -185,8 +194,9 @@ class GoNode(MinimaxNode):
             )
             yield child
 
-
-    def generate_next_child_and_rank_by_proximity_to_latest_move(self, depth="NA", parent_node_id="NA", latest_move_coordinates=()):
+    def generate_next_child_and_rank_by_proximity_to_latest_move(
+        self, depth="NA", parent_node_id="NA", latest_move_coordinates=()
+    ):
         """
         Returns:
             GoNode: possible moves on the board sorted by proximity to other latest move
@@ -199,7 +209,9 @@ class GoNode(MinimaxNode):
         for jump_size in range(1, board_size):
 
             surrounding_positions = find_moves_around_position(
-                latest_move_coordinates[0], latest_move_coordinates[1], jump_size=jump_size
+                latest_move_coordinates[0],
+                latest_move_coordinates[1],
+                jump_size=jump_size,
             )
             for move_coordinates in surrounding_positions:
                 if not is_move_valid(self.board_state, move_coordinates):
@@ -255,17 +267,3 @@ class GoNode(MinimaxNode):
 class GoTree(MinimaxTree):
     def __init__(self, root_node):
         self.root_node = root_node
-
-    def minimax_depth_of_2(self, winning_score=WINNING_SCORE):
-        depth = 2
-        self.build_and_prune_game_tree_recursive(self.root_node, depth, set())
-
-        current_node = self.root_node
-
-        for child in current_node.get_children():
-            for child2 in child.get_children():
-                child2.set_score(child2.find_utility(winning_score=winning_score))
-            child2_optimal_move = child.get_optimal_move()
-            child.set_score(child2_optimal_move.get_score())
-
-        return self.root_node.get_optimal_move()

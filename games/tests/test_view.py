@@ -1,5 +1,5 @@
 from django.test import TestCase
-from games.views import Board, find_game_by_ip, get_white_response, get_white_response_no_tree
+from games.views import Board, find_game_by_ip, get_white_response_no_tree
 
 
 class BoardTestCase(TestCase):
@@ -36,7 +36,7 @@ class BoardTestCase(TestCase):
 
 
 class HelpersTestCase(TestCase):
-    def test_get_white_response_3x3(self):
+    def test_get_white_response_no_tree_3x3(self):
         # GIVEN
         board_state = [
             ["●", "●", "+"],
@@ -46,7 +46,7 @@ class HelpersTestCase(TestCase):
         winning_score = 3
 
         # WHEN
-        actual = get_white_response(
+        actual = get_white_response_no_tree(
             board_state=board_state, winning_score=winning_score, depth=4
         )
 
@@ -65,14 +65,14 @@ class HelpersTestCase(TestCase):
 
         # WHEN
         actual = get_white_response_no_tree(
-            board_state=board_state, winning_score=winning_score, depth=4, move_coordinates=(0,1)
+            board_state=board_state, winning_score=winning_score, depth=4
         )
 
         # THEN
         expected = (0, 2)
         self.assertEqual(expected, actual)
 
-    def test_get_white_response_two_calls(self):
+    def test_get_white_response_no_tree_two_calls(self):
         # GIVEN
         board_state_1 = [
             ["●", "+", "+", "+"],
@@ -91,10 +91,10 @@ class HelpersTestCase(TestCase):
         depth = 4
 
         # WHEN
-        first_call = get_white_response(
+        first_call = get_white_response_no_tree(
             board_state_1, winning_score=winning_score, depth=depth
         )
-        actual = get_white_response(
+        actual = get_white_response_no_tree(
             board_state_2, winning_score=winning_score, depth=depth
         )
 
@@ -122,18 +122,17 @@ class HelpersTestCase(TestCase):
 
         # WHEN
         first_call_0815_1406 = get_white_response_no_tree(
-            board_state_0815_1406, winning_score=winning_score, depth=depth, move_coordinates=(0,0)
+            board_state_0815_1406, winning_score=winning_score, depth=depth
         )
         actual = get_white_response_no_tree(
-            board_state_0815_1406, winning_score=winning_score, depth=depth, move_coordinates=(0,1)
+            board_state_0815_1406, winning_score=winning_score, depth=depth
         )
 
         # THEN
         expected = (0, 2)
         self.assertEqual(expected, actual)
 
-
-    def test_get_white_response_depth_greater_than_remaining_moves(self):
+    def test_get_white_response_no_tree_depth_greater_than_remaining_moves(self):
         # GIVEN
         board_state = [
             ["●", "●", "○", "●"],
@@ -145,18 +144,18 @@ class HelpersTestCase(TestCase):
         depth = 4
 
         # WHEN
-        actual = get_white_response(
+        actual = get_white_response_no_tree(
             board_state, winning_score=winning_score, depth=depth
         )
 
         # THEN
-        expected = (1, 3)
+        expected = (3, 3)
         self.assertEqual(expected, actual)
 
-    def test_get_white_response_blocks_between_stones(self):
+    def test_get_white_response_no_tree_blocks_between_stones(self):
         # GIVEN
         winning_score = 3
-        depth = 6
+        depth = 2
 
         board_state = [
             ["●", "○", "+", "+", "+"],
@@ -167,7 +166,9 @@ class HelpersTestCase(TestCase):
         ]
 
         # WHEN
-        x, y = get_white_response(board_state, winning_score=winning_score, depth=depth)
+        x, y = get_white_response_no_tree(
+            board_state, winning_score=winning_score, depth=depth
+        )
         board_state[x][y] = "○"
         print("\n\n\n***TEST BOARD STATE***")
         [print(f"{row}") for row in board_state]

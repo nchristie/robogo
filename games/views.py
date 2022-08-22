@@ -59,7 +59,9 @@ class Index(View):
                     last_move = user_game.move_set.last()
                     move_coordinates = (last_move.x_coordinate, last_move.y_coordinate)
                     logger.info(f"last move coordinates: {move_coordinates}")
-                    white_x, white_y = get_white_response_no_tree(board_state=my_board.state, move_coordinates=move_coordinates, algorithm="prune_game_tree_recursive")
+                    white_x, white_y = get_white_response_no_tree(
+                        board_state=my_board.state
+                    )
                 except Exception as e:
                     message = f"Failed to get white move with exception: {e}"
                     logger.error(message)
@@ -154,85 +156,28 @@ def find_game_by_ip(ip):
     return user_game
 
 
-def get_white_response(board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_DEPTH, move_coordinates=(), algorithm="build_and_prune_game_tree_recursive"):
-    root_node = GoNode(
-        node_id="root_node",
-        score=None,
-        children=[],
-        board_state=board_state,
-        player_to_move="minimizer",
-    )
-    game_tree = GoTree(root_node)
-    try:
-        # using build_and_prune
-        open_moves = sum(x == "+" for x in list(itertools.chain(*board_state)))
-        if open_moves < depth:
-            depth = open_moves
-        start_minimax = perf_counter()
-        game_tree.algo_chooser(algorithm)(
-            parent=game_tree.root_node,
-            depth=depth,
-            node_ids=set(),
-            winning_score=winning_score,
-        )
-        end_minimax = perf_counter()
-        minimax_seconds_to_execute = f"{end_minimax - start_minimax:0.4f}"
-        logger.info(f"\n>>> >>> Minimax seconds to execute: {minimax_seconds_to_execute} <<< <<<\n")
-
-        logger.info(f"root node: {game_tree.root_node.__str__()}")
-        for child in game_tree.root_node.get_children():
-            if child.get_move_coordinates() == (1, 0):
-                for next_child in child.get_children():
-                    logger.info(next_child.__str__())
-
-        try:
-            white_move_node = game_tree.root_node.get_optimal_move()
-        except Exception as e:
-            logger.error(f"Couldn't get optimal move {e}")
-        print_node = white_move_node
-        try:
-            print_game_path(depth, print_node)
-        except Exception as e:
-            logger.error(f"Error printing board: {e}")
-
-    except Exception as e:
-        logger.error(f"get_white_response failed with error: {e}")
-        return
-
-    logger.info(f"white_move_node: {white_move_node.__str__()}")
-
-    assert (
-        type(white_move_node) == GoNode
-    ), f"White move node isn't of type GoNode for node: {white_move_node.get_node_id()}"
-    white_move = white_move_node.move_coordinates
-    logger.debug(f"white_move: {white_move}, best_score: {white_move_node.get_score()}")
-    return white_move
-
 def get_white_response_no_tree(
-    board_state,
-    winning_score=WINNING_SCORE,
-    depth=MAX_TREE_DEPTH,
-    move_coordinates=(),
-    algorithm="prune_game_tree_recursive"):
-    if not move_coordinates:
-        raise Exception(f"get_white_response_no_tree requires move coordinates and got move_coordinates of: {move_coordinates}")
+    board_state, winning_score=WINNING_SCORE, depth=MAX_TREE_DEPTH
+):
+
     root_node = GoNode(
         node_id="root_node",
         children=[],
         board_state=board_state,
         player_to_move="minimizer",
-        move_coordinates=move_coordinates,
     )
     game_tree = GoTree(root_node)
     try:
         open_moves = sum(x == "+" for x in list(itertools.chain(*board_state)))
-        max_open_moves = len(board_state[0])**2
+        max_open_moves = len(board_state[0]) ** 2
 
         depth = choose_depth(open_moves, max_open_moves)
-        logger.info(f"Executing minimax, searching to depth of {depth}, open moves: {int((open_moves/max_open_moves)*100)}%")
+        logger.info(
+            f"Executing minimax, searching to depth of {depth}, open moves: {int((open_moves/max_open_moves)*100)}%"
+        )
         start_minimax = perf_counter()
         try:
-            white_move_node = game_tree.algo_chooser(algorithm)(
+            white_move_node = game_tree.prune_game_tree_recursive(
                 parent=game_tree.root_node,
                 depth=depth,
                 winning_score=winning_score,
@@ -244,7 +189,9 @@ def get_white_response_no_tree(
 
         end_minimax = perf_counter()
         minimax_seconds_to_execute = f"{end_minimax - start_minimax:0.4f}"
-        logger.info(f"\n>>> >>> Minimax seconds to execute: {minimax_seconds_to_execute} <<< <<<\n")
+        logger.info(
+            f"\n>>> >>> Minimax seconds to execute: {minimax_seconds_to_execute} <<< <<<\n"
+        )
 
     except Exception as e:
         message = f"get_white_response_no_tree failed with error: {e}"
@@ -261,20 +208,10 @@ def get_white_response_no_tree(
     return white_move
 
 
-def print_game_path(depth, print_node):
-    for i in range(depth):
-        logger.error(f"Move {i} score: {print_node.get_score()}")
-        for row in transpose_board(print_node.board_state):
-            logger.error(row)
-        if not print_node.is_leaf_node():
-            print_node = print_node.get_optimal_move()
-        else:
-            break
-
 def choose_depth(open_moves, max_open_moves):
     depth = 2
-    for i in range(99,0,-5):
-        percentage_multiplier = i/100
+    for i in range(99, 0, -5):
+        percentage_multiplier = i / 100
         threshold = int(max_open_moves * percentage_multiplier)
         if open_moves < threshold:
             depth += 1

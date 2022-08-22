@@ -86,6 +86,163 @@ During development the list of potential moves was kept artificially short in or
 TODO EXPLAIN THE VARIOUS MINIMAX FUNCTIONS I'VE USED ALONG THE WAY AND WHY I SETTLED ON THE ONE IN USE NOW
 This initial iteration of Minimax goes only one layer deep, i.e. treats the current board state as the penultimate move before assessing utility. As it only goes one layer deep and also deliberately only makes connecting moves it's currently very easy to beat the computer.
 
+```
+def build_and_prune_game_tree_recursive(
+    self,
+    parent,
+    depth=MAX_TREE_DEPTH,
+    node_ids=set(),
+    winning_score=WINNING_SCORE,
+):
+    """
+    Builds game tree to a given depth
+
+    Parameters:
+        parent (MinimaxNode): the node from which we build down
+        depth (int): how far down the tree we want to build
+        node_ids (set): all the move ids which have been
+            encountered so far
+        winning_score: how many stones in a row constitutes a win
+
+    Returns:
+        parent_utility at full depth and best_score at all other levels
+
+    Side effects:
+        builds tree from parent
+    """
+    # Make sure we don't use same node twice
+    parent_node_id = parent.get_node_id()
+    node_ids.add(parent_node_id)
+
+    parent_utility = parent.find_utility(winning_score=winning_score)
+
+    raise_error_if_depth_less_than_zero(depth)
+
+    # Base case
+    # If we're at a leaf node leave the recursion
+    # a leaf node is a node at full depth or a winning node
+    if depth == 0 or is_win_state(parent, parent_utility):
+        raise_error_if_node_has_children(
+            parent, depth, message="Leaf nodes shouldn't have children"
+        )
+        parent.set_score(parent_utility)
+        parent.set_path_depth(depth)
+
+        logger.debug(
+            f"Returning at depth of {depth} with score of {parent_utility} at node: {parent_node_id}"
+        )
+        return {"best_score": parent_utility, "path_depth": depth}
+
+    alpha = -INFINITY
+    beta = INFINITY
+    player_to_move = parent.get_player_to_move()
+    best_path_depth = MAX_TREE_DEPTH
+
+    if player_to_move == "maximizer":
+        best_score = LOWEST_SCORE
+        func = max
+    elif player_to_move == "minimizer":
+        best_score = HIGHEST_SCORE
+        func = min
+
+    # recurse case
+    cells_are_not_populated = set(list(itertools.chain(*parent.get_board_state()))) == set(["+"])
+
+
+    child_generator = parent.generate_next_child
+
+
+    for child in child_generator(depth, parent_node_id):
+        child_node_id = child.get_node_id()
+        raise_error_if_node_has_children(
+            child, depth, message="Nodes should initialise without children"
+        )
+
+        # Make sure we don't use same node twice
+        if node_already_visited(child_node_id, node_ids):
+            continue
+
+        # **************************************************************************
+        # use recursion to build tree vertically
+        res = self.build_and_prune_game_tree_recursive(
+            child, depth - 1, node_ids, winning_score=winning_score
+        )
+        path_depth = res["path_depth"]
+        best_score = func(
+            res["best_score"],
+            best_score,
+        )
+        best_path_depth = min(best_path_depth, path_depth)
+        # **************************************************************************
+
+        # to get to this stage:
+        # 1. we've reached the end of depth count-down
+        # This means first we'll get to the point we want to stop building vertically
+        # and then add children at this level. Once all children are added we will work
+        # back up the tree and add child nodes at higher levels
+
+        # build tree horizontally
+        parent.add_child(child)
+        parent.set_score(best_score)
+        parent.set_path_depth(child.get_path_depth())
+
+        # set alpha and beta
+        if player_to_move == "maximizer":
+            alpha = func(best_score, alpha)
+        elif player_to_move == "minimizer":
+            beta = func(best_score, beta)
+
+        # break loop if beta <= alpha
+        if break_conditions_are_met(alpha, beta):
+            logger.debug(f"Breaking at {parent.__str__()}")
+            break
+
+    logger.debug(
+        f"Returning at end of function {parent_node_id} alpha, beta: {(alpha, beta)}"
+    )
+    return {"best_score": best_score, "path_depth": depth}
+
+
+def minimax_depth_of_2(self, winning_score=WINNING_SCORE):
+    depth = 2
+    self.build_and_prune_game_tree_recursive(self.root_node, depth, set())
+
+    current_node = self.root_node
+
+    for child in current_node.get_children():
+        for child2 in child.get_children():
+            child2.set_score(child2.find_utility(winning_score=winning_score))
+        child2_optimal_move = child.get_optimal_move()
+        child.set_score(child2_optimal_move.get_score())
+
+    return self.root_node.get_optimal_move()
+
+def find_depth_recursive(self, node, depth):
+    if depth > MAX_TREE_DEPTH:
+        raise Exception(f"Maximum tree depth of {MAX_TREE_DEPTH} exceeded")
+
+    # Base case
+    # If we're at a terminal node leave the recursion
+    if node.is_leaf_node():
+        logger.debug(f"child {type(node)}")
+        logger.debug(
+            f"depth: {depth}, node_id: {node.get_node_id()} is_leaf_node: {node.is_leaf_node()}"
+        )
+        logger.debug(f"returning at depth of {depth} owing to terminal node")
+        return depth
+
+    # recurse case
+    for i, child in enumerate(node.children):
+        logger.debug(
+            f"depth: {depth}, child index: {i}, node_id: {child.get_node_id()} is_leaf_node: {child.is_leaf_node()}, child type: {type(child)}"
+        )
+        return self.find_depth_recursive(child, depth + 1)
+
+    logger.debug(f"Returning because end of function depth {depth}")
+    return
+
+```
+
 #### iii. Database
 The database software used for this project is PostgreSQL. The database consists of two tables: Games and Moves. Each user can play one game per device as their game is tied to their IP address. Each game can have zero to many moves, and if the game is deleted all of its moves also get deleted from the database.
 

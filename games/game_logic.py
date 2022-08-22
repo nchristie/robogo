@@ -14,14 +14,14 @@ LOWEST_SCORE = -HIGHEST_SCORE
 
 
 def is_move_valid(board_state, move_coordinates):
-    checks = [is_move_within_board_boudaries, is_move_in_free_position]
+    checks = [is_move_within_board_boundaries, is_move_in_free_position]
     for check in checks:
         if not check(board_state, move_coordinates):
             return False
     return True
 
 
-def is_move_within_board_boudaries(board_state, move_coordinates):
+def is_move_within_board_boundaries(board_state, move_coordinates):
     board_size = len(board_state[0])
     for coordinate in move_coordinates:
         if (coordinate >= board_size) or (coordinate < 0):

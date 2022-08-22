@@ -6,16 +6,6 @@ from games.game_logic import INFINITY
 
 
 class MinimaxNodeTestCase(TestCase):
-    @skip("Too problematic to raise exception from this function with code in current state")
-    def test_get_score(self):
-        """Get score"""
-        # GIVEN
-        my_node_1 = MinimaxNode(
-            node_id=1, score=None, children=[], player_to_move="minimizer"
-        )
-        with self.assertRaises(Exception):
-            my_node_1.get_score()
-
     def test_set_score(self):
         """Set score"""
         # GIVEN
