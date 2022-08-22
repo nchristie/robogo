@@ -124,11 +124,6 @@ class MinimaxNode:
             f"In minimax generate_next_child, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
         )
 
-    def get_all_children_and_rank_by_proximity(self, depth=0, parent_node_id="NA"):
-        raise Exception(
-            f"In minimax get_all_children_and_rank_by_proximity, this should be implemented by class which inherits depth: {depth} parent_node_id: {parent_node_id}"
-        )
-
     def is_leaf_node(self):
         # logger.debug(f"Checking if leaf node, number of children = {len(self.children)}, node_id = {self.get_node_id()}")
         return not self.children
@@ -197,10 +192,8 @@ class MinimaxTree:
             func = min
 
         # recurse case
-        child_generator = parent.generate_next_child_and_rank_by_proximity
-
-        for child in child_generator(
-            depth=depth, latest_move_coordinates=self.root_node.get_move_coordinates()
+        for child in parent.generate_next_child_and_rank_by_proximity(
+            depth=depth
         ):
             # **************************************************************************
             # use recursion to build tree vertically
