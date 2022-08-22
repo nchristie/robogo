@@ -58,7 +58,7 @@ class GoNodeTestCase(TestCase):
 
     # TODO test_find_legal_move_when_surrounded
 
-    def test_generate_next_child_returns_generator(self):
+    def test_generate_next_child_and_rank_by_proximity_returns_generator(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
         my_node_4 = GoNode(
@@ -70,7 +70,7 @@ class GoNodeTestCase(TestCase):
 
         # THEN
         expected = GeneratorType
-        potential_moves = my_node_4.generate_next_child(depth)
+        potential_moves = my_node_4.generate_next_child_and_rank_by_proximity(depth)
         actual = type(potential_moves)
         self.assertEqual(expected, actual)
 

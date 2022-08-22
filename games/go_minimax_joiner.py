@@ -37,11 +37,8 @@ class GoNode(MinimaxNode):
     def __str__(self):
         return (
             f"node_id: {self.get_node_id()}, "
-            # f"score: {self.get_score()}, "
-            f"number of children: {len(self.get_children())}, "
             f"player_to_move: {self.get_player_to_move()}, "
             f"move_coordinates: {self.get_move_coordinates()}, "
-            f"path_depth: {self.get_path_depth()}"
         )
 
     def get_board_state(self):
@@ -55,37 +52,6 @@ class GoNode(MinimaxNode):
 
     def get_move_coordinates(self):
         return self.move_coordinates
-
-    def generate_next_child(
-        self, depth="NA", parent_node_id="NA", latest_move_coordinates=()
-    ):
-        """
-        Yields:
-            GoNode: next possible move on the board
-        """
-        player_to_move = self.alternate_player_to_move()
-        stone = PLAYER_DICT[player_to_move]
-        board_size = len(self.board_state)
-        all_moves_on_board = list_all_moves_on_board(board_size)
-        i = 0
-        for move_coordinates in all_moves_on_board:
-            if not is_move_valid(self.board_state, move_coordinates):
-                continue
-            node_id = self.make_node_id(depth, i, parent_node_id)
-            new_board_state = deepcopy(self.board_state)
-            x = move_coordinates[0]
-            y = move_coordinates[1]
-            new_board_state[x][y] = stone
-
-            next_node = GoNode(
-                node_id=node_id,
-                board_state=new_board_state,
-                move_coordinates=move_coordinates,
-                children=[],
-                player_to_move=player_to_move,
-            )
-            i += 1
-            yield next_node
 
     def generate_next_child_and_rank_by_proximity(
         self,

@@ -36,7 +36,7 @@ class BoardTestCase(TestCase):
 
 
 class HelpersTestCase(TestCase):
-    def test_get_white_response_no_tree_3x3(self):
+    def test_get_white_response_no_tree_3x3_1(self):
         # GIVEN
         board_state = [
             ["●", "●", "+"],
