@@ -3,7 +3,8 @@ from django.views import View
 from .models import Game, Move
 from .forms import MoveForm
 from .stones import EMPTY_POSITION, WHITE_STONE, BLACK_STONE
-from .go_minimax_joiner import GoNode, GoTree
+from .go_minimax_joiner import GoNode
+from .minimax import prune_game_tree_recursive
 from .game_logic import *
 import itertools
 from time import perf_counter
@@ -165,7 +166,7 @@ def get_white_response_no_tree(
         board_state=board_state,
         player_to_move="minimizer",
     )
-    game_tree = GoTree(root_node)
+
     try:
         open_moves = sum(x == "+" for x in list(itertools.chain(*board_state)))
         max_open_moves = len(board_state[0]) ** 2
@@ -176,8 +177,8 @@ def get_white_response_no_tree(
         )
         start_minimax = perf_counter()
         try:
-            white_move_node = game_tree.prune_game_tree_recursive(
-                parent=game_tree.root_node,
+            white_move_node = prune_game_tree_recursive(
+                parent=root_node,
                 depth=depth,
                 winning_score=winning_score,
             )["move_node"]
@@ -208,18 +209,15 @@ def get_white_response_no_tree(
 
 
 def choose_depth(open_moves, max_open_moves):
-    depth = 3
+    depth = 4
 
     percent_of_moves_left_on_board = open_moves / max_open_moves
     logger.info(f"percent_of_moves_left_on_board {percent_of_moves_left_on_board}")
-    # under 90% do depth of 5
     if percent_of_moves_left_on_board < 0.9:
         depth = 5
-    # under 50% do depth of 6
-    if percent_of_moves_left_on_board < 0.5:
+    if percent_of_moves_left_on_board < 0.7:
         depth = 6
-    # under 30% do depth of 7
-    if percent_of_moves_left_on_board < 0.3:
+    if percent_of_moves_left_on_board < 0.5:
         depth = 7
     depth = depth if depth < MAX_TREE_DEPTH else MAX_TREE_DEPTH
     if open_moves < depth:

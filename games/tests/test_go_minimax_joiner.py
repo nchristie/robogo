@@ -1,7 +1,7 @@
 from django.test import TestCase
-from games.go_minimax_joiner import GoNode, GoTree
+from games.go_minimax_joiner import GoNode
+from games.minimax import prune_game_tree_recursive
 from types import GeneratorType
-from unittest import skip
 from games.game_logic import *
 
 
@@ -319,12 +319,11 @@ class GoTreeTestCase(TestCase):
             board_state=[["●", "●"], ["+", "+"]],
             player_to_move="minimizer",
         )
-        tree_0801_1308 = GoTree(node_0801_1308)
 
         depth = 0
 
         # WHEN
-        actual = tree_0801_1308.prune_game_tree_recursive(
+        actual = prune_game_tree_recursive(
             parent=node_0801_1308, depth=depth, winning_score=5
         )["best_score"]
 
@@ -347,10 +346,9 @@ class GoTreeTestCase(TestCase):
         )
 
         depth = 0
-        tree_0801_1253 = GoTree(node_0801_1253)
 
         # WHEN
-        actual = tree_0801_1253.prune_game_tree_recursive(
+        actual = prune_game_tree_recursive(
             parent=node_0801_1253, depth=depth, winning_score=5
         )["best_score"]
 
@@ -373,10 +371,9 @@ class GoTreeTestCase(TestCase):
         )
 
         depth = 2
-        tree_0801_1411 = GoTree(node_0801_1411)
 
         # WHEN
-        actual = tree_0801_1411.prune_game_tree_recursive(
+        actual = prune_game_tree_recursive(
             parent=node_0801_1411, depth=depth, winning_score=5
         )["best_score"]
 
@@ -402,12 +399,10 @@ class GoTreeTestCase(TestCase):
             ],
             player_to_move="minimizer",
         )
-
-        tree_0801_1547 = GoTree(node_0801_1547)
         depth = 2
 
-        white_move_node = tree_0801_1547.prune_game_tree_recursive(
-            parent=tree_0801_1547.root_node, depth=depth, winning_score=5
+        white_move_node = prune_game_tree_recursive(
+            parent=node_0801_1547, depth=depth, winning_score=5
         )["move_node"]
 
         # WHEN
@@ -431,11 +426,10 @@ class GoTreeTestCase(TestCase):
             move_coordinates=(0, 1),
         )
 
-        tree_0805_2100 = GoTree(node_0805_2100)
         depth = 4
 
-        white_move_node = tree_0805_2100.prune_game_tree_recursive(
-            tree_0805_2100.root_node, depth, winning_score=3
+        white_move_node = prune_game_tree_recursive(
+            node_0805_2100, depth, winning_score=3
         )["move_node"]
 
         # WHEN
@@ -464,10 +458,8 @@ class GoTreeTestCase(TestCase):
             player_to_move="minimizer",
         )
 
-        tree_0809_0414 = GoTree(node_0809_0414)
-
-        white_move_node = tree_0809_0414.prune_game_tree_recursive(
-            parent=tree_0809_0414.root_node, depth=depth, winning_score=winning_score
+        white_move_node = prune_game_tree_recursive(
+            parent=node_0809_0414, depth=depth, winning_score=winning_score
         )["move_node"]
 
         # WHEN

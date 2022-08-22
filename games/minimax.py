@@ -55,94 +55,87 @@ class MinimaxNode:
         return "minimizer"
 
 
-class MinimaxTree:
-    def __init__(self, root_node):
-        self.root_node = root_node
-
-    def prune_game_tree_recursive(
-        self,
-        parent,
-        depth=MAX_TREE_DEPTH,
-        winning_score=WINNING_SCORE,
-    ):
-        """
-        Searches game tree to a given depth and calculates best next move
-        using minimax and alpha-beta pruning
-
-        Parameters:
-            parent (MinimaxNode): the node from which we build down
-            depth (int): how far down the tree we want to build
-            node_ids (set): all the move ids which have been
-                encountered so far
-            winning_score: how many stones in a row constitutes a win
-
-        Returns:
-            object containing best score and best node
-        """
-        # Make sure we don't use same node twice
-        parent_utility = parent.find_utility(winning_score=winning_score)
-
-        raise_error_if_depth_less_than_zero(depth)
-
-        # Base case
-        # If we're at a leaf node leave the recursion
-        # a leaf node is a node at full depth or a winning node
-        if depth == 0 or is_win_state(parent, parent_utility):
-            return {"best_score": parent_utility, "move_node": parent}
-
-        alpha = -INFINITY
-        beta = INFINITY
-        player_to_move = parent.get_player_to_move()
-
-        if player_to_move == "maximizer":
-            best_score = LOWEST_SCORE
-            func = max
-        elif player_to_move == "minimizer":
-            best_score = HIGHEST_SCORE
-            func = min
-
-        # recurse case
-        for child in parent.generate_next_child_and_rank_by_proximity(
-            depth=depth, parent_node_id=parent.get_node_id()
-        ):
-            # **************************************************************************
-            # use recursion to build tree vertically
-            res = self.prune_game_tree_recursive(
-                child, depth - 1, winning_score=winning_score
-            )
-            best_score = func(
-                res["best_score"],
-                best_score,
-            )
-
-            if res["best_score"] == best_score:
-                best_node = child
-            # **************************************************************************
-
-            # To get to this stage we've:
-            # 1. reached the end of depth count-down
-            # or
-            # 2. encountered a win state
-            # This means first we'll get to the point we want to stop building vertically
-            # and then evaluate children at this level. Once all children are evaluated
-            # or a break condition is met we will work
-            # back up the tree and add child nodes at higher levels
-
-            # set alpha and beta
-            if player_to_move == "maximizer":
-                alpha = func(best_score, alpha)
-            elif player_to_move == "minimizer":
-                beta = func(best_score, beta)
-
-            # break loop if beta <= alpha or win state encountered
-            if break_conditions_are_met(alpha, beta):
-                logger.debug(child.get_node_id())
-                [logger.debug(row) for row in transpose_board(child.get_board_state())]
-                break
-        return {"best_score": best_score, "move_node": best_node}
-
-
 # Helpers
+def prune_game_tree_recursive(
+    parent,
+    depth=MAX_TREE_DEPTH,
+    winning_score=WINNING_SCORE,
+):
+    """
+    Searches game tree to a given depth and calculates best next move
+    using minimax and alpha-beta pruning
+
+    Parameters:
+        parent (MinimaxNode): the node from which we build down
+        depth (int): how far down the tree we want to build
+        node_ids (set): all the move ids which have been
+            encountered so far
+        winning_score: how many stones in a row constitutes a win
+
+    Returns:
+        object containing best score and best node
+    """
+    # Make sure we don't use same node twice
+    parent_utility = parent.find_utility(winning_score=winning_score)
+
+    raise_error_if_depth_less_than_zero(depth)
+
+    # Base case
+    # If we're at a leaf node leave the recursion
+    # a leaf node is a node at full depth or a winning node
+    if depth == 0 or is_win_state(parent, parent_utility):
+        return {"best_score": parent_utility, "move_node": parent}
+
+    alpha = -INFINITY
+    beta = INFINITY
+    player_to_move = parent.get_player_to_move()
+
+    if player_to_move == "maximizer":
+        best_score = LOWEST_SCORE
+        func = max
+    elif player_to_move == "minimizer":
+        best_score = HIGHEST_SCORE
+        func = min
+
+    # recurse case
+    for child in parent.generate_next_child_and_rank_by_proximity(
+        depth=depth, parent_node_id=parent.get_node_id()
+    ):
+        # **************************************************************************
+        # use recursion to build tree vertically
+        res = prune_game_tree_recursive(child, depth - 1, winning_score=winning_score)
+        best_score = func(
+            res["best_score"],
+            best_score,
+        )
+
+        if res["best_score"] == best_score:
+            best_node = child
+        # **************************************************************************
+
+        # To get to this stage we've:
+        # 1. reached the end of depth count-down
+        # or
+        # 2. encountered a win state
+        # This means first we'll get to the point we want to stop building vertically
+        # and then evaluate children at this level. Once all children are evaluated
+        # or a break condition is met we will work
+        # back up the tree and add child nodes at higher levels
+
+        # set alpha and beta
+        if player_to_move == "maximizer":
+            alpha = func(best_score, alpha)
+        elif player_to_move == "minimizer":
+            beta = func(best_score, beta)
+
+        # break loop if beta <= alpha or win state encountered
+        if break_conditions_are_met(alpha, beta):
+            logger.debug(child.get_node_id())
+            [logger.debug(row) for row in transpose_board(child.get_board_state())]
+            break
+    return {"best_score": best_score, "move_node": best_node}
+
+
 def break_conditions_are_met(alpha, beta):
     prune_tree = alpha >= beta
     maximizer_win = alpha == HIGHEST_SCORE

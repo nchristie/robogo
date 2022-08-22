@@ -1,4 +1,4 @@
-from .minimax import MinimaxNode, MinimaxTree
+from .minimax import MinimaxNode
 from copy import deepcopy
 from .game_logic import *
 from .stones import *
@@ -53,7 +53,6 @@ class GoNode(MinimaxNode):
         self,
         depth=0,
         parent_node_id="NA",
-        max_jump_size=None,
     ):
         """
         Returns:
@@ -66,7 +65,7 @@ class GoNode(MinimaxNode):
 
         max_jump_size = ceil(board_size / 3)
         min_jump_size = 1
-        if max_jump_size == None or max_jump_size <= min_jump_size:
+        if max_jump_size <= min_jump_size:
             max_jump_size = board_size
 
         populated_cells = []
@@ -130,8 +129,3 @@ class GoNode(MinimaxNode):
                 f"Utility for node {self.get_node_id()} with coordinates {self.move_coordinates} = {score}"
             )
         return score
-
-
-class GoTree(MinimaxTree):
-    def __init__(self, root_node):
-        self.root_node = root_node
