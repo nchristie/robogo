@@ -1,8 +1,12 @@
 import logging
 from .game_logic import *
 
+from time import perf_counter
+
 
 logger = logging.getLogger(__name__)
+
+TIMEOUT_THRESHOLD = 60
 
 
 class MinimaxNode:
@@ -57,9 +61,7 @@ class MinimaxNode:
 
 # Helpers
 def minimax_with_alpha_beta_pruning_algorithm(
-    parent,
-    depth=MAX_TREE_DEPTH,
-    winning_score=WINNING_SCORE,
+    parent, depth=MAX_TREE_DEPTH, winning_score=WINNING_SCORE, start_time=None
 ):
     """
     Searches game tree to a given depth and calculates best next move
@@ -73,7 +75,7 @@ def minimax_with_alpha_beta_pruning_algorithm(
         winning_score: how many stones in a row constitutes a win
 
     Returns:
-        object containing best score and best node
+        dictionary containing best score and best node
     """
     # Make sure we don't use same node twice
     parent_utility = parent.find_utility(winning_score=winning_score)
@@ -103,7 +105,9 @@ def minimax_with_alpha_beta_pruning_algorithm(
     ):
         # **************************************************************************
         # use recursion to build tree vertically
-        res = minimax_with_alpha_beta_pruning_algorithm(child, depth - 1, winning_score=winning_score)
+        res = minimax_with_alpha_beta_pruning_algorithm(
+            child, depth - 1, winning_score=winning_score, start_time=start_time
+        )
         best_score = func(
             res["best_score"],
             best_score,
@@ -129,22 +133,30 @@ def minimax_with_alpha_beta_pruning_algorithm(
             beta = func(best_score, beta)
 
         # break loop if beta <= alpha or win state encountered
-        if break_conditions_are_met(alpha, beta):
+        # if time minus start time > 60 seconds, return best node now
+        timeout = False
+        if start_time:
+            time_now = perf_counter()
+            run_time = time_now - start_time
+            timeout = run_time > TIMEOUT_THRESHOLD
+        if break_conditions_are_met(alpha, beta, timeout):
             logger.debug(child.get_node_id())
             [logger.debug(row) for row in transpose_board(child.get_board_state())]
             break
     return {"best_score": best_score, "move_node": best_node}
 
 
-def break_conditions_are_met(alpha, beta):
+def break_conditions_are_met(alpha, beta, timeout=False):
     prune_tree = alpha >= beta
     maximizer_win = alpha == HIGHEST_SCORE
     minimizer_win = beta == LOWEST_SCORE
-    if prune_tree or maximizer_win or minimizer_win:
+    if prune_tree or maximizer_win or minimizer_win or timeout:
         logger.debug(
             f"alpha >= beta: {prune_tree}, alpha: {alpha}, beta: {beta}, maximizer_win: {maximizer_win}, minimizer_win: {minimizer_win}"
         )
-    return prune_tree or maximizer_win or minimizer_win
+    if timeout:
+        logger.info("Returning due to timeout")
+    return prune_tree or maximizer_win or minimizer_win or timeout
 
 
 def is_win_state(node, node_utility):

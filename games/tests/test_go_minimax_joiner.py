@@ -356,7 +356,9 @@ class GoTreeTestCase(TestCase):
         expected = HIGHEST_SCORE
         self.assertEqual(expected, actual)
 
-    def test_minimax_with_alpha_beta_pruning_algorithm_sets_score_based_on_children(self):
+    def test_minimax_with_alpha_beta_pruning_algorithm_sets_score_based_on_children(
+        self,
+    ):
         # GIVEN
         node_0801_1411 = GoNode(
             node_id="root_node_0801_1411",

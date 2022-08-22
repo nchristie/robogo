@@ -181,6 +181,7 @@ def get_white_response_no_tree(
                 parent=root_node,
                 depth=depth,
                 winning_score=winning_score,
+                start_time=start_minimax,
             )["move_node"]
         except Exception as e:
             message = f"Couldn't get white response {e}"
