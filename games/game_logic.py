@@ -152,3 +152,13 @@ def find_moves_around_position(x_coordinate, y_coordinate, jump_size=1):
         )
 
     return moves_around_position
+
+def find_populated_cells(board_state):
+    populated_cells = []
+
+    for x_coordinate, row in enumerate(board_state):
+        for y_coordinate, cell in enumerate(row):
+            if cell != EMPTY_POSITION:
+                populated_cells.append((x_coordinate, y_coordinate))
+
+    return populated_cells

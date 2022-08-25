@@ -54,7 +54,7 @@ class GoNode(MinimaxNode):
         parent_node_id="NA",
     ):
         """
-        Returns:
+        Yields:
             GoNode: possible moves on the board sorted by proximity to other stones
         """
         all_positions = []
@@ -67,38 +67,33 @@ class GoNode(MinimaxNode):
         if max_jump_size <= min_jump_size:
             max_jump_size = board_size
 
-        populated_cells = []
+        populated_cells = find_populated_cells(self.board_state)
 
-        for x_coordinate, row in enumerate(self.board_state):
-            for y_coordinate, cell in enumerate(row):
-                if cell != EMPTY_POSITION:
-                    populated_cells.append((x_coordinate, y_coordinate))
-
+        i = 0
         for jump_size in range(min_jump_size, max_jump_size):
             for x_coordinate, y_coordinate in populated_cells:
                 surrounding_positions = find_moves_around_position(
                     x_coordinate, y_coordinate, jump_size=jump_size
                 )
-                for position in surrounding_positions:
-                    if not is_move_valid(self.board_state, position):
+                for move_coordinates in surrounding_positions:
+                    if not is_move_valid(self.board_state, move_coordinates):
                         continue
-                    if position not in all_positions:
-                        all_positions.append(position)
-            jump_size += 1
+                    if move_coordinates not in all_positions:
+                        all_positions.append(move_coordinates)
+                        new_board_state = deepcopy(self.board_state)
+                        x = move_coordinates[0]
+                        y = move_coordinates[1]
+                        new_board_state[x][y] = stone
+                        node_id = self.make_node_id(depth, i, parent_node_id)
+                        child = GoNode(
+                            node_id=node_id,
+                            board_state=new_board_state,
+                            move_coordinates=move_coordinates,
+                            player_to_move=player_to_move,
+                        )
+                        i += 1
+                        yield child
 
-        for i, move_coordinates in enumerate(all_positions):
-            new_board_state = deepcopy(self.board_state)
-            x = move_coordinates[0]
-            y = move_coordinates[1]
-            new_board_state[x][y] = stone
-            node_id = self.make_node_id(depth, i, parent_node_id)
-            child = GoNode(
-                node_id=node_id,
-                board_state=new_board_state,
-                move_coordinates=move_coordinates,
-                player_to_move=player_to_move,
-            )
-            yield child
 
     def find_utility(self, winning_score=WINNING_SCORE):
         """

@@ -6,7 +6,7 @@ from time import perf_counter
 
 logger = logging.getLogger(__name__)
 
-TIMEOUT_THRESHOLD = 60
+TIMEOUT_THRESHOLD = 120
 
 
 class MinimaxNode:
