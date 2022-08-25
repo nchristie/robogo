@@ -100,3 +100,11 @@ https://stackoverflow.com/
 
 # Sorting moves
 - https://www.youtube.com/watch?v=dqL0L6tNz_M
+
+# Game complexity
+- https://en.wikipedia.org/wiki/Game_complexity
+- https://project.dke.maastrichtuniversity.nl/games/files/phd/SearchingForSolutions.pdf
+
+# O notation
+- https://cis.temple.edu/~vasilis/Courses/CIS603/Lectures/l7.html
+- https://stackoverflow.com/questions/2080050/how-do-we-determine-the-time-and-space-complexity-of-minmax
