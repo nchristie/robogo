@@ -7,21 +7,12 @@
 - Computing & Information Systems
 
 **Abstract -- This project creates a computer opponent for the game of Go using minimax and alpha-beta pruning and is implemented using the Python programming language, the Django web framework and a PostgreSQL database. The game itself is a variation of Go aimed at facilitating the learning of basic moves in the game for beginners.**
+
+Keywords—minimax, alpha-beta pruning, Go
+
 ## I. Introduction
 #### i. Background
 The ancient Chinese two-player board game Go has attracted media attention in recent years following Google's success in writing Artificial Intelligence capable of beating the world's best human Go player (Cook, 2016). While there are many resources to play Go online both against other humans and against computers (Sensei's Library, n.d.), there are fewer resources featuring computer opponents aimed at assisting beginners to understand the basic rules. Gomoku is a game played on a Go board in which the aim is to place five stones in a row, horizontally, vertically or diagonally before one's opponent manages to get five in a row, but it loses much of the rest of the game logic, including captures (Wikipedia Contributors, 2022). The Robogo project aims to implement a new variation of Gomoku in which all the rules of the game of Go are maintained aside from the scoring method, which is simplified down to: the winner is the first to get five stones in a row vertically or horizontally (not diagonally). The human player will play against a computer allowing them to learn how moves and captures work on a Go board without needing to find a knowledgeable human opponent. While there are resources to play Gomoku against computers online (gomokuonline.com, n.d, gomoku.yjyao.com, n.d.) on investigation I could not find this unusual variation in which capture rules are upheld available and therefore it represents a new offering to the Go playing world. At present Robogo is partially implemented: the game is currently played on a five-by-five board, with a win condition of four stones in a row either horizontally or vertically (not diagonally). Capture and Ko rules are yet to be implemented in the game. The computer blocks the human from winning in most circumstances, and this has been achieved by using minimax with alpha-beta pruning. In the following report I will explain how I brought Robogo to its current state, and the next steps anticipated in its development.
-
-#### ii. Terminology
-This section of the report will cover some terms common in the game of Go.
-- Stone: a player's piece, can be black or white
-- Group: a collection of stones which are touching on the board
-- Capture: when a stone or group of stones is surrounded on all sides they become the prisoners of the opponent
-- Ko rule: the board must not return to an identical state during gameplay. This rule prevents the game from stalling
-- Intersection: stones are played not within the lines of the grid, but on the cross-shapes which are made by the lines, these are known as intersections
-- Liberty: a stone or group of stones which are yet to be captured have free spaces around them horizontally and vertically, these are known as liberties. Once a group has zero liberties it is captured
-- Jump: a move in the game which doesn't connect to a stone, but is some one or more places away
-- Connecting move: a move in the game which links directly to another stone either horizontally or vertically
-
 ## II. Literature Review
 #### i. Language and framework
 The decision to write Robogo in Python was based on two things - firstly the popularity of the language; 58% of respondents to the StackOverflow 2022 developer survey said they had 'done extensive development work' in Python over the last year or 'want to work in' Python over the next year (Stack Overflow, 2022), and secondly its status as a back-end language, therefore suitable for the most significant feature of this project which was allowing a computer to play the game.
@@ -62,10 +53,10 @@ The minimax algorithm allows the computer to optimise its choice of next move by
 In this project minimax is implemented in the file `games/minimax.py`. The core elements in this file are a base class called `MinimaxNode` and the algorithm itself, which is a free function called `minimax_with_alpha_beta_pruning_algorithm`. The code in this file is agnostic to which game is being played, and although it is used in Robogo in order to play this variation of Go, it could equally be used for any adversarial two-player pure logic game, such as Chess.
 
 #### MinimaxNode
-In earlier iterations of the code, MinimaxNode featured member variables to allow a tree to be built for future inspection such as score for that node and an array of its children, which in turn were also MinimaxNodes. It also had method called `get_optimal_move` (Christie, 2022) which was used on the penultimate nodes in order to determine which terminal node would be selected. The method looped over the leaves of the penultimate node, and selects the one with the best score for the player, so if it's the minimiser this is the score which is worst for the opponent, and if it's the maximiser it's the score which is best for itself.
+In earlier iterations of the code, MinimaxNode featured member variables to allow a tree to be built for future inspection such as score for that node and an array of its children, which in turn were also MinimaxNodes, see commit with hash beginning ef2090 for details (Christie, 2022). It also had method called `get_optimal_move` which was used on the penultimate nodes in order to determine which terminal node would be selected. The method looped over the leaves of the penultimate node, and selects the one with the best score for the player, so if it's the minimiser this is the score which is worst for the opponent, and if it's the maximiser it's the score which is best for itself.
 
 
-**Code snippet of the get_optimal_move method**
+**Code snippet of the get_optimal_move method** << ADD TO APPENDIX
 ```
 def get_optimal_move(self):
     # output is Node
@@ -109,7 +100,7 @@ In order for Minimax to work it is necessary to be able to determine the utility
 **Getting node children; various approaches:**
 There are a number of approaches available for generating the children of a given node. Two options are to generate all the children up front, or to use a generator in order to yield the children one at a time. Both approaches were experimented with and it was found that the generator improved the algorithm speed.
 
-**Outcome of tests timing each approach**
+**Outcome of tests timing each approach** TODO ADD THIS TO APPENDIX
 ```
 ## 2
 BOARD_SIZE = 9
@@ -136,9 +127,30 @@ The code for generating ranked node children looks at each place on the board wh
 
 During early development the list of potential moves was kept artificially short in order to preserve computing resource, in particular before the alpha-beta pruning was applied. Another benefit to restricting move options is creating a beginner-friendly computer player who takes a simplistic strategy similar to that that human beginners tend to adopt. This beginner strategy involved either directly blocking one's opponent, or alternatively connecting to one's own stones directly. More sophisticated gameplay tends to involve moves which don't always connect to one's own stones or the opponent's stones.
 
-TODO EXPLAIN THE VARIOUS MINIMAX FUNCTIONS I'VE USED ALONG THE WAY AND WHY I SETTLED ON THE ONE IN USE NOW
-The initial iteration of Minimax only went one layer deep, i.e. treated the current board state as the penultimate move before assessing utility. As it only went one layer deep and also deliberately only made connecting moves it was very easy to beat the computer.
+The initial iteration of Minimax only went two layers deep. As it was only looking ahead by two moves it was very easy to beat the computer. The algorithm for minimax with alpha beta pruning at this stage was building the game tree using node children.
 
+
+**minimax_depth_of_2 function** TODO ADD THIS TO APPENDIX
+```
+def minimax_depth_of_2(self, winning_score=WINNING_SCORE):
+    depth = 2
+    self.build_and_prune_game_tree_recursive(self.root_node, depth, set())
+
+    current_node = self.root_node
+
+    for child in current_node.get_children():
+        for child2 in child.get_children():
+            child2.set_score(child2.find_utility(winning_score=winning_score))
+        child2_optimal_move = child.get_optimal_move()
+        child.set_score(child2_optimal_move.get_score())
+
+    return self.root_node.get_optimal_move()
+
+```
+
+Later
+
+**build_and_prune_game_tree_recursive** TODO ADD THIS TO APPENDIX
 ```
 def build_and_prune_game_tree_recursive(
     self,
@@ -256,19 +268,6 @@ def build_and_prune_game_tree_recursive(
     return {"best_score": best_score, "path_depth": depth}
 
 
-def minimax_depth_of_2(self, winning_score=WINNING_SCORE):
-    depth = 2
-    self.build_and_prune_game_tree_recursive(self.root_node, depth, set())
-
-    current_node = self.root_node
-
-    for child in current_node.get_children():
-        for child2 in child.get_children():
-            child2.set_score(child2.find_utility(winning_score=winning_score))
-        child2_optimal_move = child.get_optimal_move()
-        child.set_score(child2_optimal_move.get_score())
-
-    return self.root_node.get_optimal_move()
 
 def find_depth_recursive(self, node, depth):
     if depth > MAX_TREE_DEPTH:
@@ -340,7 +339,6 @@ Robinson, S (2017). 'Flask vs Django', *Stack Abuse*, 27 September 2017. [online
 
 djangoproject.com (n.d.). 'Models'. [online] Available at: https://docs.djangoproject.com/en/4.0/topics/db/models/ [Accessed 23 August 2022]
 
-
 Parker, C (2017). 'Tutorial: Create a real-time web game with Django Channels and React'. [online] Available at: https://codyparker.com/django-channels-with-react/8/ [Accessed 23 August 2022]
 
 djangoproject.com (n.d.). 'Writing your first Django app'. [online] Available at: https://docs.djangoproject.com/en/4.0/intro/tutorial01/ [Accessed 23 August 2022]
@@ -379,3 +377,20 @@ GeeksforGeeks (2021). 'Minimax Algorithm in Game Theory | Set 4 (Alpha-Beta Prun
 
 Christie (2022). 'robogo, commit:054e4e3a1540a5f08fb07f3ebb9f9a2d7c01d7fd'. Github [online] Available at: https://github.com/nchristie/robogo/commit/054e4e3a1540a5f08fb07f3ebb9f9a2d7c01d7fd#diff-525cccac87c344225da6bc8ac769aa34cadac221d1e66ea7b872ad7d6abe85f5L80-L109 [Accessed 23 August 2022]
 
+Christie (2022). 'robogo, commit:ef2090c6e2ef01e543117b80b43c82d6a8fc53eb. Github [online] Available at: https://github.com/nchristie/robogo/blob/ef2090c6e2ef01e543117b80b43c82d6a8fc53eb/games/minimax.py [Accessed 23 August 2022]
+
+
+====
+
+APPENDIX:
+
+#### ii. Terminology
+This section of the report will cover some terms common in the game of Go.
+- Stone: a player's piece, can be black or white
+- Group: a collection of stones which are touching on the board
+- Capture: when a stone or group of stones is surrounded on all sides they become the prisoners of the opponent
+- Ko rule: the board must not return to an identical state during gameplay. This rule prevents the game from stalling
+- Intersection: stones are played not within the lines of the grid, but on the cross-shapes which are made by the lines, these are known as intersections
+- Liberty: a stone or group of stones which are yet to be captured have free spaces around them horizontally and vertically, these are known as liberties. Once a group has zero liberties it is captured
+- Jump: a move in the game which doesn't connect to a stone, but is some one or more places away
+- Connecting move: a move in the game which links directly to another stone either horizontally or vertically
