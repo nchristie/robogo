@@ -13,6 +13,17 @@ Keywords—minimax, alpha-beta pruning, Go
 ## I. Introduction
 #### i. Background
 The ancient Chinese two-player board game Go has attracted media attention in recent years following Google's success in writing Artificial Intelligence capable of beating the world's best human Go player (Cook, 2016). While there are many resources to play Go online both against other humans and against computers (Sensei's Library, n.d.), there are fewer resources featuring computer opponents aimed at assisting beginners to understand the basic rules. Gomoku is a game played on a Go board in which the aim is to place five stones in a row, horizontally, vertically or diagonally before one's opponent manages to get five in a row, but it loses much of the rest of the game logic, including captures (Wikipedia Contributors, 2022). The Robogo project aims to implement a new variation of Gomoku in which all the rules of the game of Go are maintained aside from the scoring method, which is simplified down to: the winner is the first to get five stones in a row vertically or horizontally (not diagonally). The human player will play against a computer allowing them to learn how moves and captures work on a Go board without needing to find a knowledgeable human opponent. While there are resources to play Gomoku against computers online (gomokuonline.com, n.d, gomoku.yjyao.com, n.d.) on investigation I could not find this unusual variation in which capture rules are upheld available and therefore it represents a new offering to the Go playing world. At present Robogo is partially implemented: the game is currently played on a five-by-five board, with a win condition of four stones in a row either horizontally or vertically (not diagonally). Capture and Ko rules are yet to be implemented in the game. The computer blocks the human from winning in most circumstances, and this has been achieved by using minimax with alpha-beta pruning. In the following report I will explain how I brought Robogo to its current state, and the next steps anticipated in its development.
+
+#### ii. Terminology
+This section of the report will cover some terms common in the game of Go.
+- Stone: a player's piece, can be black or white
+- Group: a collection of stones which are touching on the board
+- Capture: when a stone or group of stones is surrounded on all sides they become the prisoners of the opponent
+- Ko rule: the board must not return to an identical state during gameplay. This rule prevents the game from stalling
+- Intersection: stones are played not within the lines of the grid, but on the cross-shapes which are made by the lines, these are known as intersections
+- Liberty: a stone or group of stones which are yet to be captured have free spaces around them horizontally and vertically, these are known as liberties. Once a group has zero liberties it is captured
+- Jump: a move in the game which doesn't connect to a stone, but is some one or more places away
+- Connecting move: a move in the game which links directly to another stone either horizontally or vertically
 ## II. Literature Review
 #### i. Language and framework
 The decision to write Robogo in Python was based on two things - firstly the popularity of the language; 58% of respondents to the StackOverflow 2022 developer survey said they had 'done extensive development work' in Python over the last year or 'want to work in' Python over the next year (Stack Overflow, 2022), and secondly its status as a back-end language, therefore suitable for the most significant feature of this project which was allowing a computer to play the game.
@@ -302,13 +313,17 @@ The database software used for this project is PostgreSQL. The database consists
 The front-end is implemented using Django's templating functionality which in turn uses Jinja scripting. The board is rendered using "+" to represent empty intersections, "●" to represent black stones and "○" to represent white stones.
 
 ## V. Testing and Error Handling
-#### i. Test driven development
-TODO COMPLETE THE TDD SECTION OF THE REPORT (MOVE SOME THINGS OVER FROM REFLECTIVE ESSAY)
-This section of the report will discuss the concept of test driven development (TDD) and how it was used during the writing of the code. Please see `games/tests` for the tests written on the code in this project, further explanation to follow.
+A. Test driven development
+This section of the report will discuss the concept of test driven development (TDD) and how it was used during the writing of the code. Please see `games/tests` for the tests written on the code in this project.
+Code was written for the most part using test driven development (TDD). First a failing test would be written for a new feature, then the code was written to allow that test to pass. A big advantage to this style of working is as new features were developed they could break old features. It was possible to see when features had been broken straight away by running the test suite, and the tests also guided as to what had gone wrong.
+There were some drawbacks to the TDD approach. One was that a lot of test pollution was encountered: where fixtures set up for one test ended up transferring over to new tests. This slowed down development quite a lot while investigating the source of the errors. When tests failed the initial assumption was that the software had a bug, and it took some time to establish that it was issues in the test environment. Greater research into the causes of test pollution and solutions for it would have been researched given more time on the project, but with limited time inelegant work-arounds were used including creating unique variable names within each test and manually deleting object members in the test code in order to ensure they were clean before the test took place.
 
-#### ii. Error-handling
-TODO COMPLETE THE ERROR HANDLING SECTION OF THE REPORT (MOVE SOME THINGS OVER FROM REFLECTIVE ESSAY)
-This section of the report will discuss the importance of error handling and how it's used in the software. At present there is very little error handling - only one try/except block. As the project develops more error handling will be included.
+
+B. Error handling
+While coding, it was beneficial to include error handlers for a range of scenarios. Placing the errors at the lowest possible level and providing meaningful messages was the best strategy for example, in earlier iterations of the code the `MinimaxNode` class had a score and there was a setter for that score:
+ 
+Following is an example of set_score being called from within the algorithm which executed minimax with alpha-beta pruning:  
+In the above example if there were a type error in the code which returns the best score and it returned neither an integer nor a float, then this would be raised by the error handler in the `set_score` function. This code was deprecated eventually as discussed elsewhere in the report, but was highly useful during development to observe what the algorithm was doing and flag when there had been an error and why early on.
 
 #### Observations
 TODO WRITE UP MY OBSERVATIONS
@@ -382,7 +397,9 @@ Christie (2022). 'robogo, commit:ef2090c6e2ef01e543117b80b43c82d6a8fc53eb. Githu
 
 ====
 
-APPENDIX:
+APPENDICES:
+
+Appendix A:
 
 #### ii. Terminology
 This section of the report will cover some terms common in the game of Go.
