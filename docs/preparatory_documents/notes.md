@@ -1585,3 +1585,7 @@ Black score: 3 | White score: 4
     ["●", "+", "●", "●", "+"],
     ["+", "+", "+", "○", "○"]
 ]
+
+
+commit in which generate_next_child is removed:
+https://github.com/nchristie/robogo/commit/054e4e3a1540a5f08fb07f3ebb9f9a2d7c01d7fd

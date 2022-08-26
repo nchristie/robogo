@@ -104,7 +104,11 @@ https://stackoverflow.com/
 # Game complexity
 - https://en.wikipedia.org/wiki/Game_complexity
 - https://project.dke.maastrichtuniversity.nl/games/files/phd/SearchingForSolutions.pdf
+- https://en.wikipedia.org/wiki/Big_O_notation
+
 
 # O notation
 - https://cis.temple.edu/~vasilis/Courses/CIS603/Lectures/l7.html
+- https://cis.temple.edu/~vasilis/Courses/CIS603/ (For citation)
 - https://stackoverflow.com/questions/2080050/how-do-we-determine-the-time-and-space-complexity-of-minmax
+- https://jarednielsen.com/big-o-factorial-time-complexity/
