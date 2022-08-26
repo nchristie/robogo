@@ -142,3 +142,37 @@ def test_find_moves_around_position():
         (1, 0),
     ]
     assert expected == actual
+
+def test_choose_search_depth_1():
+    # GIVEN
+    open_moves = 24
+
+    # WHEN
+    actual = choose_search_depth(open_moves)
+
+    # THEN
+    expected = 4
+    assert expected == actual
+
+def test_choose_search_depth_2():
+    # GIVEN
+    open_moves = 22
+
+    # WHEN
+    actual = choose_search_depth(open_moves)
+
+    # THEN
+    expected = 5
+    assert expected == actual
+
+def test_choose_search_depth_3():
+    # GIVEN
+    open_moves = 2
+
+    # WHEN
+    actual = choose_search_depth(open_moves)
+
+    # THEN
+    expected = 2
+    assert expected == actual
+

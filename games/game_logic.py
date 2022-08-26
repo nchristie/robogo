@@ -5,12 +5,19 @@ logger = logging.getLogger(__name__)
 
 BOARD_SIZE = 5
 WINNING_SCORE = 4
-MAX_TREE_DEPTH = 7
+MAX_TREE_DEPTH = 5
 
 INFINITY = float("inf")
 
 HIGHEST_SCORE = 100
 LOWEST_SCORE = -HIGHEST_SCORE
+
+# keys are open move threshold (should be <=)
+# right is tree depth to got to
+TREE_DEPTH_DICT = {
+    25: 4,
+    23: 5,
+}
 
 
 def is_move_valid(board_state, move_coordinates):
@@ -162,3 +169,13 @@ def find_populated_cells(board_state):
                 populated_cells.append((x_coordinate, y_coordinate))
 
     return populated_cells
+
+def choose_search_depth(open_moves):
+    depth = 2
+    for move_threshold, acceptable_depth in TREE_DEPTH_DICT.items():
+        if open_moves <= move_threshold:
+            depth = acceptable_depth if acceptable_depth > depth else depth
+    if open_moves < depth:
+        depth = open_moves
+    return depth
+
