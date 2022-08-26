@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 BOARD_SIZE = 5
 WINNING_SCORE = 4
-MAX_TREE_DEPTH = 5
+MAX_TREE_DEPTH = 6
 
 INFINITY = float("inf")
 
@@ -17,8 +17,8 @@ LOWEST_SCORE = -HIGHEST_SCORE
 TREE_DEPTH_DICT = {
     25: 4,
     23: 5,
+    13: 6
 }
-
 
 def is_move_valid(board_state, move_coordinates):
     checks = [is_move_within_board_boundaries, is_move_in_free_position]

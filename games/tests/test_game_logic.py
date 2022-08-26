@@ -176,3 +176,15 @@ def test_choose_search_depth_3():
     expected = 2
     assert expected == actual
 
+def test_choose_search_depth_4():
+    # GIVEN
+    open_moves = 13
+
+    # WHEN
+    actual = choose_search_depth(open_moves)
+
+    # THEN
+    expected = 6
+    assert expected == actual
+
+
