@@ -94,7 +94,6 @@ class GoNode(MinimaxNode):
                         i += 1
                         yield child
 
-
     def find_utility(self, winning_score=WINNING_SCORE):
         """
         Finds value of node. To be used for terminal nodes only

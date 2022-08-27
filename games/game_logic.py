@@ -14,11 +14,8 @@ LOWEST_SCORE = -HIGHEST_SCORE
 
 # keys are open move threshold (should be <=)
 # right is tree depth to got to
-TREE_DEPTH_DICT = {
-    25: 4,
-    23: 5,
-    13: 6
-}
+TREE_DEPTH_DICT = {25: 4, 23: 5, 13: 6}
+
 
 def is_move_valid(board_state, move_coordinates):
     checks = [is_move_within_board_boundaries, is_move_in_free_position]
@@ -160,6 +157,7 @@ def find_moves_around_position(x_coordinate, y_coordinate, jump_size=1):
 
     return moves_around_position
 
+
 def find_populated_cells(board_state):
     populated_cells = []
 
@@ -170,6 +168,7 @@ def find_populated_cells(board_state):
 
     return populated_cells
 
+
 def choose_search_depth(open_moves):
     depth = 2
     for move_threshold, acceptable_depth in TREE_DEPTH_DICT.items():
@@ -178,4 +177,3 @@ def choose_search_depth(open_moves):
     if open_moves < depth:
         depth = open_moves
     return depth
-

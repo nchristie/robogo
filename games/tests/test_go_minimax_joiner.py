@@ -116,9 +116,7 @@ class GoNodeTestCase(TestCase):
     def test_generate_next_child_and_rank_by_proximity_returns_all_moves(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["+", "+", "+"], ["+", "+", "+"]]
-        my_node_0814_1445 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_0814_1445 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
 
@@ -165,9 +163,7 @@ class GoNodeTestCase(TestCase):
     def test_get_scores_two_groups_of_one_stone(self):
         # GIVEN
         board_state = [["●", "+", "●"], ["+", "+", "+"], ["+", "+", "+"]]
-        my_node_10 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_10 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_10.find_utility(winning_score=5)
@@ -179,9 +175,7 @@ class GoNodeTestCase(TestCase):
     def test_get_scores_two_stones_horizontal(self):
         # GIVEN
         board_state = [["●", "●", "+"], ["+", "+", "+"], ["+", "+", "+"]]
-        my_node_11 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_11 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_11.find_utility(winning_score=5)
@@ -193,9 +187,7 @@ class GoNodeTestCase(TestCase):
     def test_get_scores_two_stones_horizontal_other_row(self):
         # GIVEN
         board_state = [["+", "+", "+"], ["●", "●", "+"], ["+", "+", "+"]]
-        my_node_12 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_12 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_12.find_utility(winning_score=5)
@@ -207,9 +199,7 @@ class GoNodeTestCase(TestCase):
     def test_get_scores_white_stones(self):
         # GIVEN
         board_state = [["+", "+", "+"], ["○", "○", "+"], ["+", "+", "+"]]
-        my_node_13 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_13 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_13.find_utility(winning_score=5)
@@ -221,9 +211,7 @@ class GoNodeTestCase(TestCase):
     def test_get_scores_two_stones_vertical(self):
         # GIVEN
         board_state = [["●", "+", "+"], ["●", "+", "+"], ["+", "+", "+"]]
-        my_node_14 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_14 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_14.find_utility(winning_score=5)
@@ -245,9 +233,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
-        my_node_15 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_15 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_15.find_utility(winning_score=5)
@@ -269,9 +255,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
-        my_node_15 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_15 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_15.find_utility(winning_score=5)
@@ -293,9 +277,7 @@ class GoNodeTestCase(TestCase):
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+"],
         ]
-        my_node_15 = GoNode(
-            board_state=board_state, player_to_move="minimizer"
-        )
+        my_node_15 = GoNode(board_state=board_state, player_to_move="minimizer")
 
         # WHEN
         actual = my_node_15.find_utility(winning_score=5)

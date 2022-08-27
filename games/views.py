@@ -206,5 +206,3 @@ def get_white_response_no_tree(
     white_move = white_move_node.move_coordinates
     logger.debug(f"white_move: {white_move}")
     return white_move
-
-

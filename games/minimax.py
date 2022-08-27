@@ -131,7 +131,7 @@ def minimax_with_alpha_beta_pruning_algorithm(
             beta = func(best_score, beta)
 
         # break loop if beta <= alpha or win state encountered
-        # if time minus start time > 60 seconds, return best node now
+        # if time minus start time > 120 seconds, return best node now
         timeout = False
         if start_time:
             time_now = perf_counter()
