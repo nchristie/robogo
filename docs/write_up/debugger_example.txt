@@ -1,0 +1,129 @@
+1. Failing test >>>
+
+def test_get_white_response_blocks_between_stones(self):
+    # GIVEN
+    winning_score = 3
+    depth = 6
+
+    board_state = [
+        ["●", "○", "+", "+", "+"],
+        ["+", "+", "+", "+", "+"],
+        ["●", "+", "+", "+", "+"],
+        ["+", "+", "+", "+", "+"],
+        ["+", "+", "+", "+", "+"],
+    ]
+
+    # WHEN
+    x, y = get_white_response(board_state, winning_score=winning_score, depth=depth)
+    board_state[x][y] = "○"
+    print("\n\n\n***TEST BOARD STATE***")
+    [print(f"{row}") for row in board_state]
+
+    # THEN
+    actual = (x, y)
+    expected = (1, 0)
+    self.assertEqual(expected, actual)
+
+===========
+
+2. Console output when test fails >>>
+
+robogo $ djanrun test games.tests.test_view.HelpersTestCase.test_get_white_response_blocks_between_stones
+Creating robogo_web_run ... done
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+
+
+
+***TEST BOARD STATE***
+['●', '○', '○', '+', '+']
+['+', '+', '+', '+', '+']
+['●', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+F
+======================================================================
+FAIL: test_get_white_response_blocks_between_stones (games.tests.test_view.HelpersTestCase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/code/games/tests/test_view.py", line 129, in test_get_white_response_blocks_between_stones
+    self.assertEqual(expected, actual)
+AssertionError: Tuples differ: (1, 0) != (0, 2)
+
+First differing element 0:
+1
+0
+
+- (1, 0)
++ (0, 2)
+
+----------------------------------------------------------------------
+Ran 1 test in 10.175s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+ERROR: 1
+
+
+============
+
+3. import pdb; pdb.set_trace() added to code under test
+
+============
+
+4. console work with debugger showing the game path from the root node when trying to block a black win >>>
+
+(Pdb) [print(row) for row in game_tree.root_node.get_board_state()]
+['●', '○', '+', '+', '+']
+['+', '+', '+', '+', '+']
+['●', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+
+(Pdb) [print(row) for row in game_tree.root_node.get_children()[3].get_board_state()]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+
+(Pdb) [print(row) for row in game_tree.root_node.get_children()[3].get_children()[7].get_board_state()]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '●', '+', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+
+(Pdb) [print(row) for row in game_tree.root_node.get_children()[3].get_children()[7].get_children()[7].get_board_state()]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '●', '○', '+', '+']
+['+', '+', '+', '+', '+']
+['+', '+', '+', '+', '+']
+
+(Pdb) [print(row) for row in game_tree.root_node.get_children()[3].get_children()[7].get_children()[7].get_children()[10].get_board_state()]
+['●', '○', '+', '+', '+']
+['○', '+', '+', '+', '+']
+['●', '●', '○', '+', '+']
+['+', '●', '+', '+', '+']
+['+', '+', '+', '+', '+']
+
+(Pdb) x = game_tree.root_node.get_children()[3].get_children()[7].get_children()[7].get_children()[10].get_children()
+
+(Pdb) [print(row) for row in x[3].get_board_state()]
+['●', '○', '+', '+', '+']
+['○', '○', '+', '+', '+']
+['●', '●', '○', '+', '+']
+['+', '●', '+', '+', '+']
+['+', '+', '+', '+', '+']
+
+(Pdb) [print(row) for row in x[3].get_children()[13].get_board_state()]
+['●', '○', '+', '+', '+']
+['○', '○', '+', '+', '+']
+['●', '●', '○', '+', '+']
+['+', '●', '+', '+', '+']
+['+', '●', '+', '+', '+']
+
+(Pdb) [print(row) for row in x[3].get_children()[14].get_board_state()]
+*** IndexError: list index out of range
+
